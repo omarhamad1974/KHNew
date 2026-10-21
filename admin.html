@@ -26,6 +26,7 @@
 </head>
 <body class="bg-gray-50 text-gray-800 antialiased font-sans min-h-screen">
 
+    <!-- Header Navigation -->
     <header class="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm">
         <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
             <div class="flex items-center space-x-3">
@@ -51,31 +52,36 @@
         </div>
     </header>
 
+    <!-- Main Content Grid -->
     <main class="max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
 
         <!-- Left Column: Article List & Controls (7 Cols) -->
         <section class="lg:col-span-7 space-y-4">
             
             <!-- GitHub Direct Sync Banner -->
-            <div class="bg-gradient-to-r from-blue-900 to-indigo-900 rounded-2xl p-4 text-white shadow-md">
+            <div class="bg-gradient-to-r from-blue-900 to-indigo-900 rounded-2xl p-4 text-white shadow-md space-y-3">
                 <div class="flex items-start justify-between">
                     <div>
-                        <span class="text-[10px] font-bold tracking-wider uppercase bg-blue-500/30 text-blue-200 px-2 py-0.5 rounded-full">GitHub Integration</span>
-                        <h2 class="text-base font-bold mt-1">Direct GitHub Commit Sync</h2>
+                        <span class="text-[10px] font-bold tracking-wider uppercase bg-blue-500/30 text-blue-200 px-2 py-0.5 rounded-full">GitHub API Direct Sync</span>
+                        <h2 class="text-base font-bold mt-1">Direct GitHub Repository Edit</h2>
                         <p class="text-xs text-blue-100 mt-0.5 leading-relaxed">
-                            Save changes directly to your repository via GitHub API without copying and pasting!
+                            Configure your repository credentials below to commit updates directly to <code class="bg-blue-800/60 px-1 rounded text-blue-200">news.json</code>.
                         </p>
                     </div>
                     <i class="fab fa-github text-3xl opacity-40"></i>
                 </div>
-                <div class="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
-                    <input type="text" id="gh-user" placeholder="GitHub Username" oninput="updateGhUrl()" class="text-xs bg-white/10 text-white placeholder-blue-200/60 border border-white/20 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-white" />
-                    <input type="text" id="gh-repo" value="KHNew" placeholder="Repo Name" oninput="updateGhUrl()" class="text-xs bg-white/10 text-white placeholder-blue-200/60 border border-white/20 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-white" />
-                    <input type="password" id="gh-token" placeholder="GitHub Token (ghp_...)" oninput="saveTokenLocally()" class="text-xs bg-white/10 text-white placeholder-blue-200/60 border border-white/20 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-white" />
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <input type="text" id="gh-user" placeholder="GitHub Username" oninput="saveConfig()" class="text-xs bg-white/10 text-white placeholder-blue-200/60 border border-white/20 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-white" />
+                    <input type="text" id="gh-repo" value="KHNew" placeholder="Repo Name" oninput="saveConfig()" class="text-xs bg-white/10 text-white placeholder-blue-200/60 border border-white/20 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-white" />
+                    <input type="password" id="gh-token" placeholder="GitHub Token (ghp_...)" oninput="saveConfig()" class="text-xs bg-white/10 text-white placeholder-blue-200/60 border border-white/20 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-white" />
                 </div>
-                <p class="text-[10px] text-blue-200/70 mt-2">
-                    * Need a token? Generate a <strong>Fine-grained Personal Access Token</strong> or classic token with <code>repo</code> write scope on GitHub and paste it above.
-                </p>
+                <div class="flex items-center justify-between pt-1">
+                    <button onclick="commitDirectlyToGitHub()" id="commit-btn" class="text-xs bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-4 py-2 rounded-xl transition-all shadow-sm flex items-center gap-1.5">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span>Commit Directly to GitHub</span>
+                    </button>
+                    <span id="sync-status" class="text-xs font-medium text-blue-200"></span>
+                </div>
             </div>
 
             <!-- Header Actions -->
@@ -86,7 +92,7 @@
                 </div>
                 <div class="flex items-center space-x-2">
                     <button onclick="loadFromLiveJson()" class="text-xs border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium px-3 py-1.5 rounded-xl transition-colors flex items-center gap-1">
-                        <i class="fas fa-sync text-[11px]"></i> Load live
+                        <i class="fas fa-sync text-[11px]"></i> Load from live
                     </button>
                     <button onclick="addNewArticle()" class="text-xs bg-brand-600 hover:bg-brand-700 text-white font-semibold px-3 py-1.5 rounded-xl transition-colors flex items-center gap-1 shadow-sm">
                         <i class="fas fa-plus"></i> Add Article
@@ -115,26 +121,26 @@
                     </button>
                 </div>
 
-                <pre id="json-preview" class="bg-gray-900 text-emerald-400 p-3 rounded-xl text-[11px] font-mono overflow-x-auto max-h-[320px] leading-relaxed border border-gray-800 shadow-inner">
+                <pre id="json-preview" class="bg-gray-900 text-emerald-400 p-3 rounded-xl text-[11px] font-mono overflow-x-auto max-h-[380px] leading-relaxed border border-gray-800 shadow-inner">
 []
                 </pre>
 
-                <!-- Direct Commit Button -->
-                <button onclick="commitDirectToGitHub()" id="commit-btn" class="mt-4 w-full bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-semibold text-xs py-2.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2">
-                    <i class="fas fa-cloud-upload-alt text-sm"></i>
-                    <span>Commit Directly to GitHub</span>
-                </button>
+                <div class="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-xl flex items-start space-x-2 text-xs text-blue-800">
+                    <i class="fas fa-info-circle text-blue-600 mt-0.5"></i>
+                    <p class="leading-relaxed">
+                        Use <strong>Commit Directly to GitHub</strong> above or copy the code and paste it manually into <strong class="font-semibold">news.json</strong> on GitHub.
+                    </p>
+                </div>
 
-                <div id="status-message" class="hidden mt-3 p-3 text-xs rounded-xl border"></div>
-
-                <a id="gh-direct-link" href="#" target="_blank" rel="noopener noreferrer" class="mt-3 w-full block text-center bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold py-2 rounded-xl transition-colors">
-                    Open news.json on GitHub <i class="fas fa-external-link-alt text-[10px] ml-1"></i>
+                <a id="gh-direct-link" href="#" target="_blank" rel="noopener noreferrer" class="mt-3 w-full block text-center bg-gray-900 hover:bg-black text-white text-xs font-semibold py-2.5 rounded-xl transition-colors shadow-sm">
+                    Open news.json directly on GitHub <i class="fas fa-external-link-alt text-[10px] ml-1"></i>
                 </a>
             </div>
         </section>
 
     </main>
 
+    <!-- Modal Form -->
     <div id="edit-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity">
         <div class="bg-white w-full max-w-lg rounded-2xl p-5 shadow-2xl transform scale-95 transition-transform border border-gray-100">
             <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-4">
@@ -158,8 +164,8 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1">Image URL</label>
-                    <input type="text" id="field-image" required placeholder="https://images.unsplash.com/... or ./assets/omar.jpg" class="w-full text-xs bg-gray-50 border border-gray-300 rounded-xl p-2.5 focus:bg-white focus:outline-none focus:border-brand-500">
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Image URL / Path</label>
+                    <input type="text" id="field-image" required placeholder="e.g. ./assets/omar.jpg or https://images.unsplash.com/..." class="w-full text-xs bg-gray-50 border border-gray-300 rounded-xl p-2.5 focus:bg-white focus:outline-none focus:border-brand-500">
                 </div>
 
                 <div>
@@ -184,8 +190,9 @@
         </div>
     </div>
 
+    <!-- JavaScript Application Logic -->
     <script>
-        // Initial Default News Data
+        // Default initial news array
         let newsArticles = [
             {
                 "id": "1",
@@ -204,97 +211,157 @@
         ];
 
         function renderArticlesList() {
-        function saveTokenLocally() {
-            const token = document.getElementById('gh-token').value.trim();
-            const user = document.getElementById('gh-user').value.trim();
-            const repo = document.getElementById('gh-repo').value.trim();
-            localStorage.setItem('gh_token', token);
-            localStorage.setItem('gh_user', user);
-            localStorage.setItem('gh_repo', repo);
-        }
+            const container = document.getElementById('articles-list');
+            const badge = document.getElementById('article-count-badge');
+            const jsonDisplay = document.getElementById('json-preview');
 
-        function loadSavedCredentials() {
-            if(localStorage.getItem('gh_token')) document.getElementById('gh-token').value = localStorage.getItem('gh_token');
-            if(localStorage.getItem('gh_user')) document.getElementById('gh-user').value = localStorage.getItem('gh_user');
-            if(localStorage.getItem('gh_repo')) document.getElementById('gh-repo').value = localStorage.getItem('gh_repo');
-        }
+            badge.innerText = `${newsArticles.length} article${newsArticles.length === 1 ? '' : 's'} total`;
 
-        async function commitDirectToGitHub() {
-            const user = document.getElementById('gh-user').value.trim();
-            const repo = document.getElementById('gh-repo').value.trim();
-            const token = document.getElementById('gh-token').value.trim();
-            const commitBtn = document.getElementById('commit-btn');
-            const statusMsg = document.getElementById('status-message');
-
-            if(!user || !repo || !token) {
-                showStatus('Please provide your GitHub Username, Repo Name, and Personal Access Token.', 'error');
-                return;
-            }
-
-            commitBtn.disabled = true;
-            commitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Committing to GitHub...`;
-
-            try {
-                // Step 1: Get current file SHA (required by GitHub API to update an existing file)
-                const fileUrl = `https://api.github.com/repos/${user}/${repo}/contents/news.json`;
-                let sha = "";
-
-                const getRes = await fetch(fileUrl, {
-                    headers: { 'Authorization': `token ${token}` }
-                });
-
-                if(getRes.ok) {
-                    const fileData = await getRes.json();
-                    sha = fileData.sha;
-                }
-
-                // Step 2: Push update payload
-                const updatedContent = JSON.stringify(newsArticles, null, 2);
-                // Unicode-safe Base64 encoding
-                const encodedContent = btoa(unescape(encodeURIComponent(updatedContent)));
-
-                const bodyData = {
-                    message: "Update news.json via KH Admin Dashboard",
-                    content: encodedContent,
-                    ...(sha && { sha })
-                };
-
-                const putRes = await fetch(fileUrl, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(bodyData)
-                });
-
-                if(!putRes.ok) {
-                    const errData = await putRes.json();
-                    throw new Error(errData.message || "Failed to commit changes.");
-                }
-
-                showStatus('Successfully committed directly to news.json on GitHub!', 'success');
-            } catch(err) {
-                showStatus(`Error: ${err.message}`, 'error');
-            } finally {
-                commitBtn.disabled = false;
-                commitBtn.innerHTML = `<i class="fas fa-cloud-upload-alt text-sm"></i> <span>Commit Directly to GitHub</span>`;
-            }
-        }
-
-        function showStatus(text, type) {
-            const el = document.getElementById('status-message');
-            el.classList.remove('hidden', 'bg-emerald-50', 'text-emerald-800', 'border-emerald-200', 'bg-red-50', 'text-red-800', 'border-red-200');
-            if(type === 'success') {
-                el.classList.add('bg-emerald-50', 'text-emerald-800', 'border-emerald-200');
+            if(newsArticles.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white rounded-2xl p-8 text-center border border-dashed border-gray-300">
+                        <i class="far fa-newspaper text-gray-300 text-3xl mb-2"></i>
+                        <p class="text-xs text-gray-500 font-medium">No articles available.</p>
+                        <button onclick="addNewArticle()" class="mt-3 text-xs bg-brand-50 text-brand-600 font-semibold px-3 py-1.5 rounded-lg">Add First Article</button>
+                    </div>
+                `;
             } else {
-                el.classList.add('bg-red-50', 'text-red-800', 'border-red-200');
+                container.innerHTML = newsArticles.map((item, index) => `
+                    <div class="bg-white p-3.5 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between hover:border-gray-300 transition-all">
+                        <div class="flex items-center space-x-3 overflow-hidden">
+                            <img src="${item.image}" alt="Thumb" class="w-14 h-14 rounded-xl object-cover border border-gray-100 flex-shrink-0" onerror="this.src='https://placehold.co/100x100/e2e8f0/64748b?text=Image'" />
+                            <div class="min-w-0">
+                                <span class="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-md">ID: ${item.id}</span>
+                                <h3 class="font-bold text-xs text-gray-900 truncate mt-0.5">${item.title}</h3>
+                                <p class="text-[11px] text-gray-500 truncate mt-0.5">${item.excerpt}</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-1.5 pl-2 flex-shrink-0">
+                            <button onclick="openEditModal(${index})" class="w-8 h-8 rounded-xl bg-gray-100 hover:bg-brand-50 hover:text-brand-600 text-gray-600 flex items-center justify-center transition-colors">
+                                <i class="fas fa-pencil-alt text-xs"></i>
+                            </button>
+                            <button onclick="deleteArticle(${index})" class="w-8 h-8 rounded-xl bg-gray-100 hover:bg-red-50 hover:text-red-600 text-gray-600 flex items-center justify-center transition-colors">
+                                <i class="fas fa-trash-alt text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
             }
-            el.innerHTML = text;
+
+            // Update JSON Live Output
+            jsonDisplay.textContent = JSON.stringify(newsArticles, null, 2);
+        }
+
+        function openEditModal(index) {
+            const article = newsArticles[index];
+            document.getElementById('modal-heading').innerText = "Edit Article";
+            document.getElementById('field-index').value = index;
+            document.getElementById('field-id').value = article.id;
+            document.getElementById('field-title').value = article.title;
+            document.getElementById('field-image').value = article.image;
+            document.getElementById('field-excerpt').value = article.excerpt;
+            document.getElementById('field-text').value = article.text;
+
+            showModal();
+        }
+
+        function addNewArticle() {
+            document.getElementById('modal-heading').innerText = "Add New Article";
+            document.getElementById('field-index').value = "-1";
+            document.getElementById('field-id').value = String(newsArticles.length + 1);
+            document.getElementById('field-title').value = "";
+            document.getElementById('field-image').value = "";
+            document.getElementById('field-excerpt').value = "";
+            document.getElementById('field-text').value = "";
+
+            showModal();
+        }
+
+        function showModal() {
+            const modal = document.getElementById('edit-modal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.querySelector('div').classList.remove('scale-95');
+            modal.querySelector('div').classList.add('scale-100');
+        }
+
+        function closeEditModal() {
+            const modal = document.getElementById('edit-modal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modal.querySelector('div').classList.remove('scale-100');
+            modal.querySelector('div').classList.add('scale-95');
+        }
+
+        function saveArticle(e) {
+            e.preventDefault();
+            const index = parseInt(document.getElementById('field-index').value);
+            const updatedItem = {
+                id: document.getElementById('field-id').value.trim(),
+                title: document.getElementById('field-title').value.trim(),
+                excerpt: document.getElementById('field-excerpt').value.trim(),
+                text: document.getElementById('field-text').value.trim(),
+                image: document.getElementById('field-image').value.trim()
+            };
+
+            if(index >= 0) {
+                newsArticles[index] = updatedItem;
+            } else {
+                newsArticles.push(updatedItem);
+            }
+
+            closeEditModal();
+            renderArticlesList();
+        }
+
+        function deleteArticle(index) {
+            newsArticles.splice(index, 1);
+            renderArticlesList();
+        }
+
+        function copyJsonToClipboard() {
+            const jsonText = JSON.stringify(newsArticles, null, 2);
+            
+            if(navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(jsonText);
+            } else {
+                const textarea = document.createElement("textarea");
+                textarea.value = jsonText;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textarea);
+            }
+
+            const btn = document.getElementById('copy-btn');
+            btn.innerHTML = `<i class="fas fa-check text-emerald-600"></i> Copied!`;
+            setTimeout(() => {
+                btn.innerHTML = `<i class="far fa-copy"></i> Copy Code`;
+            }, 2000);
+        }
+
+        function exportJsonFile() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(newsArticles, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "news.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        async function loadFromLiveJson() {
+            try {
+                const res = await fetch('./news.json');
+                if(!res.ok) throw new Error("Could not fetch");
+                const liveData = await res.json();
+                newsArticles = liveData;
+                renderArticlesList();
+            } catch(err) {
+                alert("Could not load news.json. Please make sure the file exists in your repository root.");
+            }
         }
 
         function updateGhUrl() {
-            saveTokenLocally();
             const user = document.getElementById('gh-user').value.trim() || 'YOUR-USERNAME';
             const repo = document.getElementById('gh-repo').value.trim() || 'KHNew';
             const directLink = document.getElementById('gh-direct-link');
@@ -311,10 +378,100 @@
             }
         }
 
-        window.onload = function() {
-            loadSavedCredentials();
-            renderArticlesList();
+        function saveConfig() {
+            const user = document.getElementById('gh-user').value.trim();
+            const repo = document.getElementById('gh-repo').value.trim();
+            const token = document.getElementById('gh-token').value.trim();
+
+            localStorage.setItem('kh_gh_user', user);
+            localStorage.setItem('kh_gh_repo', repo);
+            localStorage.setItem('kh_gh_token', token);
+
             updateGhUrl();
+        }
+
+        function loadSavedConfig() {
+            const user = localStorage.getItem('kh_gh_user') || '';
+            const repo = localStorage.getItem('kh_gh_repo') || 'KHNew';
+            const token = localStorage.getItem('kh_gh_token') || '';
+
+            document.getElementById('gh-user').value = user;
+            document.getElementById('gh-repo').value = repo;
+            document.getElementById('gh-token').value = token;
+
+            updateGhUrl();
+        }
+
+        // Direct commit function via GitHub API
+        async function commitDirectlyToGitHub() {
+            const user = document.getElementById('gh-user').value.trim();
+            const repo = document.getElementById('gh-repo').value.trim();
+            const token = document.getElementById('gh-token').value.trim();
+            const statusLabel = document.getElementById('sync-status');
+            const btn = document.getElementById('commit-btn');
+
+            if(!user || !repo || !token) {
+                alert("Please enter your GitHub Username, Repository Name, and Personal Access Token.");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Syncing...`;
+            statusLabel.innerText = "Connecting to GitHub...";
+
+            try {
+                const apiPath = `https://api.github.com/repos/${user}/${repo}/contents/news.json`;
+                
+                // Get file SHA if it already exists
+                let sha = "";
+                const getRes = await fetch(apiPath, {
+                    headers: { 'Authorization': `token ${token}` }
+                });
+
+                if(getRes.ok) {
+                    const getData = await getRes.json();
+                    sha = getData.sha;
+                }
+
+                const jsonContent = JSON.stringify(newsArticles, null, 2);
+                const encodedContent = btoa(unescape(encodeURIComponent(jsonContent)));
+
+                const putRes = await fetch(apiPath, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: "Update news.json via Admin Dashboard",
+                        content: encodedContent,
+                        sha: sha || undefined
+                    })
+                });
+
+                if(!putRes.ok) {
+                    const errData = await putRes.json();
+                    throw new Error(errData.message || "Failed to commit");
+                }
+
+                statusLabel.innerText = "✓ Committed successfully!";
+                btn.innerHTML = `<i class="fas fa-check"></i> Updated!`;
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> Commit Directly to GitHub`;
+                }, 3000);
+
+            } catch(err) {
+                alert("GitHub API Error: " + err.message);
+                statusLabel.innerText = "Sync failed.";
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> Commit Directly to GitHub`;
+            }
+        }
+
+        window.onload = function() {
+            loadSavedConfig();
+            renderArticlesList();
         };
     </script>
 </body>
