@@ -1,0 +1,16 @@
+[
+  {
+    "id": "1",
+    "title": "Welcome to KH Mobile Web App",
+    "excerpt": "Experience fast mobile navigation with dynamic news updates.",
+    "text": "We are proud to launch our app-like web architecture. Connect with us instantly via WhatsApp or explore our services.",
+    "image": "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    "id": "2",
+    "title": "Services & Solutions",
+    "excerpt": "Discover our mobile app and web design capabilities.",
+    "text": "We offer custom iOS/Android app development, responsive website design, and cloud hosting solutions.",
+    "image": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80"
+  }
+]
