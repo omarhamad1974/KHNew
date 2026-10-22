@@ -50,9 +50,65 @@
       "title": "Patents",
       "description": "A patent is an exclusive right granted for an invention, which is a product or a process that has new features. A patent for an invention is the grant of a property right to the inventor, issued by the Patent Office. The term of a patent is 20 years from the date on which the application for the patent was filed. For entrepreneurs and industry pioneers, a patent provides one of the most definitive ways to protect a company's Intellectual Property (safeguard innovation) and to boost company valuation. The Patent Offices grants utility patents which are available for inventions that provide any new or useful process, machine, article or composition of matter. In appropriate circumstances, utility patents may also be used to protect computer software and business methods. Each invention must meet the legal requirement of not being obvious to a person of ordinary skill in the field of the invention, in addition to being new or novel.",
       "icon": "fas fa-star"
+    },
+    {
+      "id": "2",
+      "title": "Trademarks",
+      "description": "A trademark is a word, name, symbol or device which is used in trade with goods to indicate the source of the goods and to distinguish them from the goods of others. A service mark is the same as a trademark except that it identifies and distinguishes the source of a service rather than a product. Trademarks, service marks and trade names create a \"brand\" in the marketplace. They are among the most valuable and most relied-upon assets of both growth-oriented and established businesses. Businesses with distinctive brands accomplish sales objectives in less time and with less cost than others. Exclusive, consistent use is essential to obtaining recognition in the marketplace.",
+      "icon": "fas fa-star"
+    },
+    {
+      "id": "3",
+      "title": "Translation",
+      "description": "KH Translation is an accredited translation service provider that provides top-quality cost-effective, personalized / customized, fast, professional and technologically advanced translation services.",
+      "icon": "fas fa-star"
     }
   ],
   "products": [],
-  "testimonials": [],
-  "employees": []
+  "testimonials": [
+    {
+      "id": "1",
+      "name": "Omar Hamad",
+      "role": "CEO, Plannplay",
+      "text": "Very good company, they did everything good and protected my company from a lot of things that could happen to her"
+    },
+    {
+      "id": "2",
+      "name": "Mohammad Youssef",
+      "role": "Eclipse",
+      "text": "Very good company, they did everything good and protected my company from a lot of things that could happen to her"
+    },
+    {
+      "id": "3",
+      "name": "Mohammad Lotfy",
+      "role": "El motahedda",
+      "text": "Very good company, they did everything good and protected my company from a lot of things that could happen to her"
+    }
+  ],
+  "employees": [
+    {
+      "id": "1",
+      "name": "Khaled Hamada",
+      "position": "CEO",
+      "image": "./asset/Khaled-Hamada.jpg"
+    },
+    {
+      "id": "2",
+      "name": "Sherif Youssef",
+      "position": "Translation Department Head",
+      "image": "./assets/sherif-youssef.jpg"
+    },
+    {
+      "id": "3",
+      "name": "Mirna Al Kayyali",
+      "position": "IP Department Head",
+      "image": "../assets/Mirna-Al-Kayyali.jpg"
+    },
+    {
+      "id": "4",
+      "name": "Magdy Gamal",
+      "position": "Senior Project Manager",
+      "image": "./assets/Magdy-Gamal.jpg"
+    }
+  ]
 }
