@@ -7,14 +7,14 @@
       "title": "Using Legal Skills with Technical Knowledge",
       "subtitle": "Discover legal and IP services.",
       "tag": "Featured",
-      "image": "https://unsplash.com/photos/abstract-geometric-pattern-of-illuminated-lights-fYOCiHbHLQ8"
+      "image": "./assets/slider1.jpg"
     },
     {
       "id": "2",
       "title": "Protecting Innovation",
       "subtitle": "Discover legal and IP services.",
       "tag": "Featured",
-      "image": "https://unsplash.com/photos/a-judges-gaven-on-a-wooden-table-oA1aVtEcWaE"
+      "image": "./assets/slider2.jpg"
     }
   ],
   "jurisdictions": [
