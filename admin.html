@@ -1,517 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KH Web App - Master Content Manager</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- JSZip and FileSaver CDN scripts for Zip Export -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#eff6ff',
-                            100: '#dbeafe',
-                            500: '#2563eb',
-                            600: '#1d4ed8',
-                            700: '#1e40af',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>KHIP Admin</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script>tailwind.config={theme:{extend:{colors:{brand:{50:'#eff6ff',100:'#dbeafe',600:'#1d4ed8',700:'#1e40af'}}}}}</script>
+<style>:focus-visible{outline:2px solid #1d4ed8;outline-offset:2px}summary{list-style:none}summary::-webkit-details-marker{display:none}</style>
 </head>
-<body class="bg-gray-50 text-gray-800 antialiased font-sans min-h-screen">
+<body class="bg-gray-100 text-gray-900 antialiased font-sans">
 
-    <!-- Header Navigation -->
-    <header class="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-md">
-                    KH
-                </div>
-                <div>
-                    <h1 class="font-bold text-gray-900 text-base leading-tight">Master Website Manager</h1>
-                    <p class="text-xs text-gray-500">Visual Editor for <code class="bg-gray-100 text-brand-600 px-1 py-0.5 rounded">app-data.json</code></p>
-                </div>
-            </div>
-
-            <div class="flex items-center space-x-2">
-                <button onclick="downloadAllFilesZip()" class="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition-all shadow-sm">
-                    <i class="fas fa-file-archive"></i>
-                    <span>Download All (ZIP)</span>
-                </button>
-                <button onclick="exportJsonFile()" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition-all shadow-sm">
-                    <i class="fas fa-download"></i>
-                    <span>Download JSON</span>
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Content Grid -->
-    <main class="max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-        <!-- Left Column: Tabs & Editors (7 Cols) -->
-        <section class="lg:col-span-7 space-y-4">
-            
-            <!-- GitHub Direct Sync Banner -->
-            <div class="bg-gradient-to-r from-blue-900 to-indigo-900 rounded-2xl p-4 text-white shadow-md space-y-3">
-                <div class="flex items-start justify-between">
-                    <div>
-                        <span class="text-[10px] font-bold tracking-wider uppercase bg-blue-500/30 text-blue-200 px-2 py-0.5 rounded-full">GitHub Direct Sync</span>
-                        <h2 class="text-base font-bold mt-1">Direct Repository Sync</h2>
-                        <p class="text-xs text-blue-100 mt-0.5 leading-relaxed">
-                            Updates commit directly to <code class="bg-blue-800/60 px-1 rounded text-blue-200">app-data.json</code> on your GitHub repository.
-                        </p>
-                    </div>
-                    <i class="fab fa-github text-3xl opacity-40"></i>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                    <input type="text" id="gh-user" placeholder="GitHub Username" oninput="saveConfig()" class="text-xs bg-white/10 text-white placeholder-blue-200/60 border border-white/20 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-white" />
-                    <input type="text" id="gh-repo" value="KHNew" placeholder="Repo Name" oninput="saveConfig()" class="text-xs bg-white/10 text-white placeholder-blue-200/60 border border-white/20 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-white" />
-                    <input type="password" id="gh-token" placeholder="GitHub Token (ghp_...)" oninput="saveConfig()" class="text-xs bg-white/10 text-white placeholder-blue-200/60 border border-white/20 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-white" />
-                </div>
-                <div class="flex items-center justify-between pt-1">
-                    <button onclick="commitDirectlyToGitHub()" id="commit-btn" class="text-xs bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-4 py-2 rounded-xl transition-all shadow-sm flex items-center gap-1.5">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                        <span>Commit Directly to GitHub</span>
-                    </button>
-                    <span id="sync-status" class="text-xs font-medium text-blue-200"></span>
-                </div>
-            </div>
-
-            <!-- Toast Banner -->
-            <div id="toast-message" class="hidden p-3 rounded-xl text-xs font-medium border"></div>
-
-            <!-- Navigation Tabs -->
-            <div class="flex space-x-1 bg-white p-1.5 rounded-2xl border border-gray-200 shadow-sm text-xs font-semibold overflow-x-auto no-scrollbar">
-                <button onclick="switchTab('carousel')" id="tab-carousel" class="flex-1 min-w-[70px] py-2 px-2.5 rounded-xl transition-colors bg-brand-600 text-white">Carousel</button>
-                <button onclick="switchTab('jurisdictions')" id="tab-jurisdictions" class="flex-1 min-w-[85px] py-2 px-2.5 rounded-xl transition-colors text-gray-600 hover:bg-gray-100">Jurisdictions</button>
-                <button onclick="switchTab('news')" id="tab-news" class="flex-1 min-w-[70px] py-2 px-2.5 rounded-xl transition-colors text-gray-600 hover:bg-gray-100">News</button>
-                <button onclick="switchTab('services')" id="tab-services" class="flex-1 min-w-[70px] py-2 px-2.5 rounded-xl transition-colors text-gray-600 hover:bg-gray-100">Services</button>
-                <button onclick="switchTab('products')" id="tab-products" class="flex-1 min-w-[70px] py-2 px-2.5 rounded-xl transition-colors text-gray-600 hover:bg-gray-100">Products</button>
-                <button onclick="switchTab('testimonials')" id="tab-testimonials" class="flex-1 min-w-[70px] py-2 px-2.5 rounded-xl transition-colors text-gray-600 hover:bg-gray-100">Testimonials</button>
-                <button onclick="switchTab('employees')" id="tab-employees" class="flex-1 min-w-[70px] py-2 px-2.5 rounded-xl transition-colors text-gray-600 hover:bg-gray-100">Employees</button>
-            </div>
-
-            <!-- Header Controls -->
-            <div class="flex items-center justify-between bg-white p-3.5 rounded-2xl border border-gray-200 shadow-sm">
-                <div>
-                    <h2 class="font-bold text-gray-900 text-sm capitalize" id="tab-title">Carousel Slides</h2>
-                    <p class="text-xs text-gray-500" id="tab-count-badge">0 items</p>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <button onclick="loadFromLiveJson()" class="text-xs border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium px-3 py-1.5 rounded-xl transition-colors flex items-center gap-1">
-                        <i class="fas fa-sync text-[11px]"></i> Load Live
-                    </button>
-                    <button onclick="addNewItem()" class="text-xs bg-brand-600 hover:bg-brand-700 text-white font-semibold px-3 py-1.5 rounded-xl transition-colors flex items-center gap-1 shadow-sm">
-                        <i class="fas fa-plus"></i> Add Item
-                    </button>
-                </div>
-            </div>
-
-            <!-- Dynamic Section Item List -->
-            <div id="items-list" class="space-y-3">
-                <!-- Javascript dynamic list -->
-            </div>
-        </section>
-
-        <!-- Right Column: Live Code Output (5 Cols) -->
-        <section class="lg:col-span-5 space-y-4">
-            <div class="bg-white rounded-2xl p-4 border border-gray-200 shadow-sm sticky top-20">
-                <div class="flex items-center justify-between mb-3">
-                    <div class="flex items-center space-x-2">
-                        <i class="fas fa-code text-brand-600"></i>
-                        <h3 class="font-bold text-gray-900 text-sm">Generated app-data.json</h3>
-                    </div>
-                    <button onclick="copyJsonToClipboard()" id="copy-btn" class="text-xs bg-gray-100 hover:bg-brand-50 hover:text-brand-600 text-gray-700 font-semibold px-3 py-1 rounded-lg transition-all flex items-center gap-1">
-                        <i class="far fa-copy"></i> Copy Code
-                    </button>
-                </div>
-
-                <pre id="json-preview" class="bg-gray-900 text-emerald-400 p-3 rounded-xl text-[11px] font-mono overflow-x-auto max-h-[420px] leading-relaxed border border-gray-800 shadow-inner">
-{}
-                </pre>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- Modal Dialog -->
-    <div id="edit-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity">
-        <div class="bg-white w-full max-w-lg rounded-2xl p-5 shadow-2xl transform scale-95 transition-transform border border-gray-100">
-            <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-3">
-                <h3 id="modal-heading" class="font-bold text-gray-900 text-base">Edit Item</h3>
-                <button onclick="closeEditModal()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center hover:bg-gray-200">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-
-            <form id="item-form" onsubmit="saveItem(event)" class="space-y-3">
-                <input type="hidden" id="field-index">
-                <div id="modal-form-fields" class="space-y-3">
-                    <!-- Form fields generated dynamically based on active tab -->
-                </div>
-
-                <div class="flex items-center justify-end space-x-2 pt-3 border-t border-gray-100">
-                    <button type="button" onclick="closeEditModal()" class="text-xs bg-gray-100 text-gray-700 font-semibold px-4 py-2 rounded-xl">Cancel</button>
-                    <button type="submit" class="text-xs bg-brand-600 text-white font-semibold px-5 py-2 rounded-xl shadow-sm">Save Changes</button>
-                </div>
-            </form>
-        </div>
+<section id="login" class="max-w-md mx-auto p-5 pt-12">
+  <div class="flex items-center gap-3 mb-6">
+    <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center text-white font-black text-xl">KH</div>
+    <div><h1 class="text-xl font-extrabold">KHIP content admin</h1><p class="text-xs text-gray-600">Edit the website content without touching JSON.</p></div>
+  </div>
+  <form id="login-form" class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm space-y-3">
+    <label class="block text-xs font-bold">GitHub username or organization<input id="f-o" required autocomplete="off" class="mt-1 w-full px-3 py-2 text-sm rounded-lg border border-gray-300 font-normal"></label>
+    <label class="block text-xs font-bold">Repository name<input id="f-r" required autocomplete="off" class="mt-1 w-full px-3 py-2 text-sm rounded-lg border border-gray-300 font-normal"></label>
+    <div class="grid grid-cols-2 gap-3">
+      <label class="block text-xs font-bold">Branch<input id="f-b" value="main" class="mt-1 w-full px-3 py-2 text-sm rounded-lg border border-gray-300 font-normal"></label>
+      <label class="block text-xs font-bold">Data file<input id="f-p" value="app-data.json" class="mt-1 w-full px-3 py-2 text-sm rounded-lg border border-gray-300 font-normal"></label>
     </div>
+    <label class="block text-xs font-bold">Access token<input id="f-t" type="password" required autocomplete="off" class="mt-1 w-full px-3 py-2 text-sm rounded-lg border border-gray-300 font-normal"></label>
+    <label class="flex items-center gap-2 text-xs"><input id="f-s" type="checkbox"> Keep me signed in for this browser tab</label>
+    <p id="login-err" class="hidden text-xs text-red-700 bg-red-50 border border-red-200 rounded-lg p-2" role="alert"></p>
+    <button class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 rounded-xl text-sm">Connect</button>
+  </form>
+  <details class="mt-4 text-xs text-gray-700 bg-white rounded-2xl border border-gray-200 p-4">
+    <summary class="font-bold cursor-pointer">How do I get a token?</summary>
+    <ol class="list-decimal ml-4 mt-2 space-y-1">
+      <li>On GitHub open Settings, Developer settings, Personal access tokens, Fine-grained tokens.</li>
+      <li>Choose "Only select repositories" and pick the website repository.</li>
+      <li>Under Repository permissions set <b>Contents</b> to Read and write.</li>
+      <li>Generate the token and paste it above. Treat it like a password.</li>
+    </ol>
+    <p class="mt-2">The token stays in this browser and is only sent to api.github.com.</p>
+  </details>
+</section>
 
-    <!-- Application Logic -->
-    <script>
-        let currentTab = 'carousel';
-        let masterData = {
-            about: "KHIP delivers high-performance IP legal solutions designed for fast mobile navigation.",
-            aboutMainText: "KHIP is dedicated to delivering high-performance IP and legal services across the Middle East.",
-            carousel: [],
-            jurisdictions: [],
-            news: [],
-            services: [],
-            products: [],
-            testimonials: [],
-            employees: []
-        };
+<section id="app" class="hidden">
+  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur border-b shadow-sm">
+    <div class="max-w-3xl mx-auto px-4 py-3 flex items-center gap-2">
+      <div class="min-w-0 flex-1"><h1 class="font-extrabold truncate" id="repo-name"></h1><p id="state" class="text-[11px] text-gray-500">Loaded</p></div>
+      <button data-act="backup" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl" title="Download a copy"><i class="fas fa-download"></i></button>
+      <button data-act="out" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl">Sign out</button>
+      <button id="save" data-act="save" disabled class="text-xs bg-brand-600 hover:bg-brand-700 disabled:bg-gray-300 text-white font-bold px-4 py-2 rounded-xl">Save to GitHub</button>
+    </div>
+    <nav id="tabs" class="max-w-3xl mx-auto flex gap-1.5 overflow-x-auto px-4 pb-2" aria-label="Sections"></nav>
+  </header>
+  <main id="view" class="max-w-3xl mx-auto p-4 space-y-3"></main>
+</section>
 
-        function switchTab(tab) {
-            currentTab = tab;
-            ['carousel', 'jurisdictions', 'news', 'services', 'products', 'testimonials', 'employees'].forEach(t => {
-                const btn = document.getElementById(`tab-${t}`);
-                if(!btn) return;
-                if(t === tab) {
-                    btn.className = "flex-1 min-w-[70px] py-2 px-2.5 rounded-xl transition-colors bg-brand-600 text-white shadow-sm font-bold";
-                } else {
-                    btn.className = "flex-1 min-w-[70px] py-2 px-2.5 rounded-xl transition-colors text-gray-600 hover:bg-gray-100 font-semibold";
-                }
-            });
+<div id="toast" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 hidden max-w-sm px-4 py-2.5 rounded-xl text-sm font-bold shadow-xl text-white" role="status"></div>
 
-            document.getElementById('tab-title').innerText = `${tab} Section`;
-            renderTabItems();
-        }
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const SC={
+ carousel:{label:'Carousel',icon:'fa-images',one:'slide',title:'title',req:['title'],f:[['title','Title'],['subtitle','Subtitle'],['tag','Tag'],['image','Image','img']]},
+ jurisdictions:{label:'Countries',icon:'fa-globe-africa',one:'country',title:'country',req:['country'],f:[['country','Country'],['code','Country code, 2 letters (eg, ae, sa)'],['tag','Tag'],['brief','Overview','area'],['details','Filing details','area']]},
+ news:{label:'News',icon:'fa-newspaper',one:'article',title:'title',req:['title','excerpt'],f:[['title','Title'],['date','Date','date'],['image','Image','img'],['excerpt','Short summary','area'],['text','Full article','area']]},
+ services:{label:'Services',icon:'fa-balance-scale',one:'service',title:'title',req:['title','description'],f:[['title','Title'],['icon','Icon class (e.g. fas fa-lightbulb)'],['description','Description','area']]},
+ products:{label:'Products',icon:'fa-file-contract',one:'product',title:'title',req:['title'],f:[['title','Title'],['category','Category'],['price','Price (or "Inquire")'],['image','Image','img']]},
+ testimonials:{label:'Testimonials',icon:'fa-quote-left',one:'testimonial',title:'name',req:['name','text'],f:[['name','Client name'],['role','Role and company'],['text','Quote','area']]},
+ employees:{label:'Team',icon:'fa-users',one:'team member',title:'name',req:['name','position'],f:[['name','Name'],['position','Position'],['image','Photo','img']]}
+};
+const GEN=[['aboutMainText','About text','area'],['about','Short tagline'],['social.linkedin','LinkedIn URL'],['social.youtube','YouTube URL']];
+let S={},D=null,sha='',tab='general',dirty=false,openItem=null;
 
-        function renderTabItems() {
-            const list = masterData[currentTab] || [];
-            const container = document.getElementById('items-list');
-            document.getElementById('tab-count-badge').innerText = `${list.length} items total`;
-            document.getElementById('json-preview').textContent = JSON.stringify(masterData, null, 2);
+const get=(o,p)=>p.split('.').reduce((a,k)=>a?.[k],o)??'';
+const set=(o,p,v)=>{const k=p.split('.'),l=k.pop();k.forEach(x=>o=o[x]??={});o[l]=v};
+const imgSrc=v=>!v?'':/^https?:/.test(v)?v:`https://raw.githubusercontent.com/${S.o}/${S.r}/${S.b}/${String(v).replace(/^\.?\//,'')}`;
+const b64=u8=>{let s='';for(let i=0;i<u8.length;i+=0x8000)s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000));return btoa(s)};
+const unb64=s=>new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\n/g,'')),c=>c.charCodeAt(0)));
+function toast(m,ok=true){const t=$('toast');t.textContent=m;t.className=`fixed bottom-4 left-1/2 -translate-x-1/2 z-50 max-w-sm px-4 py-2.5 rounded-xl text-sm font-bold shadow-xl text-white ${ok?'bg-emerald-600':'bg-red-600'}`;clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.add('hidden'),4000)}
+function mark(on=true){dirty=on;$('save').disabled=!on;$('state').textContent=on?'Unsaved changes':'All changes saved'}
 
-            if(!list.length) {
-                container.innerHTML = `<div class="bg-white p-8 rounded-2xl text-center border border-dashed text-gray-400 text-xs">No items in ${currentTab}. Add an item to populate placeholders.</div>`;
-                return;
-            }
+async function api(path,{method='GET',query='',body}={}){
+  const r=await fetch(`https://api.github.com/repos/${S.o}/${S.r}/contents/${path}${query}`,{method,headers:{Authorization:'Bearer '+S.t,Accept:'application/vnd.github+json'},body:body&&JSON.stringify(body)});
+  if(!r.ok){
+    const m={401:'The token was rejected. Check it and its expiry date.',403:'The token cannot write to this repository. Set Contents to Read and write.',404:'Repository, branch or file not found, or the token has no access to it.',409:'The file changed on GitHub. Reload the page and apply your edits again.',422:'GitHub rejected the change. Reload and try again.'}[r.status]||`GitHub error ${r.status}`;
+    throw new Error(m);
+  }
+  return r.json();
+}
 
-            container.innerHTML = list.map((item, index) => `
-                <div class="bg-white p-3 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
-                    <div class="flex items-center space-x-3 overflow-hidden min-w-0">
-                        ${item.flag ? `<div class="w-10 h-10 rounded-xl bg-gray-50 border flex items-center justify-center text-2xl flex-shrink-0">${item.flag}</div>` : item.image ? `<img src="${item.image}" class="w-12 h-12 rounded-xl object-cover flex-shrink-0" onerror="this.src='https://placehold.co/100?text=IMG'"/>` : `<div class="w-12 h-12 rounded-xl bg-blue-50 text-brand-600 flex items-center justify-center font-bold flex-shrink-0"><i class="${item.icon || 'fas fa-star'}"></i></div>`}
-                        <div class="min-w-0 flex-1">
-                            <span class="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded">ID: ${item.id || (index+1)}</span>
-                            <h3 class="font-bold text-xs text-gray-900 truncate mt-0.5">${item.country || item.title || item.name || 'Untitled Item'}</h3>
-                            <p class="text-[11px] text-gray-500 truncate">${item.brief || item.subtitle || item.excerpt || item.description || item.price || item.role || item.position || 'No details provided'}</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-1.5 pl-2 flex-shrink-0">
-                        <button onclick="openEditModal(${index})" class="w-8 h-8 rounded-xl bg-gray-100 hover:bg-brand-50 text-gray-600 hover:text-brand-600 flex items-center justify-center transition-colors"><i class="fas fa-pencil-alt text-xs"></i></button>
-                        <button onclick="deleteItem(${index})" class="w-8 h-8 rounded-xl bg-gray-100 hover:bg-red-50 text-gray-600 hover:text-red-600 flex items-center justify-center transition-colors"><i class="fas fa-trash-alt text-xs"></i></button>
-                    </div>
-                </div>
-            `).join('');
-        }
+async function connect(creds){
+  S=creds;
+  try{
+    const j=await api(S.p,{query:'?ref='+encodeURIComponent(S.b)});
+    D=JSON.parse(unb64(j.content));sha=j.sha;
+  }catch(e){$('login-err').textContent=e.message.includes('JSON')?'The data file is not valid JSON.':e.message;$('login-err').classList.remove('hidden');return}
+  localStorage.setItem('khip-admin',JSON.stringify({o:S.o,r:S.r,b:S.b,p:S.p}));
+  if($('f-s').checked)sessionStorage.setItem('khip-admin-t',S.t);
+  $('login').classList.add('hidden');$('app').classList.remove('hidden');
+  $('repo-name').textContent=`${S.o}/${S.r}`;mark(false);tabs();view();
+}
 
-        function openEditModal(index) {
-            const item = masterData[currentTab][index];
-            document.getElementById('modal-heading').innerText = `Edit ${currentTab} Item`;
-            document.getElementById('field-index').value = index;
-            buildModalForm(item);
-            showModal();
-        }
+function tabs(){
+  const all=[['general','General','fa-house'],...Object.entries(SC).map(([k,v])=>[k,v.label,v.icon])];
+  $('tabs').innerHTML=all.map(([k,l,i])=>`<button data-act="tab" data-k="${k}" class="flex-shrink-0 text-xs font-bold px-3 py-2 rounded-xl ${k===tab?'bg-brand-600 text-white':'bg-gray-100 hover:bg-gray-200'}"><i class="fas ${i}"></i> ${l}${SC[k]?` (${(D[k]||[]).length})`:''}</button>`).join('');
+}
+const inp='w-full px-3 py-2 text-sm rounded-lg border border-gray-300 bg-white font-normal';
+function fld(base,[k,l,t]){
+  const p=base+k,v=get(D,p);let h;
+  if(t==='area')h=`<textarea data-p="${p}" aria-label="${esc(l)}" rows="5" class="${inp}">${esc(v)}</textarea>`;
+  else if(t==='img')h=`<div class="flex items-center gap-2"><img data-prev="${p}" src="${esc(imgSrc(v))}" alt="" onerror="this.style.visibility='hidden'" class="w-12 h-12 rounded-lg object-cover bg-gray-200 flex-shrink-0"><input data-p="${p}" aria-label="${esc(l)}" value="${esc(v)}" placeholder="Image URL or upload" class="${inp}"><label class="flex-shrink-0 text-xs bg-brand-50 text-brand-700 font-bold px-3 py-2.5 rounded-lg cursor-pointer hover:bg-brand-100"><i class="fas fa-upload"></i><input type="file" accept="image/*" data-up="${p}" class="hidden"></label></div>`;
+  else h=`<input data-p="${p}" aria-label="${esc(l)}" type="${t==='date'?'date':'text'}" value="${esc(v)}" class="${inp}">`;
+  return `<div><span class="text-xs font-bold text-gray-700">${esc(l)}</span>${h}</div>`;
+}
+function view(){
+  const m=$('view');
+  if(tab==='general'){m.innerHTML=`<div class="bg-white p-4 rounded-2xl border border-gray-200 space-y-3">${GEN.map(f=>fld('',f)).join('')}</div>`;return}
+  const s=SC[tab],arr=D[tab]=D[tab]||[];
+  m.innerHTML=`<div class="flex items-center justify-between"><h2 class="font-extrabold text-lg">${s.label}</h2><button data-act="add" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-2 rounded-xl"><i class="fas fa-plus"></i> Add ${s.one}</button></div>`
+  +(arr.length?'':`<p class="text-sm text-gray-600 bg-white p-4 rounded-2xl border">Nothing here yet. Add the first ${s.one}.</p>`)
+  +arr.map((x,i)=>`<details ${openItem===`${tab}.${i}`?'open':''} class="bg-white rounded-2xl border border-gray-200 shadow-sm"><summary class="flex items-center gap-2 p-3 cursor-pointer"><span class="flex-1 min-w-0 font-bold text-sm truncate">${esc(x[s.title]||'Untitled '+s.one)}</span>
+    <button data-act="up" data-i="${i}" ${i?'':'disabled'} aria-label="Move up" class="w-8 h-8 rounded-lg bg-gray-100 disabled:opacity-30"><i class="fas fa-arrow-up text-xs"></i></button>
+    <button data-act="down" data-i="${i}" ${i<arr.length-1?'':'disabled'} aria-label="Move down" class="w-8 h-8 rounded-lg bg-gray-100 disabled:opacity-30"><i class="fas fa-arrow-down text-xs"></i></button>
+    <button data-act="del" data-i="${i}" aria-label="Delete" class="w-8 h-8 rounded-lg bg-red-50 text-red-600"><i class="fas fa-trash text-xs"></i></button></summary>
+    <div class="p-4 pt-1 space-y-3 border-t">${s.f.map(f=>fld(`${tab}.${i}.`,f)).join('')}</div></details>`).join('');
+}
 
-        function addNewItem() {
-            document.getElementById('modal-heading').innerText = `Add New ${currentTab} Item`;
-            document.getElementById('field-index').value = "-1";
-            buildModalForm({ id: String((masterData[currentTab] || []).length + 1) });
-            showModal();
-        }
+function validate(){
+  for(const [k,s] of Object.entries(SC))for(const [i,x] of (D[k]||[]).entries())for(const f of s.req)
+    if(!String(x[f]??'').trim()){tab=k;openItem=`${k}.${i}`;tabs();view();return `${s.label}, item ${i+1}: "${f}" is required.`}
+  return '';
+}
+async function save(){
+  const err=validate();if(err)return toast(err,false);
+  $('save').disabled=true;$('state').textContent='Saving...';
+  try{
+    const j=await api(S.p,{method:'PUT',body:{message:'Update content via admin page',content:b64(new TextEncoder().encode(JSON.stringify(D,null,2)+'\n')),sha,branch:S.b}});
+    sha=j.content.sha;mark(false);toast('Saved. The site updates in a minute or two.');
+  }catch(e){mark(true);toast(e.message,false)}
+}
+async function upload(file,p){
+  if(file.size>3e6)return toast('Image is over 3 MB. Please compress it first.',false);
+  toast('Uploading image...');
+  const path='assets/'+Date.now().toString(36)+'-'+file.name.replace(/[^\w.\-]/g,'-');
+  try{
+    await api(path,{method:'PUT',body:{message:'Upload image via admin page',content:b64(new Uint8Array(await file.arrayBuffer())),branch:S.b}});
+    set(D,p,'./'+path);mark();view();toast('Image uploaded.');
+  }catch(e){toast(e.message,false)}
+}
 
-        function buildModalForm(item = {}) {
-            const container = document.getElementById('modal-form-fields');
-            let fields = `<input type="hidden" id="f-id" value="${item.id || ''}">`;
-
-            if(currentTab === 'jurisdictions') {
-                fields += `
-                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Country Name</label><input type="text" id="f-country" value="${item.country||''}" placeholder="e.g. Egypt" required class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
-                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Flag Emoji</label><input type="text" id="f-flag" value="${item.flag||'🌐'}" class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
-                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Badge Tag</label><input type="text" id="f-tag" value="${item.tag||'Jurisdiction'}" class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
-                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Brief Overview</label><textarea id="f-brief" rows="2" placeholder="Brief IP legal description..." class="w-full text-xs bg-gray-50 border rounded-xl p-2.5">${item.brief||''}</textarea></div>
-                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Detailed IP Guidelines</label><textarea id="f-details" rows="4" placeholder="Detailed IP regulations..." class="w-full text-xs bg-gray-50 border rounded-xl p-2.5">${item.details||''}</textarea></div>
-                `;
-            } else if(currentTab === 'carousel') {
-                fields += `
-                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Title</label><input type="text" id="f-title" value="${item.title||''}" placeholder="Headline Title" required class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
-                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Subtitle</label><input type="text" id="f-subtitle" value="${item.subtitle||''}" placeholder="Subheading details" class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
-                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Badge Tag</label><input type="text" id="f-tag" value="${item.tag||'Featured'}" class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
-                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Image URL / Path</label><input type="text" id="f-image" value="${item.image||''}" placeholder="https://placehold.co/800x400?text=Banner" class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
-                `;
-            } else if(currentTab === 'news') {
-                fields += `
-                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Title</label><input type="text" id="f-title" value="${item.title||''}" placeholder="Article Headline" required class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
-                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Image URL / Path</label><input type="text" id="f-image" value="${item.image||''}" placeholder="https://placehold.co/600x400?text=News" class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
-                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Excerpt</label><textarea id="f-excerpt" rows="2" placeholder="Summary snippet..." class="w-full text-xs bg-gray-50 border rounded-xl p-2.5">${item.excerpt||''}</textarea></div>
-                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Full Text</label><textarea id="f-text" rows="3" placeholder="Full article body..." class="w-full text-xs bg-gray-50 border rounded-xl p-2.5">${item.text||''}</textarea></div>
-                `;
-            } else if(currentTab === 'services') {
-                fields += `
-                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Title</label><input type="text" id="f-title" value="${item.title||''}" placeholder="Service Title" required class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
-                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Description</label><input type="text" id="f-description" value="${item.description||''}" placeholder="Short service scope" class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
-                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">FontAwesome Icon Class</label><input type="text" id="f-icon" value="${item.icon||'fas fa-star'}" class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
-                `;
-            } else if(currentTab === 'products') {
-                fields += `
-                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Product Title</label><input type="text" id="f-title" value="${item.title||''}" placeholder="Product / Solution name" required class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
-                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Category</label><input type="text" id="f-category" value="${item.category||'Services'}" class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
-                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Price</label><input type="text" id="f-price" value="${item.price||'Inquire'}" class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
-                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Image URL / Path</label><input type="text" id="f-image" value="${item.image||''}" placeholder="https://placehold.co/300x200?text=Product" class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
-                `;
-            } else if(currentTab === 'testimonials') {
-                fields += `
-                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Client Name</label><input type="text" id="f-name" value="${item.name||''}" placeholder="Client / Company Name" required class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
-                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Client Role/Company</label><input type="text" id="f-role" value="${item.role||''}" placeholder="Position or Organization" class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
-                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Testimonial Quote</label><textarea id="f-text" rows="3" placeholder="Client feedback quote..." class="w-full text-xs bg-gray-50 border rounded-xl p-2.5">${item.text||''}</textarea></div>
-                `;
-            } else if(currentTab === 'employees') {
-                fields += `
-                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Employee Name</label><input type="text" id="f-name" value="${item.name||''}" placeholder="Full Name" required class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
-                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Position / Title</label><input type="text" id="f-position" value="${item.position||''}" placeholder="Job Title" class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
-                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Photo URL / Path</label><input type="text" id="f-image" value="${item.image||''}" placeholder="https://placehold.co/150x150?text=Avatar" class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
-                `;
-            }
-            container.innerHTML = fields;
-        }
-
-        function saveItem(e) {
-            e.preventDefault();
-            const index = parseInt(document.getElementById('field-index').value);
-            const newItem = { id: document.getElementById('f-id').value };
-
-            if(currentTab === 'jurisdictions') {
-                newItem.country = document.getElementById('f-country').value.trim() || "Jurisdiction";
-                newItem.flag = document.getElementById('f-flag').value.trim() || "🌐";
-                newItem.tag = document.getElementById('f-tag').value.trim() || "Jurisdiction";
-                newItem.brief = document.getElementById('f-brief').value.trim() || "IP guidelines available upon inquiry.";
-                newItem.details = document.getElementById('f-details').value.trim() || newItem.brief;
-            } else if(currentTab === 'carousel') {
-                newItem.title = document.getElementById('f-title').value.trim() || "Featured Announcement";
-                newItem.subtitle = document.getElementById('f-subtitle').value.trim() || "Discover legal and IP services.";
-                newItem.tag = document.getElementById('f-tag').value.trim() || "Featured";
-                newItem.image = document.getElementById('f-image').value.trim() || "https://placehold.co/800x400/1e40af/ffffff?text=Banner";
-            } else if(currentTab === 'news') {
-                newItem.title = document.getElementById('f-title').value.trim() || "News Article";
-                newItem.image = document.getElementById('f-image').value.trim() || "https://placehold.co/600x400/2563eb/ffffff?text=News";
-                newItem.excerpt = document.getElementById('f-excerpt').value.trim() || "Summary update available.";
-                newItem.text = document.getElementById('f-text').value.trim() || newItem.excerpt;
-            } else if(currentTab === 'services') {
-                newItem.title = document.getElementById('f-title').value.trim() || "Legal Service";
-                newItem.description = document.getElementById('f-description').value.trim() || "Comprehensive legal support.";
-                newItem.icon = document.getElementById('f-icon').value.trim() || "fas fa-star";
-            } else if(currentTab === 'products') {
-                newItem.title = document.getElementById('f-title').value.trim() || "IP Product";
-                newItem.category = document.getElementById('f-category').value.trim() || "Services";
-                newItem.price = document.getElementById('f-price').value.trim() || "Inquire";
-                newItem.image = document.getElementById('f-image').value.trim() || "https://placehold.co/300x200/1d4ed8/ffffff?text=Product";
-            } else if(currentTab === 'testimonials') {
-                newItem.name = document.getElementById('f-name').value.trim() || "Client Partner";
-                newItem.role = document.getElementById('f-role').value.trim() || "Enterprise Legal Counsel";
-                newItem.text = document.getElementById('f-text').value.trim() || "High quality service and guidance.";
-            } else if(currentTab === 'employees') {
-                newItem.name = document.getElementById('f-name').value.trim() || "Team Member";
-                newItem.position = document.getElementById('f-position').value.trim() || "IP Attorney";
-                newItem.image = document.getElementById('f-image').value.trim() || "https://placehold.co/150x150/1e40af/ffffff?text=Team";
-            }
-
-            if(!masterData[currentTab]) masterData[currentTab] = [];
-
-            if(index >= 0) {
-                masterData[currentTab][index] = newItem;
-            } else {
-                masterData[currentTab].push(newItem);
-            }
-
-            closeEditModal();
-            renderTabItems();
-        }
-
-        function deleteItem(index) {
-            masterData[currentTab].splice(index, 1);
-            renderTabItems();
-        }
-
-        function showModal() {
-            const modal = document.getElementById('edit-modal');
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-            modal.querySelector('div').classList.remove('scale-95');
-        }
-
-        function closeEditModal() {
-            const modal = document.getElementById('edit-modal');
-            modal.classList.add('opacity-0', 'pointer-events-none');
-            modal.querySelector('div').classList.add('scale-95');
-        }
-
-        async function commitDirectlyToGitHub() {
-            const user = document.getElementById('gh-user').value.trim();
-            const repo = document.getElementById('gh-repo').value.trim();
-            const token = document.getElementById('gh-token').value.trim();
-            const btn = document.getElementById('commit-btn');
-            const statusLabel = document.getElementById('sync-status');
-
-            if(!user || !repo || !token) {
-                showNotification("Please provide GitHub Username, Repository Name, and Access Token.", "error");
-                return;
-            }
-
-            btn.disabled = true;
-            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Syncing...`;
-            statusLabel.innerText = "Connecting...";
-
-            try {
-                const apiPath = `https://api.github.com/repos/${user}/${repo}/contents/app-data.json`;
-                let sha = "";
-                
-                const getRes = await fetch(apiPath, {
-                    headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
-                });
-
-                if(getRes.ok) {
-                    const getData = await getRes.json();
-                    sha = getData.sha;
-                }
-
-                const jsonContent = JSON.stringify(masterData, null, 2);
-                const encodedContent = btoa(unescape(encodeURIComponent(jsonContent)));
-
-                const putRes = await fetch(apiPath, {
-                    method: 'PUT',
-                    headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        message: "Update app-data.json via Website Admin Manager",
-                        content: encodedContent,
-                        sha: sha || undefined
-                    })
-                });
-
-                if(!putRes.ok) throw new Error("Failed to commit changes to GitHub.");
-
-                statusLabel.innerText = "✓ Committed!";
-                showNotification("app-data.json updated successfully on GitHub!", "success");
-                btn.innerHTML = `<i class="fas fa-check"></i> Updated!`;
-                setTimeout(() => { btn.disabled = false; btn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> Commit Directly to GitHub`; }, 3000);
-
-            } catch(err) {
-                showNotification(err.message, "error");
-                statusLabel.innerText = "Sync failed.";
-                btn.disabled = false;
-                btn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> Commit Directly to GitHub`;
-            }
-        }
-
-        async function loadFromLiveJson() {
-            try {
-                const res = await fetch(`./app-data.json?v=${Date.now()}`);
-                if(!res.ok) throw new Error();
-                masterData = await res.json();
-                renderTabItems();
-                showNotification("Loaded live app-data.json successfully!", "success");
-            } catch(err) {
-                showNotification("Could not load app-data.json. Using current or empty state.", "error");
-            }
-        }
-
-        function exportJsonFile() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(masterData, null, 2));
-            const anchor = document.createElement('a');
-            anchor.setAttribute("href", dataStr);
-            anchor.setAttribute("download", "app-data.json");
-            document.body.appendChild(anchor);
-            anchor.click();
-            anchor.remove();
-        }
-
-        async function downloadAllFilesZip() {
-            const zip = new JSZip();
-
-            // 1. Add app-data.json with active modifications
-            zip.file("app-data.json", JSON.stringify(masterData, null, 2));
-
-            // 2. Fetch and add current HTML files (or fallback to basic templates)
-            const filesToFetch = [
-                { path: 'index.html', name: 'index.html' },
-                { path: 'about.html', name: 'about.html' },
-                { path: 'admin.html', name: 'admin.html' }
-            ];
-
-            showNotification("Preparing ZIP archive...", "success");
-
-            for (const file of filesToFetch) {
-                try {
-                    const res = await fetch(`./${file.path}?v=${Date.now()}`);
-                    if (res.ok) {
-                        const content = await res.text();
-                        zip.file(file.name, content);
-                    }
-                } catch (err) {
-                    console.warn(`Could not fetch ${file.name} for zip, skipping remote fetch.`);
-                }
-            }
-
-            // Generate ZIP file and trigger browser download
-            zip.generateAsync({ type: "blob" }).then(function (content) {
-                saveAs(content, "KHIP-Web-App-Bundle.zip");
-                showNotification("ZIP package downloaded successfully!", "success");
-            }).catch(function (err) {
-                showNotification("Failed to generate ZIP bundle.", "error");
-            });
-        }
-
-        function copyJsonToClipboard() {
-            navigator.clipboard.writeText(JSON.stringify(masterData, null, 2));
-            const btn = document.getElementById('copy-btn');
-            btn.innerHTML = `<i class="fas fa-check text-emerald-600"></i> Copied!`;
-            setTimeout(() => { btn.innerHTML = `<i class="far fa-copy"></i> Copy Code`; }, 2000);
-        }
-
-        function showNotification(msg, type = "error") {
-            const toast = document.getElementById('toast-message');
-            toast.classList.remove('hidden', 'bg-red-100', 'text-red-800', 'border-red-200', 'bg-emerald-100', 'text-emerald-800', 'border-emerald-200');
-            toast.classList.add(type === "error" ? 'bg-red-100' : 'bg-emerald-100', type === "error" ? 'text-red-800' : 'text-emerald-800');
-            toast.innerText = msg;
-        }
-
-        function saveConfig() {
-            localStorage.setItem('kh_gh_user', document.getElementById('gh-user').value.trim());
-            localStorage.setItem('kh_gh_repo', document.getElementById('gh-repo').value.trim());
-            localStorage.setItem('kh_gh_token', document.getElementById('gh-token').value.trim());
-        }
-
-        function loadSavedConfig() {
-            document.getElementById('gh-user').value = localStorage.getItem('kh_gh_user') || 'omarhamad1974';
-            document.getElementById('gh-repo').value = localStorage.getItem('kh_gh_repo') || 'KHNew';
-            document.getElementById('gh-token').value = localStorage.getItem('kh_gh_token') || '';
-        }
-
-        window.onload = function() {
-            loadSavedConfig();
-            loadFromLiveJson();
-        };
-    </script>
+document.addEventListener('input',e=>{
+  const p=e.target.dataset.p;if(!p)return;
+  set(D,p,e.target.value);mark();
+  if(p.endsWith('image')){const im=document.querySelector(`[data-prev="${p}"]`);if(im){im.style.visibility='';im.src=imgSrc(e.target.value)}}
+});
+document.addEventListener('change',e=>{const f=e.target.files?.[0];if(f&&e.target.dataset.up)upload(f,e.target.dataset.up)});
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-act]');if(!t)return;
+  const a=t.dataset.act,i=+t.dataset.i,arr=D&&D[tab];
+  if(t.closest('summary'))e.preventDefault();
+  if(a==='tab'){tab=t.dataset.k;openItem=null;tabs();view()}
+  else if(a==='add'){const s=SC[tab];const o={id:String(Math.max(0,...arr.map(x=>+x.id||0))+1)};s.f.forEach(([k])=>o[k]='');arr.push(o);openItem=`${tab}.${arr.length-1}`;mark();tabs();view();document.querySelector('details[open] input')?.focus()}
+  else if(a==='del'){if(confirm(`Delete "${arr[i][SC[tab].title]||'this item'}"?`)){arr.splice(i,1);openItem=null;mark();tabs();view()}}
+  else if(a==='up'||a==='down'){const j=a==='up'?i-1:i+1;[arr[i],arr[j]]=[arr[j],arr[i]];openItem=`${tab}.${j}`;mark();view()}
+  else if(a==='save')save();
+  else if(a==='backup'){const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([JSON.stringify(D,null,2)],{type:'application/json'}));l.download='app-data-backup.json';l.click()}
+  else if(a==='out'){if(!dirty||confirm('You have unsaved changes. Sign out anyway?')){sessionStorage.removeItem('khip-admin-t');dirty=false;location.reload()}}
+});
+$('login-form').addEventListener('submit',e=>{
+  e.preventDefault();$('login-err').classList.add('hidden');
+  connect({o:$('f-o').value.trim(),r:$('f-r').value.trim(),b:$('f-b').value.trim()||'main',p:$('f-p').value.trim()||'app-data.json',t:$('f-t').value.trim()});
+});
+addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue=''}});
+try{const s=JSON.parse(localStorage.getItem('khip-admin'));if(s){$('f-o').value=s.o;$('f-r').value=s.r;$('f-b').value=s.b;$('f-p').value=s.p}}catch{}
+const tk=sessionStorage.getItem('khip-admin-t');
+if(tk&&$('f-o').value){$('f-t').value=tk;$('f-s').checked=true;connect({o:$('f-o').value,r:$('f-r').value,b:$('f-b').value,p:$('f-p').value,t:tk})}
+</script>
 </body>
 </html>
