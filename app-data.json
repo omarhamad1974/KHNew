@@ -89,6 +89,13 @@
       "image": "./assets/omar.jpg",
       "excerpt": "jfla;sjdfkl;ajsdkfljaslkd jakldfjkl",
       "text": "jflk;ajsdflk;jaklsd fjaskl;dfjkal;sjdf jkal;sjdfk;ajsdf"
+    },
+    {
+      "id": "3",
+      "title": "News 3",
+      "image": "./assets/omar.jpg",
+      "excerpt": "jflak;sjdflk;jaskldfjaslk dkjfla;sjdflasjdfl asjfdlk;",
+      "text": "jfkl;ajsdklfjaskldf jakls;dfjlkasjdfklajs dfjklas dfl"
     }
   ],
   "services": [
@@ -103,6 +110,18 @@
       "title": "Service 2",
       "description": "Amazing service",
       "icon": "fas fa-star"
+    },
+    {
+      "id": "3",
+      "title": "service 3",
+      "description": "fjkla;sjdflajsd;l",
+      "icon": "fjkl;ajsdkfl;jas;djkla sdjfkl;a sdfjl"
+    },
+    {
+      "id": "4",
+      "title": "Service 4",
+      "description": "lf;ajsldf;jalsk;",
+      "icon": "jfl;ajsdklf;jkal;jsdfkl;jaskdlf;jals jfkals;jdfklja sdfjkla; dfasdl;fjl;as df"
     }
   ],
   "products": [
@@ -116,6 +135,20 @@
     {
       "id": "2",
       "title": "Product 2",
+      "category": "Services",
+      "price": "Inquire",
+      "image": "./assets/omar.jpg"
+    },
+    {
+      "id": "3",
+      "title": "Product 3",
+      "category": "Services",
+      "price": "Inquire",
+      "image": "./assets/omar.jpg"
+    },
+    {
+      "id": "4",
+      "title": "Product 4",
       "category": "Services",
       "price": "Inquire",
       "image": "./assets/omar.jpg"
@@ -133,6 +166,12 @@
       "name": "Koko waya",
       "role": "Aber sabel",
       "text": "The are great"
+    },
+    {
+      "id": "3",
+      "name": "fasdfasdfasdf",
+      "role": "afsdfasdfasdf",
+      "text": "asdfasdfasd fasd fasdf  g adfg asdfasdf a"
     }
   ],
   "employees": [
@@ -146,6 +185,12 @@
       "id": "2",
       "name": "Omar Hamad",
       "position": "asdfasdfas",
+      "image": "./assets/omar.jpg"
+    },
+    {
+      "id": "3",
+      "name": "Hamada koko",
+      "position": "jfkla;sjdflk",
       "image": "./assets/omar.jpg"
     }
   ]
