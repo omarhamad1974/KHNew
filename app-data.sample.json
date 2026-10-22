@@ -6,48 +6,141 @@
     "youtube": "https://www.youtube.com/@khip"
   },
   "carousel": [
-    { "id": "1", "title": "Legal skills with technical knowledge", "subtitle": "Patent and trademark services across the region.", "tag": "Featured", "image": "https://placehold.co/800x400/1d4ed8/ffffff?text=KHIP" },
-    { "id": "2", "title": "Protecting innovation", "subtitle": "From first filing to granted rights.", "tag": "Patents", "image": "https://placehold.co/800x400/1e40af/ffffff?text=Patents" }
+    {
+      "id": "1",
+      "title": "Legal skills with technical knowledge",
+      "subtitle": "Patent and trademark services across the region.",
+      "tag": "Featured",
+      "image": "https://placehold.co/800x400/1d4ed8/ffffff?text=KHIP"
+    },
+    {
+      "id": "2",
+      "title": "Protecting innovation",
+      "subtitle": "From first filing to granted rights.",
+      "tag": "Patents",
+      "image": "https://placehold.co/800x400/1e40af/ffffff?text=Patents"
+    }
   ],
   "jurisdictions": [
-    { "id": "1", "country": "Egypt", "code": "eg", "tag": "Jurisdiction",
+    {
+      "id": "1",
+      "country": "Egypt",
+      "code": "eg",
+      "tag": "Jurisdiction",
       "brief": "Egypt is modernizing its IP framework to attract investment. It is a member of the Paris Convention and the PCT.\n\nDirect filings can claim priority within 12 months. PCT applications can enter the national phase within 30 months.",
-      "details": "Required documents:\nPower of attorney, legalized by the Egyptian consulate (4 months).\nCertified priority document (3 months).\n\nLanguage:\nEnglish at filing. Arabic translation of the specification, claims and drawings within 6 months.\n\nDeadlines:\nRequest for examination within 3 months of notification. Annuities are paid yearly." },
-    { "id": "2", "country": "UAE", "code": "ae", "tag": "Jurisdiction",
+      "details": "Required documents:\nPower of attorney, legalized by the Egyptian consulate (4 months).\nCertified priority document (3 months).\n\nLanguage:\nEnglish at filing. Arabic translation of the specification, claims and drawings within 6 months.\n\nDeadlines:\nRequest for examination within 3 months of notification. Annuities are paid yearly."
+    },
+    {
+      "id": "2",
+      "country": "UAE",
+      "code": "ae",
+      "tag": "Jurisdiction",
       "brief": "The UAE accepts PCT national phase entry within 30 months and requires notarized documents within 90 days of filing.",
-      "details": "PCT filing requirements:\nNotarized power of attorney (90 days).\nNotarized commercial register extract (90 days).\nArabic translation of the specification (90 days).\n\nAnnuities:\nPaid yearly. A 3-month grace period applies." },
-    { "id": "3", "country": "Saudi Arabia", "code": "sa", "tag": "Jurisdiction",
+      "details": "PCT filing requirements:\nNotarized power of attorney (90 days).\nNotarized commercial register extract (90 days).\nArabic translation of the specification (90 days).\n\nAnnuities:\nPaid yearly. A 3-month grace period applies."
+    },
+    {
+      "id": "3",
+      "country": "Saudi Arabia",
+      "code": "sa",
+      "tag": "Jurisdiction",
       "brief": "Saudi Arabia requires a notarized power of attorney and specifications in English and Arabic.",
-      "details": "PCT filing requirements:\nNotarized power of attorney, apostilled or legalized.\nSpecification in English and Arabic.\n\nAnnuities:\nPaid between January 1 and March 31 each year." },
-    { "id": "4", "country": "Jordan", "code": "jo", "tag": "Jurisdiction",
+      "details": "PCT filing requirements:\nNotarized power of attorney, apostilled or legalized.\nSpecification in English and Arabic.\n\nAnnuities:\nPaid between January 1 and March 31 each year."
+    },
+    {
+      "id": "4",
+      "country": "Jordan",
+      "code": "jo",
+      "tag": "Jurisdiction",
       "brief": "Sample entry showing how a new country appears. Replace with real guidance.",
-      "details": "Add filing requirements, deadlines and language rules here." }
+      "details": "Add filing requirements, deadlines and language rules here."
+    }
   ],
   "news": [
-    { "id": "1", "title": "KHIP represents Egypt at IP event in Brussels", "date": "2026-10-15",
+    {
+      "id": "1",
+      "title": "KHIP represents Egypt at IP event in Brussels",
+      "date": "2026-10-15",
       "image": "https://placehold.co/600x400/1d4ed8/ffffff?text=Brussels",
       "excerpt": "Our team joined regional IP firms at a Brussels event on cross-border filing.",
-      "text": "Our team joined regional IP firms at a Brussels event on cross-border filing.\n\nWe met European partners and discussed filing strategies for the Middle East." },
-    { "id": "2", "title": "New PPH option for Egyptian patent filings", "date": "2026-09-28",
+      "text": "Our team joined regional IP firms at a Brussels event on cross-border filing.\n\nWe met European partners and discussed filing strategies for the Middle East."
+    },
+    {
+      "id": "2",
+      "title": "New PPH option for Egyptian patent filings",
+      "date": "2026-09-28",
       "image": "https://placehold.co/600x400/1e40af/ffffff?text=PPH",
       "excerpt": "Applicants can now request faster examination based on a positive Japanese or Chinese result.",
-      "text": "Applicants can now request faster examination based on a positive Japanese or Chinese result.\n\nContact us to check whether your application qualifies." }
+      "text": "Applicants can now request faster examination based on a positive Japanese or Chinese result.\n\nContact us to check whether your application qualifies."
+    }
   ],
   "services": [
-    { "id": "1", "title": "Patents", "icon": "fas fa-lightbulb", "description": "Exclusive rights for new inventions, filed directly or through the PCT." },
-    { "id": "2", "title": "Trademarks", "icon": "far fa-copyright", "description": "Protect the names, logos and symbols that identify your goods and services." },
-    { "id": "3", "title": "Translation", "icon": "fas fa-language", "description": "Accredited legal and technical translation, including Arabic patent texts." }
+    {
+      "id": "1",
+      "title": "Patents",
+      "icon": "ph-lightbulb",
+      "description": "Exclusive rights for new inventions, filed directly or through the PCT."
+    },
+    {
+      "id": "2",
+      "title": "Trademarks",
+      "icon": "ph-seal-check",
+      "description": "Protect the names, logos and symbols that identify your goods and services."
+    },
+    {
+      "id": "3",
+      "title": "Translation",
+      "icon": "ph-translate",
+      "description": "Accredited legal and technical translation, including Arabic patent texts."
+    }
   ],
   "products": [
-    { "id": "1", "title": "Trademark search report", "category": "Trademarks", "price": "From $120", "image": "https://placehold.co/300x200/1d4ed8/ffffff?text=TM+Search" },
-    { "id": "2", "title": "Patentability search", "category": "Patents", "price": "Inquire", "image": "https://placehold.co/300x200/1e40af/ffffff?text=Patent+Search" }
+    {
+      "id": "1",
+      "title": "Trademark search report",
+      "category": "Trademarks",
+      "price": "From $120",
+      "image": "https://placehold.co/300x200/1d4ed8/ffffff?text=TM+Search"
+    },
+    {
+      "id": "2",
+      "title": "Patentability search",
+      "category": "Patents",
+      "price": "Inquire",
+      "image": "https://placehold.co/300x200/1e40af/ffffff?text=Patent+Search"
+    }
   ],
   "testimonials": [
-    { "id": "1", "name": "Client name", "role": "CEO, Company A", "text": "Sample endorsement. Replace with a real client quote." },
-    { "id": "2", "name": "Client name", "role": "Founder, Company B", "text": "Another sample endorsement with different wording." }
+    {
+      "id": "1",
+      "name": "Client name",
+      "role": "CEO, Company A",
+      "text": "Sample endorsement. Replace with a real client quote."
+    },
+    {
+      "id": "2",
+      "name": "Client name",
+      "role": "Founder, Company B",
+      "text": "Another sample endorsement with different wording."
+    }
   ],
   "employees": [
-    { "id": "1", "name": "Khaled Hamada", "position": "CEO", "image": "./assets/Khaled-Hamada.jpg" },
-    { "id": "2", "name": "Sherif Youssef", "position": "Translation Department Head", "image": "./assets/Sherif-Youssef.jpg" }
+    {
+      "id": "1",
+      "name": "Khaled Hamada",
+      "position": "CEO",
+      "image": "Khaled-Hamada.jpg"
+    },
+    {
+      "id": "2",
+      "name": "Sherif Youssef",
+      "position": "Translation Department Head",
+      "image": "Sherif-Youssef.jpg"
+    }
+  ],
+  "chatPrompts": [
+    "Hello KHIP, I'd like to register a trademark in Egypt",
+    "How long does a patent filing take in the UAE?",
+    "Can you translate my patent into Arabic?",
+    "What do I need for a PCT national phase entry?"
   ]
 }

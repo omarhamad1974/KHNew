@@ -51,6 +51,7 @@
     </div>
     <nav id="tabs" class="max-w-3xl mx-auto flex gap-1.5 overflow-x-auto px-4 pb-2" aria-label="Sections"></nav>
   </header>
+  <datalist id="assets"></datalist>
   <main id="view" class="max-w-3xl mx-auto p-4 space-y-3"></main>
 </section>
 
@@ -63,7 +64,7 @@ const SC={
  carousel:{label:'Carousel',icon:'fa-images',one:'slide',title:'title',req:['title'],f:[['title','Title'],['subtitle','Subtitle'],['tag','Tag'],['image','Image','img']]},
  jurisdictions:{label:'Countries',icon:'fa-globe-africa',one:'country',title:'country',req:['country'],f:[['country','Country'],['code','Country code, 2 letters (eg, ae, sa)'],['tag','Tag'],['brief','Overview','area'],['details','Filing details','area']]},
  news:{label:'News',icon:'fa-newspaper',one:'article',title:'title',req:['title','excerpt'],f:[['title','Title'],['date','Date','date'],['image','Image','img'],['excerpt','Short summary','area'],['text','Full article','area']]},
- services:{label:'Services',icon:'fa-balance-scale',one:'service',title:'title',req:['title','description'],f:[['title','Title'],['icon','Icon class (e.g. fas fa-lightbulb)'],['description','Description','area']]},
+ services:{label:'Services',icon:'fa-balance-scale',one:'service',title:'title',req:['title','description'],f:[['title','Title'],['icon','Icon (optional, e.g. ph-lightbulb)'],['description','Description','area']]},
  products:{label:'Products',icon:'fa-file-contract',one:'product',title:'title',req:['title'],f:[['title','Title'],['category','Category'],['price','Price (or "Inquire")'],['image','Image','img']]},
  testimonials:{label:'Testimonials',icon:'fa-quote-left',one:'testimonial',title:'name',req:['name','text'],f:[['name','Client name'],['role','Role and company'],['text','Quote','area']]},
  employees:{label:'Team',icon:'fa-users',one:'team member',title:'name',req:['name','position'],f:[['name','Name'],['position','Position'],['image','Photo','img']]}
@@ -73,7 +74,9 @@ let S={},D=null,sha='',tab='general',dirty=false,openItem=null;
 
 const get=(o,p)=>p.split('.').reduce((a,k)=>a?.[k],o)??'';
 const set=(o,p,v)=>{const k=p.split('.'),l=k.pop();k.forEach(x=>o=o[x]??={});o[l]=v};
-const imgSrc=v=>!v?'':/^https?:/.test(v)?v:`https://raw.githubusercontent.com/${S.o}/${S.r}/${S.b}/${String(v).replace(/^\.?\//,'')}`;
+const full=v=>!v?'':/^(https?:|\.\/|\/)/.test(v)?v:'./assets/'+v;
+const imgSrc=v=>!v?'':/^https?:/.test(v)?v:`https://raw.githubusercontent.com/${S.o}/${S.r}/${S.b}/${full(v).replace(/^\.?\//,'')}`;
+let ASSETS=[];
 const b64=u8=>{let s='';for(let i=0;i<u8.length;i+=0x8000)s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000));return btoa(s)};
 const unb64=s=>new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\n/g,'')),c=>c.charCodeAt(0)));
 function toast(m,ok=true){const t=$('toast');t.textContent=m;t.className=`fixed bottom-4 left-1/2 -translate-x-1/2 z-50 max-w-sm px-4 py-2.5 rounded-xl text-sm font-bold shadow-xl text-white ${ok?'bg-emerald-600':'bg-red-600'}`;clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.add('hidden'),4000)}
@@ -93,11 +96,13 @@ async function connect(creds){
   try{
     const j=await api(S.p,{query:'?ref='+encodeURIComponent(S.b)});
     D=JSON.parse(unb64(j.content));sha=j.sha;
+    try{ASSETS=(await api('assets',{query:'?ref='+encodeURIComponent(S.b)})).map(f=>f.name)}catch{}
   }catch(e){$('login-err').textContent=e.message.includes('JSON')?'The data file is not valid JSON.':e.message;$('login-err').classList.remove('hidden');return}
   localStorage.setItem('khip-admin',JSON.stringify({o:S.o,r:S.r,b:S.b,p:S.p}));
   if($('f-s').checked)sessionStorage.setItem('khip-admin-t',S.t);
   $('login').classList.add('hidden');$('app').classList.remove('hidden');
   $('repo-name').textContent=`${S.o}/${S.r}`;mark(false);tabs();view();
+  $('assets').innerHTML=ASSETS.map(n=>`<option value="${esc(n)}">`).join('');
 }
 
 function tabs(){
@@ -108,7 +113,7 @@ const inp='w-full px-3 py-2 text-sm rounded-lg border border-gray-300 bg-white f
 function fld(base,[k,l,t]){
   const p=base+k,v=get(D,p);let h;
   if(t==='area')h=`<textarea data-p="${p}" aria-label="${esc(l)}" rows="5" class="${inp}">${esc(v)}</textarea>`;
-  else if(t==='img')h=`<div class="flex items-center gap-2"><img data-prev="${p}" src="${esc(imgSrc(v))}" alt="" onerror="this.style.visibility='hidden'" class="w-12 h-12 rounded-lg object-cover bg-gray-200 flex-shrink-0"><input data-p="${p}" aria-label="${esc(l)}" value="${esc(v)}" placeholder="Image URL or upload" class="${inp}"><label class="flex-shrink-0 text-xs bg-brand-50 text-brand-700 font-bold px-3 py-2.5 rounded-lg cursor-pointer hover:bg-brand-100"><i class="fas fa-upload"></i><input type="file" accept="image/*" data-up="${p}" class="hidden"></label></div>`;
+  else if(t==='img')h=`<div class="flex items-center gap-2"><img data-prev="${p}" src="${esc(imgSrc(v))}" alt="" onerror="this.style.visibility='hidden'" class="w-12 h-12 rounded-lg object-cover bg-gray-200 flex-shrink-0"><input data-p="${p}" aria-label="${esc(l)}" value="${esc(v)}" list="assets" placeholder="File name in assets, or upload" class="${inp}"><label class="flex-shrink-0 text-xs bg-brand-50 text-brand-700 font-bold px-3 py-2.5 rounded-lg cursor-pointer hover:bg-brand-100"><i class="fas fa-upload"></i><input type="file" accept="image/*" data-up="${p}" class="hidden"></label></div>`;
   else h=`<input data-p="${p}" aria-label="${esc(l)}" type="${t==='date'?'date':'text'}" value="${esc(v)}" class="${inp}">`;
   return `<div><span class="text-xs font-bold text-gray-700">${esc(l)}</span>${h}</div>`;
 }
@@ -144,7 +149,7 @@ async function upload(file,p){
   const path='assets/'+Date.now().toString(36)+'-'+file.name.replace(/[^\w.\-]/g,'-');
   try{
     await api(path,{method:'PUT',body:{message:'Upload image via admin page',content:b64(new Uint8Array(await file.arrayBuffer())),branch:S.b}});
-    set(D,p,'./'+path);mark();view();toast('Image uploaded.');
+    ASSETS.push(path.slice(7));$('assets').innerHTML+=`<option value="${esc(path.slice(7))}">`;set(D,p,path.slice(7));mark();view();toast('Image uploaded.');
   }catch(e){toast(e.message,false)}
 }
 
@@ -153,7 +158,7 @@ document.addEventListener('input',e=>{
   set(D,p,e.target.value);mark();
   if(p.endsWith('image')){const im=document.querySelector(`[data-prev="${p}"]`);if(im){im.style.visibility='';im.src=imgSrc(e.target.value)}}
 });
-document.addEventListener('change',e=>{const f=e.target.files?.[0];if(f&&e.target.dataset.up)upload(f,e.target.dataset.up)});
+document.addEventListener('change',e=>{const p=e.target.dataset.p;if(p&&p.endsWith('image')&&e.target.value){const v=e.target.value.trim().replace(/^\.\/assets\//,'');e.target.value=v;set(D,p,v)}const f=e.target.files?.[0];if(f&&e.target.dataset.up)upload(f,e.target.dataset.up)});
 document.addEventListener('click',e=>{
   const t=e.target.closest('[data-act]');if(!t)return;
   const a=t.dataset.act,i=+t.dataset.i,arr=D&&D[tab];
