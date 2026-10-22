@@ -293,8 +293,7 @@
                 <div class="carousel-slide absolute inset-0 ${i === 0 ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500">
                     <img src="${slide.image || 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=800&q=80'}" 
                          alt="${slide.title || 'Slide Title'}" 
-                         class="w-full h-full object-cover opacity-80" 
-                         onerror="this.src='https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=800&q=80'" />
+                         class="w-full h-full object-cover opacity-80" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent p-5 flex flex-col justify-end text-white">
                         <span class="text-xs uppercase font-semibold text-brand-500 bg-white/90 px-2 py-0.5 rounded w-max mb-1">${slide.tag || 'Featured'}</span>
                         <h2 class="text-xl font-bold leading-tight">${slide.title || 'KHIP Solutions'}</h2>
@@ -440,8 +439,7 @@
                 <div onclick="openNewsModal('${item.id}')" class="bg-white p-3 rounded-2xl border border-gray-100 shadow-sm flex space-x-3 cursor-pointer hover:shadow-md transition-shadow">
                     <img src="${item.image || 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=600&q=80'}" 
                          alt="${item.title || 'News'}" 
-                         class="w-20 h-20 rounded-xl object-cover flex-shrink-0" 
-                         onerror="this.src='https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=600&q=80'" />
+                         class="w-20 h-20 rounded-xl object-cover flex-shrink-0"  />
                     <div class="flex flex-col justify-between py-0.5 min-w-0 flex-1">
                         <div>
                             <h3 class="font-bold text-sm text-gray-900 leading-snug line-clamp-1">${item.title || 'News Update'}</h3>
