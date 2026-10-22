@@ -44,7 +44,14 @@
     }
   ],
   "news": [],
-  "services": [],
+  "services": [
+    {
+      "id": "1",
+      "title": "Patents",
+      "description": "A patent is an exclusive right granted for an invention, which is a product or a process that has new features. A patent for an invention is the grant of a property right to the inventor, issued by the Patent Office. The term of a patent is 20 years from the date on which the application for the patent was filed. For entrepreneurs and industry pioneers, a patent provides one of the most definitive ways to protect a company's Intellectual Property (safeguard innovation) and to boost company valuation. The Patent Offices grants utility patents which are available for inventions that provide any new or useful process, machine, article or composition of matter. In appropriate circumstances, utility patents may also be used to protect computer software and business methods. Each invention must meet the legal requirement of not being obvious to a person of ordinary skill in the field of the invention, in addition to being new or novel.",
+      "icon": "fas fa-star"
+    }
+  ],
   "products": [],
   "testimonials": [],
   "employees": []
