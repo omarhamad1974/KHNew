@@ -90,7 +90,7 @@
       "id": "1",
       "name": "Khaled Hamada",
       "position": "CEO",
-      "image": "./asset/Khaled-Hamada.jpg"
+      "image": "./assets/Khaled-Hamada.jpg"
     },
     {
       "id": "2",
@@ -102,7 +102,7 @@
       "id": "3",
       "name": "Mirna Al Kayyali",
       "position": "IP Department Head",
-      "image": "../assets/Mirna-Al-Kayyali.jpg"
+      "image": "./assets/Mirna-Al-Kayyali.jpg"
     },
     {
       "id": "4",
