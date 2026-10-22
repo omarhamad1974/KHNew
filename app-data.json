@@ -8,12 +8,88 @@
       "subtitle": "Great Heros",
       "tag": "Featured",
       "image": "https://placehold.co/800x400/1e40af/ffffff?text=Banner"
+    },
+    {
+      "id": "2",
+      "title": "Hero 2",
+      "subtitle": "Great hero 2",
+      "tag": "Featured",
+      "image": "./assets/omar.jpg"
     }
   ],
   "jurisdictions": [],
-  "news": [],
-  "services": [],
-  "products": [],
-  "testimonials": [],
-  "employees": []
+  "news": [
+    {
+      "id": "1",
+      "title": "News 1",
+      "image": "https://placehold.co/600x400/2563eb/ffffff?text=News",
+      "excerpt": "This is news 1 brief",
+      "text": "This is news 1 details ... bla bla bla bla bla bla bla blas"
+    },
+    {
+      "id": "2",
+      "title": "News 2",
+      "image": "./assets/omar.jpg",
+      "excerpt": "jfla;sjdfkl;ajsdkfljaslkd jakldfjkl",
+      "text": "jflk;ajsdflk;jaklsd fjaskl;dfjkal;sjdf jkal;sjdfk;ajsdf"
+    }
+  ],
+  "services": [
+    {
+      "id": "1",
+      "title": "Service 1",
+      "description": "Great service",
+      "icon": "fas fa-star"
+    },
+    {
+      "id": "2",
+      "title": "Service 2",
+      "description": "Amazing service",
+      "icon": "fas fa-star"
+    }
+  ],
+  "products": [
+    {
+      "id": "1",
+      "title": "Product 1",
+      "category": "Services",
+      "price": "Inquire",
+      "image": "./assets/omar.jpg"
+    },
+    {
+      "id": "2",
+      "title": "Product 2",
+      "category": "Services",
+      "price": "Inquire",
+      "image": "./assets/omar.jpg"
+    }
+  ],
+  "testimonials": [
+    {
+      "id": "1",
+      "name": "Omar Hamad",
+      "role": "PLANnPLAY",
+      "text": "They are great"
+    },
+    {
+      "id": "2",
+      "name": "Koko waya",
+      "role": "Aber sabel",
+      "text": "The are great"
+    }
+  ],
+  "employees": [
+    {
+      "id": "1",
+      "name": "Khaled Hamada",
+      "position": "CEO",
+      "image": "./assets/omar.jpg"
+    },
+    {
+      "id": "2",
+      "name": "Omar Hamad",
+      "position": "asdfasdfas",
+      "image": "./assets/omar.jpg"
+    }
+  ]
 }
