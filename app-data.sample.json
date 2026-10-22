@@ -51,8 +51,48 @@
       "country": "Jordan",
       "code": "jo",
       "tag": "Jurisdiction",
-      "brief": "Sample entry showing how a new country appears. Replace with real guidance.",
-      "details": "Add filing requirements, deadlines and language rules here."
+      "brief": "Sample overview for Jordan. Replace this text with a short introduction to the IP system in Jordan, the main treaties it belongs to, and the usual filing routes for foreign applicants.\n\nA second paragraph can explain how long registration typically takes and what makes Jordan important for your clients.",
+      "details": "Required documents:\nPower of attorney (sample): legalization requirements and time frame.\nDeed of assignment (sample): when it is needed.\nCertified priority document (sample): deadline from filing.\n\nLanguage requirements:\nSample text describing translation rules in Jordan.\n\nDeadlines:\nRequest for examination: sample deadline.\nAnnuity fees: sample payment schedule.\n\nExamination process:\nSample description of formal and substantive examination, office actions and appeal options in Jordan."
+    },
+    {
+      "id": "5",
+      "country": "Kuwait",
+      "code": "kw",
+      "tag": "Jurisdiction",
+      "brief": "Sample overview for Kuwait. Replace this text with a short introduction to the IP system in Kuwait, the main treaties it belongs to, and the usual filing routes for foreign applicants.\n\nA second paragraph can explain how long registration typically takes and what makes Kuwait important for your clients.",
+      "details": "Required documents:\nPower of attorney (sample): legalization requirements and time frame.\nDeed of assignment (sample): when it is needed.\nCertified priority document (sample): deadline from filing.\n\nLanguage requirements:\nSample text describing translation rules in Kuwait.\n\nDeadlines:\nRequest for examination: sample deadline.\nAnnuity fees: sample payment schedule.\n\nExamination process:\nSample description of formal and substantive examination, office actions and appeal options in Kuwait."
+    },
+    {
+      "id": "6",
+      "country": "Qatar",
+      "code": "qa",
+      "tag": "Jurisdiction",
+      "brief": "Sample overview for Qatar. Replace this text with a short introduction to the IP system in Qatar, the main treaties it belongs to, and the usual filing routes for foreign applicants.\n\nA second paragraph can explain how long registration typically takes and what makes Qatar important for your clients.",
+      "details": "Required documents:\nPower of attorney (sample): legalization requirements and time frame.\nDeed of assignment (sample): when it is needed.\nCertified priority document (sample): deadline from filing.\n\nLanguage requirements:\nSample text describing translation rules in Qatar.\n\nDeadlines:\nRequest for examination: sample deadline.\nAnnuity fees: sample payment schedule.\n\nExamination process:\nSample description of formal and substantive examination, office actions and appeal options in Qatar."
+    },
+    {
+      "id": "7",
+      "country": "Bahrain",
+      "code": "bh",
+      "tag": "Jurisdiction",
+      "brief": "Sample overview for Bahrain. Replace this text with a short introduction to the IP system in Bahrain, the main treaties it belongs to, and the usual filing routes for foreign applicants.\n\nA second paragraph can explain how long registration typically takes and what makes Bahrain important for your clients.",
+      "details": "Required documents:\nPower of attorney (sample): legalization requirements and time frame.\nDeed of assignment (sample): when it is needed.\nCertified priority document (sample): deadline from filing.\n\nLanguage requirements:\nSample text describing translation rules in Bahrain.\n\nDeadlines:\nRequest for examination: sample deadline.\nAnnuity fees: sample payment schedule.\n\nExamination process:\nSample description of formal and substantive examination, office actions and appeal options in Bahrain."
+    },
+    {
+      "id": "8",
+      "country": "Oman",
+      "code": "om",
+      "tag": "Jurisdiction",
+      "brief": "Sample overview for Oman. Replace this text with a short introduction to the IP system in Oman, the main treaties it belongs to, and the usual filing routes for foreign applicants.\n\nA second paragraph can explain how long registration typically takes and what makes Oman important for your clients.",
+      "details": "Required documents:\nPower of attorney (sample): legalization requirements and time frame.\nDeed of assignment (sample): when it is needed.\nCertified priority document (sample): deadline from filing.\n\nLanguage requirements:\nSample text describing translation rules in Oman.\n\nDeadlines:\nRequest for examination: sample deadline.\nAnnuity fees: sample payment schedule.\n\nExamination process:\nSample description of formal and substantive examination, office actions and appeal options in Oman."
+    },
+    {
+      "id": "9",
+      "country": "Morocco",
+      "code": "ma",
+      "tag": "Jurisdiction",
+      "brief": "Sample overview for Morocco. Replace this text with a short introduction to the IP system in Morocco, the main treaties it belongs to, and the usual filing routes for foreign applicants.\n\nA second paragraph can explain how long registration typically takes and what makes Morocco important for your clients.",
+      "details": "Required documents:\nPower of attorney (sample): legalization requirements and time frame.\nDeed of assignment (sample): when it is needed.\nCertified priority document (sample): deadline from filing.\n\nLanguage requirements:\nSample text describing translation rules in Morocco.\n\nDeadlines:\nRequest for examination: sample deadline.\nAnnuity fees: sample payment schedule.\n\nExamination process:\nSample description of formal and substantive examination, office actions and appeal options in Morocco."
     }
   ],
   "news": [
@@ -62,15 +102,47 @@
       "date": "2026-10-15",
       "image": "https://placehold.co/600x400/1d4ed8/ffffff?text=Brussels",
       "excerpt": "Our team joined regional IP firms at a Brussels event on cross-border filing.",
-      "text": "Our team joined regional IP firms at a Brussels event on cross-border filing.\n\nWe met European partners and discussed filing strategies for the Middle East."
+      "text": "Our team joined regional IP firms at a Brussels event on cross-border filing.\n\nThis is sample article text. Write the full story here: what happened, who was involved and why it matters to your clients.\n\nA third paragraph can add details, quotes or next steps, and a closing line can invite readers to get in touch."
     },
     {
       "id": "2",
       "title": "New PPH option for Egyptian patent filings",
       "date": "2026-09-28",
-      "image": "https://placehold.co/600x400/1e40af/ffffff?text=PPH",
+      "image": "https://placehold.co/600x400/1d4ed8/ffffff?text=PPH",
       "excerpt": "Applicants can now request faster examination based on a positive Japanese or Chinese result.",
-      "text": "Applicants can now request faster examination based on a positive Japanese or Chinese result.\n\nContact us to check whether your application qualifies."
+      "text": "Applicants can now request faster examination based on a positive Japanese or Chinese result.\n\nThis is sample article text. Write the full story here: what happened, who was involved and why it matters to your clients.\n\nA third paragraph can add details, quotes or next steps, and a closing line can invite readers to get in touch."
+    },
+    {
+      "id": "3",
+      "title": "Arabic translation deadlines explained",
+      "date": "2026-09-10",
+      "image": "https://placehold.co/600x400/1d4ed8/ffffff?text=Translation",
+      "excerpt": "A short guide to the Arabic translation deadlines for patents in Egypt, the UAE and Saudi Arabia.",
+      "text": "A short guide to the Arabic translation deadlines for patents in Egypt, the UAE and Saudi Arabia.\n\nThis is sample article text. Write the full story here: what happened, who was involved and why it matters to your clients.\n\nA third paragraph can add details, quotes or next steps, and a closing line can invite readers to get in touch."
+    },
+    {
+      "id": "4",
+      "title": "Trademark filing checklist for the Gulf",
+      "date": "2026-08-22",
+      "image": "https://placehold.co/600x400/1d4ed8/ffffff?text=Trademarks",
+      "excerpt": "Everything you need to prepare before filing a trademark in the Gulf countries.",
+      "text": "Everything you need to prepare before filing a trademark in the Gulf countries.\n\nThis is sample article text. Write the full story here: what happened, who was involved and why it matters to your clients.\n\nA third paragraph can add details, quotes or next steps, and a closing line can invite readers to get in touch."
+    },
+    {
+      "id": "5",
+      "title": "Meet our new IP Department Head",
+      "date": "2026-08-05",
+      "image": "https://placehold.co/600x400/1d4ed8/ffffff?text=Team",
+      "excerpt": "We are pleased to welcome a new head of our IP department to the KHIP family.",
+      "text": "We are pleased to welcome a new head of our IP department to the KHIP family.\n\nThis is sample article text. Write the full story here: what happened, who was involved and why it matters to your clients.\n\nA third paragraph can add details, quotes or next steps, and a closing line can invite readers to get in touch."
+    },
+    {
+      "id": "6",
+      "title": "KHIP workshop for start-ups in Cairo",
+      "date": "2026-07-18",
+      "image": "https://placehold.co/600x400/1d4ed8/ffffff?text=Workshop",
+      "excerpt": "We hosted a hands-on session on protecting early-stage inventions and brand names.",
+      "text": "We hosted a hands-on session on protecting early-stage inventions and brand names.\n\nThis is sample article text. Write the full story here: what happened, who was involved and why it matters to your clients.\n\nA third paragraph can add details, quotes or next steps, and a closing line can invite readers to get in touch."
     }
   ],
   "services": [
@@ -78,19 +150,43 @@
       "id": "1",
       "title": "Patents",
       "icon": "ph-lightbulb",
-      "description": "Exclusive rights for new inventions, filed directly or through the PCT."
+      "description": "Exclusive rights for new inventions, filed directly or through the PCT.",
+      "details": "We prepare, file and prosecute patent applications in Egypt and across the region, including PCT national phase entries.\n\nOur service includes patentability advice, drafting support, responses to office actions, annuity payments and post-grant matters.\n\nSample text: replace with your own detailed description."
     },
     {
       "id": "2",
       "title": "Trademarks",
       "icon": "ph-seal-check",
-      "description": "Protect the names, logos and symbols that identify your goods and services."
+      "description": "Protect the names, logos and symbols that identify your goods and services.",
+      "details": "We search, file and manage trademark registrations, renewals, oppositions and recordals.\n\nOur team also advises on portfolio strategy and coordinates filings in multiple countries.\n\nSample text: replace with your own detailed description."
     },
     {
       "id": "3",
+      "title": "Industrial designs",
+      "icon": "ph-pencil-ruler",
+      "description": "Registration for the appearance of products, from packaging to furniture.",
+      "details": "We help you register the visual features of a product, including shape, pattern and ornamentation.\n\nSample text: replace with your own detailed description."
+    },
+    {
+      "id": "4",
+      "title": "Copyright",
+      "icon": "ph-copyright",
+      "description": "Record and protect creative works such as software, books, music and film.",
+      "details": "We assist with deposit and registration of creative works and with licensing agreements.\n\nSample text: replace with your own detailed description."
+    },
+    {
+      "id": "5",
+      "title": "Enforcement",
+      "icon": "ph-scales",
+      "description": "Stop counterfeiting and infringement with a clear action plan.",
+      "details": "We prepare cease-and-desist letters, customs recordals and court actions to defend your rights.\n\nSample text: replace with your own detailed description."
+    },
+    {
+      "id": "6",
       "title": "Translation",
       "icon": "ph-translate",
-      "description": "Accredited legal and technical translation, including Arabic patent texts."
+      "description": "Accredited legal and technical translation, including Arabic patent texts.",
+      "details": "KH Translation provides accredited, fast and precise translation of patents, contracts and legal documents.\n\nSample text: replace with your own detailed description."
     }
   ],
   "products": [
@@ -114,13 +210,31 @@
       "id": "1",
       "name": "Client name",
       "role": "CEO, Company A",
-      "text": "Sample endorsement. Replace with a real client quote."
+      "text": "KHIP handled our trademark filings in three countries without a single missed deadline. Their updates were clear and always on time."
     },
     {
       "id": "2",
       "name": "Client name",
       "role": "Founder, Company B",
-      "text": "Another sample endorsement with different wording."
+      "text": "From the first call they understood our invention and explained each step of the patent process in plain language."
+    },
+    {
+      "id": "3",
+      "name": "Client name",
+      "role": "Legal Counsel, Company C",
+      "text": "Fast, precise Arabic translation of a very technical specification. We will definitely use the service again."
+    },
+    {
+      "id": "4",
+      "name": "Client name",
+      "role": "Managing Director, Company D",
+      "text": "They protected our brand during a difficult dispute and kept us informed at every stage. Highly recommended."
+    },
+    {
+      "id": "5",
+      "name": "Client name",
+      "role": "Head of Innovation, Company E",
+      "text": "A reliable partner for our regional expansion. One team for patents, trademarks and translation made everything simpler."
     }
   ],
   "employees": [
@@ -135,6 +249,30 @@
       "name": "Sherif Youssef",
       "position": "Translation Department Head",
       "image": "Sherif-Youssef.jpg"
+    },
+    {
+      "id": "3",
+      "name": "Mirna Al Kayyali",
+      "position": "IP Department Head",
+      "image": "Mirna-Al-Kayyali.jpg"
+    },
+    {
+      "id": "4",
+      "name": "Magdy Gamal",
+      "position": "Senior Project Manager",
+      "image": "Magdy-Gamal.jpg"
+    },
+    {
+      "id": "5",
+      "name": "Sara Adel",
+      "position": "Trademark Attorney",
+      "image": "Sara-Adel.jpg"
+    },
+    {
+      "id": "6",
+      "name": "Omar Fathy",
+      "position": "Patent Engineer",
+      "image": "Omar-Fathy.jpg"
     }
   ],
   "chatPrompts": [
