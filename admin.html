@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KH Web App - News Manager Admin</title>
+    <title>KH Web App - Master Content Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- JSZip and FileSaver CDN scripts for Zip Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -34,15 +37,15 @@
                     KH
                 </div>
                 <div>
-                    <h1 class="font-bold text-gray-900 text-base leading-tight">News Manager Admin</h1>
-                    <p class="text-xs text-gray-500">Visual Editor for <code class="bg-gray-100 text-brand-600 px-1 py-0.5 rounded">news.json</code></p>
+                    <h1 class="font-bold text-gray-900 text-base leading-tight">Master Website Manager</h1>
+                    <p class="text-xs text-gray-500">Visual Editor for <code class="bg-gray-100 text-brand-600 px-1 py-0.5 rounded">app-data.json</code></p>
                 </div>
             </div>
 
             <div class="flex items-center space-x-2">
-                <button onclick="openGitHubRepo()" class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium px-3 py-2 rounded-xl flex items-center gap-1.5 transition-colors">
-                    <i class="fab fa-github text-sm"></i>
-                    <span class="hidden sm:inline">Open Repo</span>
+                <button onclick="downloadAllFilesZip()" class="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition-all shadow-sm">
+                    <i class="fas fa-file-archive"></i>
+                    <span>Download All (ZIP)</span>
                 </button>
                 <button onclick="exportJsonFile()" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition-all shadow-sm">
                     <i class="fas fa-download"></i>
@@ -55,17 +58,17 @@
     <!-- Main Content Grid -->
     <main class="max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        <!-- Left Column: Article List & Controls (7 Cols) -->
+        <!-- Left Column: Tabs & Editors (7 Cols) -->
         <section class="lg:col-span-7 space-y-4">
             
             <!-- GitHub Direct Sync Banner -->
             <div class="bg-gradient-to-r from-blue-900 to-indigo-900 rounded-2xl p-4 text-white shadow-md space-y-3">
                 <div class="flex items-start justify-between">
                     <div>
-                        <span class="text-[10px] font-bold tracking-wider uppercase bg-blue-500/30 text-blue-200 px-2 py-0.5 rounded-full">GitHub API Direct Sync</span>
-                        <h2 class="text-base font-bold mt-1">Direct GitHub Repository Edit</h2>
+                        <span class="text-[10px] font-bold tracking-wider uppercase bg-blue-500/30 text-blue-200 px-2 py-0.5 rounded-full">GitHub Direct Sync</span>
+                        <h2 class="text-base font-bold mt-1">Direct Repository Sync</h2>
                         <p class="text-xs text-blue-100 mt-0.5 leading-relaxed">
-                            Configure your repository credentials below to commit updates directly to <code class="bg-blue-800/60 px-1 rounded text-blue-200">news.json</code>.
+                            Updates commit directly to <code class="bg-blue-800/60 px-1 rounded text-blue-200">app-data.json</code> on your GitHub repository.
                         </p>
                     </div>
                     <i class="fab fa-github text-3xl opacity-40"></i>
@@ -84,348 +87,308 @@
                 </div>
             </div>
 
-            <!-- Header Actions -->
-            <div class="flex items-center justify-between bg-white p-4 rounded-2xl border border-gray-200 shadow-sm">
+            <!-- Toast Banner -->
+            <div id="toast-message" class="hidden p-3 rounded-xl text-xs font-medium border"></div>
+
+            <!-- Navigation Tabs -->
+            <div class="flex space-x-1 bg-white p-1.5 rounded-2xl border border-gray-200 shadow-sm text-xs font-semibold overflow-x-auto no-scrollbar">
+                <button onclick="switchTab('carousel')" id="tab-carousel" class="flex-1 min-w-[70px] py-2 px-2.5 rounded-xl transition-colors bg-brand-600 text-white">Carousel</button>
+                <button onclick="switchTab('jurisdictions')" id="tab-jurisdictions" class="flex-1 min-w-[85px] py-2 px-2.5 rounded-xl transition-colors text-gray-600 hover:bg-gray-100">Jurisdictions</button>
+                <button onclick="switchTab('news')" id="tab-news" class="flex-1 min-w-[70px] py-2 px-2.5 rounded-xl transition-colors text-gray-600 hover:bg-gray-100">News</button>
+                <button onclick="switchTab('services')" id="tab-services" class="flex-1 min-w-[70px] py-2 px-2.5 rounded-xl transition-colors text-gray-600 hover:bg-gray-100">Services</button>
+                <button onclick="switchTab('products')" id="tab-products" class="flex-1 min-w-[70px] py-2 px-2.5 rounded-xl transition-colors text-gray-600 hover:bg-gray-100">Products</button>
+                <button onclick="switchTab('testimonials')" id="tab-testimonials" class="flex-1 min-w-[70px] py-2 px-2.5 rounded-xl transition-colors text-gray-600 hover:bg-gray-100">Testimonials</button>
+                <button onclick="switchTab('employees')" id="tab-employees" class="flex-1 min-w-[70px] py-2 px-2.5 rounded-xl transition-colors text-gray-600 hover:bg-gray-100">Employees</button>
+            </div>
+
+            <!-- Header Controls -->
+            <div class="flex items-center justify-between bg-white p-3.5 rounded-2xl border border-gray-200 shadow-sm">
                 <div>
-                    <h2 class="font-bold text-gray-900 text-sm">News Articles</h2>
-                    <p class="text-xs text-gray-500" id="article-count-badge">0 articles in list</p>
+                    <h2 class="font-bold text-gray-900 text-sm capitalize" id="tab-title">Carousel Slides</h2>
+                    <p class="text-xs text-gray-500" id="tab-count-badge">0 items</p>
                 </div>
                 <div class="flex items-center space-x-2">
                     <button onclick="loadFromLiveJson()" class="text-xs border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium px-3 py-1.5 rounded-xl transition-colors flex items-center gap-1">
-                        <i class="fas fa-sync text-[11px]"></i> Load from live
+                        <i class="fas fa-sync text-[11px]"></i> Load Live
                     </button>
-                    <button onclick="addNewArticle()" class="text-xs bg-brand-600 hover:bg-brand-700 text-white font-semibold px-3 py-1.5 rounded-xl transition-colors flex items-center gap-1 shadow-sm">
-                        <i class="fas fa-plus"></i> Add Article
+                    <button onclick="addNewItem()" class="text-xs bg-brand-600 hover:bg-brand-700 text-white font-semibold px-3 py-1.5 rounded-xl transition-colors flex items-center gap-1 shadow-sm">
+                        <i class="fas fa-plus"></i> Add Item
                     </button>
                 </div>
             </div>
 
-            <!-- Articles Cards List -->
-            <div id="articles-list" class="space-y-3">
-                <!-- Dynamic cards populated via JS -->
+            <!-- Dynamic Section Item List -->
+            <div id="items-list" class="space-y-3">
+                <!-- Javascript dynamic list -->
             </div>
         </section>
 
-        <!-- Right Column: JSON Output & Preview (5 Cols) -->
+        <!-- Right Column: Live Code Output (5 Cols) -->
         <section class="lg:col-span-5 space-y-4">
-            
-            <!-- Generated JSON Output Card -->
             <div class="bg-white rounded-2xl p-4 border border-gray-200 shadow-sm sticky top-20">
                 <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center space-x-2">
                         <i class="fas fa-code text-brand-600"></i>
-                        <h3 class="font-bold text-gray-900 text-sm">Generated news.json</h3>
+                        <h3 class="font-bold text-gray-900 text-sm">Generated app-data.json</h3>
                     </div>
                     <button onclick="copyJsonToClipboard()" id="copy-btn" class="text-xs bg-gray-100 hover:bg-brand-50 hover:text-brand-600 text-gray-700 font-semibold px-3 py-1 rounded-lg transition-all flex items-center gap-1">
                         <i class="far fa-copy"></i> Copy Code
                     </button>
                 </div>
 
-                <pre id="json-preview" class="bg-gray-900 text-emerald-400 p-3 rounded-xl text-[11px] font-mono overflow-x-auto max-h-[380px] leading-relaxed border border-gray-800 shadow-inner">
-[]
+                <pre id="json-preview" class="bg-gray-900 text-emerald-400 p-3 rounded-xl text-[11px] font-mono overflow-x-auto max-h-[420px] leading-relaxed border border-gray-800 shadow-inner">
+{}
                 </pre>
-
-                <div class="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-xl flex items-start space-x-2 text-xs text-blue-800">
-                    <i class="fas fa-info-circle text-blue-600 mt-0.5"></i>
-                    <p class="leading-relaxed">
-                        Use <strong>Commit Directly to GitHub</strong> above or copy the code and paste it manually into <strong class="font-semibold">news.json</strong> on GitHub.
-                    </p>
-                </div>
-
-                <a id="gh-direct-link" href="#" target="_blank" rel="noopener noreferrer" class="mt-3 w-full block text-center bg-gray-900 hover:bg-black text-white text-xs font-semibold py-2.5 rounded-xl transition-colors shadow-sm">
-                    Open news.json directly on GitHub <i class="fas fa-external-link-alt text-[10px] ml-1"></i>
-                </a>
             </div>
         </section>
 
     </main>
 
-    <!-- Modal Form -->
+    <!-- Modal Dialog -->
     <div id="edit-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity">
         <div class="bg-white w-full max-w-lg rounded-2xl p-5 shadow-2xl transform scale-95 transition-transform border border-gray-100">
-            <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-4">
-                <h3 id="modal-heading" class="font-bold text-gray-900 text-base">Edit Article</h3>
-                <button onclick="closeEditModal()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center hover:bg-gray-200 transition-colors">
+            <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-3">
+                <h3 id="modal-heading" class="font-bold text-gray-900 text-base">Edit Item</h3>
+                <button onclick="closeEditModal()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center hover:bg-gray-200">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
 
-            <form id="article-form" onsubmit="saveArticle(event)" class="space-y-3">
+            <form id="item-form" onsubmit="saveItem(event)" class="space-y-3">
                 <input type="hidden" id="field-index">
-
-                <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1">Article ID</label>
-                    <input type="text" id="field-id" required class="w-full text-xs bg-gray-50 border border-gray-300 rounded-xl p-2.5 focus:bg-white focus:outline-none focus:border-brand-500">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1">Title</label>
-                    <input type="text" id="field-title" required placeholder="e.g. New Product Launch" class="w-full text-xs bg-gray-50 border border-gray-300 rounded-xl p-2.5 focus:bg-white focus:outline-none focus:border-brand-500">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1">Image URL / Path</label>
-                    <input type="text" id="field-image" required placeholder="e.g. ./assets/omar.jpg or https://images.unsplash.com/..." class="w-full text-xs bg-gray-50 border border-gray-300 rounded-xl p-2.5 focus:bg-white focus:outline-none focus:border-brand-500">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1">Excerpt (Short Summary)</label>
-                    <textarea id="field-excerpt" rows="2" required placeholder="Brief intro shown on list card..." class="w-full text-xs bg-gray-50 border border-gray-300 rounded-xl p-2.5 focus:bg-white focus:outline-none focus:border-brand-500"></textarea>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1">Full Article Text</label>
-                    <textarea id="field-text" rows="4" required placeholder="Complete article content..." class="w-full text-xs bg-gray-50 border border-gray-300 rounded-xl p-2.5 focus:bg-white focus:outline-none focus:border-brand-500"></textarea>
+                <div id="modal-form-fields" class="space-y-3">
+                    <!-- Form fields generated dynamically based on active tab -->
                 </div>
 
                 <div class="flex items-center justify-end space-x-2 pt-3 border-t border-gray-100">
-                    <button type="button" onclick="closeEditModal()" class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-4 py-2 rounded-xl transition-colors">
-                        Cancel
-                    </button>
-                    <button type="submit" class="text-xs bg-brand-600 hover:bg-brand-700 text-white font-semibold px-5 py-2 rounded-xl transition-colors shadow-sm">
-                        Save Changes
-                    </button>
+                    <button type="button" onclick="closeEditModal()" class="text-xs bg-gray-100 text-gray-700 font-semibold px-4 py-2 rounded-xl">Cancel</button>
+                    <button type="submit" class="text-xs bg-brand-600 text-white font-semibold px-5 py-2 rounded-xl shadow-sm">Save Changes</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- JavaScript Application Logic -->
+    <!-- Application Logic -->
     <script>
-        // Default initial news array
-        let newsArticles = [
-            {
-                "id": "1",
-                "title": "Welcome to KH Mobile Web App",
-                "excerpt": "Experience fast mobile navigation with dynamic news updates.",
-                "text": "We are proud to launch our app-like web architecture. Connect with us instantly via WhatsApp or explore our services.",
-                "image": "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=600&q=80"
-            },
-            {
-                "id": "2",
-                "title": "Services & Solutions",
-                "excerpt": "Discover our mobile app and web design capabilities.",
-                "text": "We offer custom iOS/Android app development, responsive website design, and cloud hosting solutions.",
-                "image": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80"
-            }
-        ];
+        let currentTab = 'carousel';
+        let masterData = {
+            about: "KHIP delivers high-performance IP legal solutions designed for fast mobile navigation.",
+            aboutMainText: "KHIP is dedicated to delivering high-performance IP and legal services across the Middle East.",
+            carousel: [],
+            jurisdictions: [],
+            news: [],
+            services: [],
+            products: [],
+            testimonials: [],
+            employees: []
+        };
 
-        function renderArticlesList() {
-            const container = document.getElementById('articles-list');
-            const badge = document.getElementById('article-count-badge');
-            const jsonDisplay = document.getElementById('json-preview');
+        function switchTab(tab) {
+            currentTab = tab;
+            ['carousel', 'jurisdictions', 'news', 'services', 'products', 'testimonials', 'employees'].forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                if(!btn) return;
+                if(t === tab) {
+                    btn.className = "flex-1 min-w-[70px] py-2 px-2.5 rounded-xl transition-colors bg-brand-600 text-white shadow-sm font-bold";
+                } else {
+                    btn.className = "flex-1 min-w-[70px] py-2 px-2.5 rounded-xl transition-colors text-gray-600 hover:bg-gray-100 font-semibold";
+                }
+            });
 
-            badge.innerText = `${newsArticles.length} article${newsArticles.length === 1 ? '' : 's'} total`;
+            document.getElementById('tab-title').innerText = `${tab} Section`;
+            renderTabItems();
+        }
 
-            if(newsArticles.length === 0) {
-                container.innerHTML = `
-                    <div class="bg-white rounded-2xl p-8 text-center border border-dashed border-gray-300">
-                        <i class="far fa-newspaper text-gray-300 text-3xl mb-2"></i>
-                        <p class="text-xs text-gray-500 font-medium">No articles available.</p>
-                        <button onclick="addNewArticle()" class="mt-3 text-xs bg-brand-50 text-brand-600 font-semibold px-3 py-1.5 rounded-lg">Add First Article</button>
-                    </div>
-                `;
-            } else {
-                container.innerHTML = newsArticles.map((item, index) => `
-                    <div class="bg-white p-3.5 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between hover:border-gray-300 transition-all">
-                        <div class="flex items-center space-x-3 overflow-hidden">
-                            <img src="${item.image}" alt="Thumb" class="w-14 h-14 rounded-xl object-cover border border-gray-100 flex-shrink-0" onerror="this.src='https://placehold.co/100x100/e2e8f0/64748b?text=Image'" />
-                            <div class="min-w-0">
-                                <span class="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-md">ID: ${item.id}</span>
-                                <h3 class="font-bold text-xs text-gray-900 truncate mt-0.5">${item.title}</h3>
-                                <p class="text-[11px] text-gray-500 truncate mt-0.5">${item.excerpt}</p>
-                            </div>
-                        </div>
+        function renderTabItems() {
+            const list = masterData[currentTab] || [];
+            const container = document.getElementById('items-list');
+            document.getElementById('tab-count-badge').innerText = `${list.length} items total`;
+            document.getElementById('json-preview').textContent = JSON.stringify(masterData, null, 2);
 
-                        <div class="flex items-center space-x-1.5 pl-2 flex-shrink-0">
-                            <button onclick="openEditModal(${index})" class="w-8 h-8 rounded-xl bg-gray-100 hover:bg-brand-50 hover:text-brand-600 text-gray-600 flex items-center justify-center transition-colors">
-                                <i class="fas fa-pencil-alt text-xs"></i>
-                            </button>
-                            <button onclick="deleteArticle(${index})" class="w-8 h-8 rounded-xl bg-gray-100 hover:bg-red-50 hover:text-red-600 text-gray-600 flex items-center justify-center transition-colors">
-                                <i class="fas fa-trash-alt text-xs"></i>
-                            </button>
-                        </div>
-                    </div>
-                `).join('');
+            if(!list.length) {
+                container.innerHTML = `<div class="bg-white p-8 rounded-2xl text-center border border-dashed text-gray-400 text-xs">No items in ${currentTab}. Add an item to populate placeholders.</div>`;
+                return;
             }
 
-            // Update JSON Live Output
-            jsonDisplay.textContent = JSON.stringify(newsArticles, null, 2);
+            container.innerHTML = list.map((item, index) => `
+                <div class="bg-white p-3 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
+                    <div class="flex items-center space-x-3 overflow-hidden min-w-0">
+                        ${item.flag ? `<div class="w-10 h-10 rounded-xl bg-gray-50 border flex items-center justify-center text-2xl flex-shrink-0">${item.flag}</div>` : item.image ? `<img src="${item.image}" class="w-12 h-12 rounded-xl object-cover flex-shrink-0" onerror="this.src='https://placehold.co/100?text=IMG'"/>` : `<div class="w-12 h-12 rounded-xl bg-blue-50 text-brand-600 flex items-center justify-center font-bold flex-shrink-0"><i class="${item.icon || 'fas fa-star'}"></i></div>`}
+                        <div class="min-w-0 flex-1">
+                            <span class="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded">ID: ${item.id || (index+1)}</span>
+                            <h3 class="font-bold text-xs text-gray-900 truncate mt-0.5">${item.country || item.title || item.name || 'Untitled Item'}</h3>
+                            <p class="text-[11px] text-gray-500 truncate">${item.brief || item.subtitle || item.excerpt || item.description || item.price || item.role || item.position || 'No details provided'}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-1.5 pl-2 flex-shrink-0">
+                        <button onclick="openEditModal(${index})" class="w-8 h-8 rounded-xl bg-gray-100 hover:bg-brand-50 text-gray-600 hover:text-brand-600 flex items-center justify-center transition-colors"><i class="fas fa-pencil-alt text-xs"></i></button>
+                        <button onclick="deleteItem(${index})" class="w-8 h-8 rounded-xl bg-gray-100 hover:bg-red-50 text-gray-600 hover:text-red-600 flex items-center justify-center transition-colors"><i class="fas fa-trash-alt text-xs"></i></button>
+                    </div>
+                </div>
+            `).join('');
         }
 
         function openEditModal(index) {
-            const article = newsArticles[index];
-            document.getElementById('modal-heading').innerText = "Edit Article";
+            const item = masterData[currentTab][index];
+            document.getElementById('modal-heading').innerText = `Edit ${currentTab} Item`;
             document.getElementById('field-index').value = index;
-            document.getElementById('field-id').value = article.id;
-            document.getElementById('field-title').value = article.title;
-            document.getElementById('field-image').value = article.image;
-            document.getElementById('field-excerpt').value = article.excerpt;
-            document.getElementById('field-text').value = article.text;
-
+            buildModalForm(item);
             showModal();
         }
 
-        function addNewArticle() {
-            document.getElementById('modal-heading').innerText = "Add New Article";
+        function addNewItem() {
+            document.getElementById('modal-heading').innerText = `Add New ${currentTab} Item`;
             document.getElementById('field-index').value = "-1";
-            document.getElementById('field-id').value = String(newsArticles.length + 1);
-            document.getElementById('field-title').value = "";
-            document.getElementById('field-image').value = "";
-            document.getElementById('field-excerpt').value = "";
-            document.getElementById('field-text').value = "";
-
+            buildModalForm({ id: String((masterData[currentTab] || []).length + 1) });
             showModal();
+        }
+
+        function buildModalForm(item = {}) {
+            const container = document.getElementById('modal-form-fields');
+            let fields = `<input type="hidden" id="f-id" value="${item.id || ''}">`;
+
+            if(currentTab === 'jurisdictions') {
+                fields += `
+                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Country Name</label><input type="text" id="f-country" value="${item.country||''}" placeholder="e.g. Egypt" required class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
+                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Flag Emoji</label><input type="text" id="f-flag" value="${item.flag||'🌐'}" class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
+                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Badge Tag</label><input type="text" id="f-tag" value="${item.tag||'Jurisdiction'}" class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
+                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Brief Overview</label><textarea id="f-brief" rows="2" placeholder="Brief IP legal description..." class="w-full text-xs bg-gray-50 border rounded-xl p-2.5">${item.brief||''}</textarea></div>
+                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Detailed IP Guidelines</label><textarea id="f-details" rows="4" placeholder="Detailed IP regulations..." class="w-full text-xs bg-gray-50 border rounded-xl p-2.5">${item.details||''}</textarea></div>
+                `;
+            } else if(currentTab === 'carousel') {
+                fields += `
+                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Title</label><input type="text" id="f-title" value="${item.title||''}" placeholder="Headline Title" required class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
+                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Subtitle</label><input type="text" id="f-subtitle" value="${item.subtitle||''}" placeholder="Subheading details" class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
+                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Badge Tag</label><input type="text" id="f-tag" value="${item.tag||'Featured'}" class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
+                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Image URL / Path</label><input type="text" id="f-image" value="${item.image||''}" placeholder="https://placehold.co/800x400?text=Banner" class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
+                `;
+            } else if(currentTab === 'news') {
+                fields += `
+                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Title</label><input type="text" id="f-title" value="${item.title||''}" placeholder="Article Headline" required class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
+                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Image URL / Path</label><input type="text" id="f-image" value="${item.image||''}" placeholder="https://placehold.co/600x400?text=News" class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
+                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Excerpt</label><textarea id="f-excerpt" rows="2" placeholder="Summary snippet..." class="w-full text-xs bg-gray-50 border rounded-xl p-2.5">${item.excerpt||''}</textarea></div>
+                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Full Text</label><textarea id="f-text" rows="3" placeholder="Full article body..." class="w-full text-xs bg-gray-50 border rounded-xl p-2.5">${item.text||''}</textarea></div>
+                `;
+            } else if(currentTab === 'services') {
+                fields += `
+                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Title</label><input type="text" id="f-title" value="${item.title||''}" placeholder="Service Title" required class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
+                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Description</label><input type="text" id="f-description" value="${item.description||''}" placeholder="Short service scope" class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
+                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">FontAwesome Icon Class</label><input type="text" id="f-icon" value="${item.icon||'fas fa-star'}" class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
+                `;
+            } else if(currentTab === 'products') {
+                fields += `
+                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Product Title</label><input type="text" id="f-title" value="${item.title||''}" placeholder="Product / Solution name" required class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
+                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Category</label><input type="text" id="f-category" value="${item.category||'Services'}" class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
+                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Price</label><input type="text" id="f-price" value="${item.price||'Inquire'}" class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
+                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Image URL / Path</label><input type="text" id="f-image" value="${item.image||''}" placeholder="https://placehold.co/300x200?text=Product" class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
+                `;
+            } else if(currentTab === 'testimonials') {
+                fields += `
+                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Client Name</label><input type="text" id="f-name" value="${item.name||''}" placeholder="Client / Company Name" required class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
+                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Client Role/Company</label><input type="text" id="f-role" value="${item.role||''}" placeholder="Position or Organization" class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
+                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Testimonial Quote</label><textarea id="f-text" rows="3" placeholder="Client feedback quote..." class="w-full text-xs bg-gray-50 border rounded-xl p-2.5">${item.text||''}</textarea></div>
+                `;
+            } else if(currentTab === 'employees') {
+                fields += `
+                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Employee Name</label><input type="text" id="f-name" value="${item.name||''}" placeholder="Full Name" required class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
+                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Position / Title</label><input type="text" id="f-position" value="${item.position||''}" placeholder="Job Title" class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
+                    <div><label class="block text-xs font-semibold text-gray-700 mb-1">Photo URL / Path</label><input type="text" id="f-image" value="${item.image||''}" placeholder="https://placehold.co/150x150?text=Avatar" class="w-full text-xs bg-gray-50 border rounded-xl p-2.5"></div>
+                `;
+            }
+            container.innerHTML = fields;
+        }
+
+        function saveItem(e) {
+            e.preventDefault();
+            const index = parseInt(document.getElementById('field-index').value);
+            const newItem = { id: document.getElementById('f-id').value };
+
+            if(currentTab === 'jurisdictions') {
+                newItem.country = document.getElementById('f-country').value.trim() || "Jurisdiction";
+                newItem.flag = document.getElementById('f-flag').value.trim() || "🌐";
+                newItem.tag = document.getElementById('f-tag').value.trim() || "Jurisdiction";
+                newItem.brief = document.getElementById('f-brief').value.trim() || "IP guidelines available upon inquiry.";
+                newItem.details = document.getElementById('f-details').value.trim() || newItem.brief;
+            } else if(currentTab === 'carousel') {
+                newItem.title = document.getElementById('f-title').value.trim() || "Featured Announcement";
+                newItem.subtitle = document.getElementById('f-subtitle').value.trim() || "Discover legal and IP services.";
+                newItem.tag = document.getElementById('f-tag').value.trim() || "Featured";
+                newItem.image = document.getElementById('f-image').value.trim() || "https://placehold.co/800x400/1e40af/ffffff?text=Banner";
+            } else if(currentTab === 'news') {
+                newItem.title = document.getElementById('f-title').value.trim() || "News Article";
+                newItem.image = document.getElementById('f-image').value.trim() || "https://placehold.co/600x400/2563eb/ffffff?text=News";
+                newItem.excerpt = document.getElementById('f-excerpt').value.trim() || "Summary update available.";
+                newItem.text = document.getElementById('f-text').value.trim() || newItem.excerpt;
+            } else if(currentTab === 'services') {
+                newItem.title = document.getElementById('f-title').value.trim() || "Legal Service";
+                newItem.description = document.getElementById('f-description').value.trim() || "Comprehensive legal support.";
+                newItem.icon = document.getElementById('f-icon').value.trim() || "fas fa-star";
+            } else if(currentTab === 'products') {
+                newItem.title = document.getElementById('f-title').value.trim() || "IP Product";
+                newItem.category = document.getElementById('f-category').value.trim() || "Services";
+                newItem.price = document.getElementById('f-price').value.trim() || "Inquire";
+                newItem.image = document.getElementById('f-image').value.trim() || "https://placehold.co/300x200/1d4ed8/ffffff?text=Product";
+            } else if(currentTab === 'testimonials') {
+                newItem.name = document.getElementById('f-name').value.trim() || "Client Partner";
+                newItem.role = document.getElementById('f-role').value.trim() || "Enterprise Legal Counsel";
+                newItem.text = document.getElementById('f-text').value.trim() || "High quality service and guidance.";
+            } else if(currentTab === 'employees') {
+                newItem.name = document.getElementById('f-name').value.trim() || "Team Member";
+                newItem.position = document.getElementById('f-position').value.trim() || "IP Attorney";
+                newItem.image = document.getElementById('f-image').value.trim() || "https://placehold.co/150x150/1e40af/ffffff?text=Team";
+            }
+
+            if(!masterData[currentTab]) masterData[currentTab] = [];
+
+            if(index >= 0) {
+                masterData[currentTab][index] = newItem;
+            } else {
+                masterData[currentTab].push(newItem);
+            }
+
+            closeEditModal();
+            renderTabItems();
+        }
+
+        function deleteItem(index) {
+            masterData[currentTab].splice(index, 1);
+            renderTabItems();
         }
 
         function showModal() {
             const modal = document.getElementById('edit-modal');
             modal.classList.remove('opacity-0', 'pointer-events-none');
             modal.querySelector('div').classList.remove('scale-95');
-            modal.querySelector('div').classList.add('scale-100');
         }
 
         function closeEditModal() {
             const modal = document.getElementById('edit-modal');
             modal.classList.add('opacity-0', 'pointer-events-none');
-            modal.querySelector('div').classList.remove('scale-100');
             modal.querySelector('div').classList.add('scale-95');
         }
 
-        function saveArticle(e) {
-            e.preventDefault();
-            const index = parseInt(document.getElementById('field-index').value);
-            const updatedItem = {
-                id: document.getElementById('field-id').value.trim(),
-                title: document.getElementById('field-title').value.trim(),
-                excerpt: document.getElementById('field-excerpt').value.trim(),
-                text: document.getElementById('field-text').value.trim(),
-                image: document.getElementById('field-image').value.trim()
-            };
-
-            if(index >= 0) {
-                newsArticles[index] = updatedItem;
-            } else {
-                newsArticles.push(updatedItem);
-            }
-
-            closeEditModal();
-            renderArticlesList();
-        }
-
-        function deleteArticle(index) {
-            newsArticles.splice(index, 1);
-            renderArticlesList();
-        }
-
-        function copyJsonToClipboard() {
-            const jsonText = JSON.stringify(newsArticles, null, 2);
-            
-            if(navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(jsonText);
-            } else {
-                const textarea = document.createElement("textarea");
-                textarea.value = jsonText;
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand("copy");
-                document.body.removeChild(textarea);
-            }
-
-            const btn = document.getElementById('copy-btn');
-            btn.innerHTML = `<i class="fas fa-check text-emerald-600"></i> Copied!`;
-            setTimeout(() => {
-                btn.innerHTML = `<i class="far fa-copy"></i> Copy Code`;
-            }, 2000);
-        }
-
-        function exportJsonFile() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(newsArticles, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", "news.json");
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-        }
-
-        async function loadFromLiveJson() {
-            try {
-                const res = await fetch('./news.json');
-                if(!res.ok) throw new Error("Could not fetch");
-                const liveData = await res.json();
-                newsArticles = liveData;
-                renderArticlesList();
-            } catch(err) {
-                alert("Could not load news.json. Please make sure the file exists in your repository root.");
-            }
-        }
-
-        function updateGhUrl() {
-            const user = document.getElementById('gh-user').value.trim() || 'YOUR-USERNAME';
-            const repo = document.getElementById('gh-repo').value.trim() || 'KHNew';
-            const directLink = document.getElementById('gh-direct-link');
-            directLink.href = `https://github.com/${user}/${repo}/edit/main/news.json`;
-        }
-
-        function openGitHubRepo() {
-            const user = document.getElementById('gh-user').value.trim() || '';
-            const repo = document.getElementById('gh-repo').value.trim() || 'KHNew';
-            if(user) {
-                window.open(`https://github.com/${user}/${repo}`, '_blank');
-            } else {
-                window.open(`https://github.com`, '_blank');
-            }
-        }
-
-        function saveConfig() {
-            const user = document.getElementById('gh-user').value.trim();
-            const repo = document.getElementById('gh-repo').value.trim();
-            const token = document.getElementById('gh-token').value.trim();
-
-            localStorage.setItem('kh_gh_user', user);
-            localStorage.setItem('kh_gh_repo', repo);
-            localStorage.setItem('kh_gh_token', token);
-
-            updateGhUrl();
-        }
-
-        function loadSavedConfig() {
-            const user = localStorage.getItem('kh_gh_user') || '';
-            const repo = localStorage.getItem('kh_gh_repo') || 'KHNew';
-            const token = localStorage.getItem('kh_gh_token') || '';
-
-            document.getElementById('gh-user').value = user;
-            document.getElementById('gh-repo').value = repo;
-            document.getElementById('gh-token').value = token;
-
-            updateGhUrl();
-        }
-
-        // Direct commit function via GitHub API
         async function commitDirectlyToGitHub() {
             const user = document.getElementById('gh-user').value.trim();
             const repo = document.getElementById('gh-repo').value.trim();
             const token = document.getElementById('gh-token').value.trim();
-            const statusLabel = document.getElementById('sync-status');
             const btn = document.getElementById('commit-btn');
+            const statusLabel = document.getElementById('sync-status');
 
             if(!user || !repo || !token) {
-                alert("Please enter your GitHub Username, Repository Name, and Personal Access Token.");
+                showNotification("Please provide GitHub Username, Repository Name, and Access Token.", "error");
                 return;
             }
 
             btn.disabled = true;
             btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Syncing...`;
-            statusLabel.innerText = "Connecting to GitHub...";
+            statusLabel.innerText = "Connecting...";
 
             try {
-                const apiPath = `https://api.github.com/repos/${user}/${repo}/contents/news.json`;
-                
-                // Get file SHA if it already exists
+                const apiPath = `https://api.github.com/repos/${user}/${repo}/contents/app-data.json`;
                 let sha = "";
+                
                 const getRes = await fetch(apiPath, {
-                    headers: { 'Authorization': `token ${token}` }
+                    headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
                 });
 
                 if(getRes.ok) {
@@ -433,45 +396,121 @@
                     sha = getData.sha;
                 }
 
-                const jsonContent = JSON.stringify(newsArticles, null, 2);
+                const jsonContent = JSON.stringify(masterData, null, 2);
                 const encodedContent = btoa(unescape(encodeURIComponent(jsonContent)));
 
                 const putRes = await fetch(apiPath, {
                     method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${token}`,
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        message: "Update news.json via Admin Dashboard",
+                        message: "Update app-data.json via Website Admin Manager",
                         content: encodedContent,
                         sha: sha || undefined
                     })
                 });
 
-                if(!putRes.ok) {
-                    const errData = await putRes.json();
-                    throw new Error(errData.message || "Failed to commit");
-                }
+                if(!putRes.ok) throw new Error("Failed to commit changes to GitHub.");
 
-                statusLabel.innerText = "✓ Committed successfully!";
+                statusLabel.innerText = "✓ Committed!";
+                showNotification("app-data.json updated successfully on GitHub!", "success");
                 btn.innerHTML = `<i class="fas fa-check"></i> Updated!`;
-                setTimeout(() => {
-                    btn.disabled = false;
-                    btn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> Commit Directly to GitHub`;
-                }, 3000);
+                setTimeout(() => { btn.disabled = false; btn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> Commit Directly to GitHub`; }, 3000);
 
             } catch(err) {
-                alert("GitHub API Error: " + err.message);
+                showNotification(err.message, "error");
                 statusLabel.innerText = "Sync failed.";
                 btn.disabled = false;
                 btn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> Commit Directly to GitHub`;
             }
         }
 
+        async function loadFromLiveJson() {
+            try {
+                const res = await fetch(`./app-data.json?v=${Date.now()}`);
+                if(!res.ok) throw new Error();
+                masterData = await res.json();
+                renderTabItems();
+                showNotification("Loaded live app-data.json successfully!", "success");
+            } catch(err) {
+                showNotification("Could not load app-data.json. Using current or empty state.", "error");
+            }
+        }
+
+        function exportJsonFile() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(masterData, null, 2));
+            const anchor = document.createElement('a');
+            anchor.setAttribute("href", dataStr);
+            anchor.setAttribute("download", "app-data.json");
+            document.body.appendChild(anchor);
+            anchor.click();
+            anchor.remove();
+        }
+
+        async function downloadAllFilesZip() {
+            const zip = new JSZip();
+
+            // 1. Add app-data.json with active modifications
+            zip.file("app-data.json", JSON.stringify(masterData, null, 2));
+
+            // 2. Fetch and add current HTML files (or fallback to basic templates)
+            const filesToFetch = [
+                { path: 'index.html', name: 'index.html' },
+                { path: 'about.html', name: 'about.html' },
+                { path: 'admin.html', name: 'admin.html' }
+            ];
+
+            showNotification("Preparing ZIP archive...", "success");
+
+            for (const file of filesToFetch) {
+                try {
+                    const res = await fetch(`./${file.path}?v=${Date.now()}`);
+                    if (res.ok) {
+                        const content = await res.text();
+                        zip.file(file.name, content);
+                    }
+                } catch (err) {
+                    console.warn(`Could not fetch ${file.name} for zip, skipping remote fetch.`);
+                }
+            }
+
+            // Generate ZIP file and trigger browser download
+            zip.generateAsync({ type: "blob" }).then(function (content) {
+                saveAs(content, "KHIP-Web-App-Bundle.zip");
+                showNotification("ZIP package downloaded successfully!", "success");
+            }).catch(function (err) {
+                showNotification("Failed to generate ZIP bundle.", "error");
+            });
+        }
+
+        function copyJsonToClipboard() {
+            navigator.clipboard.writeText(JSON.stringify(masterData, null, 2));
+            const btn = document.getElementById('copy-btn');
+            btn.innerHTML = `<i class="fas fa-check text-emerald-600"></i> Copied!`;
+            setTimeout(() => { btn.innerHTML = `<i class="far fa-copy"></i> Copy Code`; }, 2000);
+        }
+
+        function showNotification(msg, type = "error") {
+            const toast = document.getElementById('toast-message');
+            toast.classList.remove('hidden', 'bg-red-100', 'text-red-800', 'border-red-200', 'bg-emerald-100', 'text-emerald-800', 'border-emerald-200');
+            toast.classList.add(type === "error" ? 'bg-red-100' : 'bg-emerald-100', type === "error" ? 'text-red-800' : 'text-emerald-800');
+            toast.innerText = msg;
+        }
+
+        function saveConfig() {
+            localStorage.setItem('kh_gh_user', document.getElementById('gh-user').value.trim());
+            localStorage.setItem('kh_gh_repo', document.getElementById('gh-repo').value.trim());
+            localStorage.setItem('kh_gh_token', document.getElementById('gh-token').value.trim());
+        }
+
+        function loadSavedConfig() {
+            document.getElementById('gh-user').value = localStorage.getItem('kh_gh_user') || 'omarhamad1974';
+            document.getElementById('gh-repo').value = localStorage.getItem('kh_gh_repo') || 'KHNew';
+            document.getElementById('gh-token').value = localStorage.getItem('kh_gh_token') || '';
+        }
+
         window.onload = function() {
             loadSavedConfig();
-            renderArticlesList();
+            loadFromLiveJson();
         };
     </script>
 </body>
