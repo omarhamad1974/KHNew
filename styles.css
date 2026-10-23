@@ -1,11 +1,16 @@
 /* KHIP shared styles. Linked from every page: <link rel="stylesheet" href="styles.css"> */
 
 /* ---------- Base ---------- */
-html{scroll-behavior:smooth;scroll-padding-top:72px}
+html{height:100%}
 body{background:#f7f6f3;color:rgba(11,18,40,.8)}
 :focus-visible{outline:2px solid #1d4ed8;outline-offset:2px}
 .no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{scrollbar-width:none}
 .khip{font-family:Jost,system-ui,sans-serif;font-weight:500;color:#173a7a;letter-spacing:.03em}
+
+/* ---------- App shell: page scrolls inside #khip-page, the bar never moves ---------- */
+body.khip-shell{height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+#khip-page{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;scroll-behavior:smooth;scroll-padding-top:72px}
+body.lock #khip-page{overflow:hidden}
 
 /* ---------- Layout ---------- */
 .wrap{max-width:72rem;margin-left:auto;margin-right:auto;padding-left:1.25rem;padding-right:1.25rem}
@@ -45,8 +50,8 @@ body{background:#f7f6f3;color:rgba(11,18,40,.8)}
 @media(max-width:639px){#mena-map .lbl{display:none}}
 @media(prefers-reduced-motion:reduce){.pulse{animation:none}}
 
-/* ---------- Sticky bottom bar (built by footer.js) ---------- */
-#khip-bar{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:60;background:#1b2433;color:#fff;border-top:1px solid rgba(255,255,255,.1);box-shadow:0 -6px 24px rgba(10,15,25,.25);padding-bottom:env(safe-area-inset-bottom);font-family:inherit;transform:translate3d(0,0,0);-webkit-transform:translate3d(0,0,0);will-change:transform;contain:layout}
+/* ---------- Bottom bar (built by footer.js) ---------- */
+#khip-bar{position:relative;flex:0 0 auto;z-index:60;background:#1b2433;color:#fff;border-top:1px solid rgba(255,255,255,.1);padding-bottom:env(safe-area-inset-bottom);font-family:inherit}
 #khip-bar *{box-sizing:border-box}
 #khip-bar .kin{max-width:48rem;margin:0 auto}
 #khip-bar form{display:flex;gap:8px;padding:10px 12px 6px;margin:0}

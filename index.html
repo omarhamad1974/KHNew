@@ -66,7 +66,7 @@
 </main>
 
 <div id="modal" class="fixed inset-0 bg-ink/70 backdrop-blur-sm z-50 flex items-end md:items-center justify-center opacity-0 pointer-events-none transition-opacity duration-500" style="padding-bottom:var(--khip-h,0px)" data-act="close" role="dialog" aria-modal="true" aria-labelledby="m-title">
-  <div id="sheet" class="sheet closed relative bg-white w-full max-w-md md:max-w-2xl rounded-t-3xl md:rounded-3xl overflow-hidden" onclick="event.stopPropagation()">
+  <div id="sheet" class="sheet closed relative bg-white w-full max-w-md md:max-w-2xl rounded-t-3xl md:rounded-3xl overflow-hidden">
     <button data-act="close" aria-label="Close" class="absolute top-3 right-3 z-10 w-11 h-11 rounded-full bg-stone-100 hover:bg-stone-200 active:scale-95 flex items-center justify-center transition touch-manipulation"><i class="ph-light ph-x text-xl"></i></button>
     <div id="m-scroll" class="max-h-[calc(100dvh_-_var(--khip-h,0px)_-_1.5rem)] overflow-y-auto overscroll-contain p-6 md:p-9 pb-10"><div id="m-body" class="space-y-4"></div></div>
   </div>
@@ -180,7 +180,7 @@ function pick(i){
   setTimeout(()=>{
     c.innerHTML=`<div class="flex items-center gap-4"><span class="text-4xl">${flag(j)}</span><h3 class="font-display text-3xl font-semibold text-ink">${esc(j.country)}</h3></div><p class="mt-4 text-sm md:text-base leading-relaxed line-clamp-4 max-w-3xl">${esc(j.brief||'IP guidelines available upon inquiry.')}</p><div class="mt-6 text-center"><button data-act="jurmodal" data-i="${i}" class="text-sm bg-ink hover:bg-stone-800 text-white px-10 py-2.5 rounded-full transition">Process</button></div>`;
     c.style.transition='none';c.style.transform='translateX(24px)';void c.offsetWidth;
-    c.style.transition='opacity .6s ease,transform .7s cubic-bezier(.16,1,.3,1)';c.style.opacity=1;c.style.transform='none';
+    c.style.minHeight=Math.max(parseFloat(c.style.minHeight)||0,c.scrollHeight)+'px';c.style.transition='opacity .6s ease,transform .7s cubic-bezier(.16,1,.3,1)';c.style.opacity=1;c.style.transform='none';
   },300);
 }
 // Countries advance by themselves every 3 seconds
@@ -193,11 +193,11 @@ setInterval(()=>{
 function openModal(html){
   lastFocus=document.activeElement;$('m-body').innerHTML=html;
   $('modal').classList.remove('opacity-0','pointer-events-none');$('sheet').classList.remove('closed');$('m-scroll').scrollTop=0;
-  document.body.style.overflow='hidden';$('sheet').querySelector('button').focus({preventScroll:true});
+  document.body.classList.add('lock');$('sheet').querySelector('button').focus({preventScroll:true});
 }
 function closeModal(){
   $('modal').classList.add('opacity-0','pointer-events-none');$('sheet').classList.add('closed');
-  document.body.style.overflow='';if(location.hash.startsWith('#news-'))history.replaceState(null,'',location.pathname);
+  document.body.classList.remove('lock');if(location.hash.startsWith('#news-'))history.replaceState(null,'',location.pathname);
   lastFocus&&lastFocus.focus();
 }
 function openNews(id){

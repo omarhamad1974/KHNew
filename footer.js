@@ -10,15 +10,21 @@
   const nav=[['jurisdictions','ph-globe-hemisphere-west','Countries'],['services','ph-seal-check','Services'],['top','ph-house','Home'],['news','ph-newspaper','News'],['about','ph-info','About']];
   const bar=document.createElement('div');bar.id='khip-bar';
   bar.innerHTML=`<div class="kin"><form><div class="kf"><i class="ph-light ph-whatsapp-logo"></i><input aria-label="Message KHIP on WhatsApp" autocomplete="off"></div><button class="ks">Send</button></form><nav>${nav.map(([k,i,l])=>`<button type="button" data-go="${k}"><i class="ph-light ${i}"></i>${l}</button>`).join('')}</nav></div>`;
-  document.body.appendChild(bar);
-  // keep page content clear of the bar, and tell the page how tall it is
-  const sync=()=>{const h=bar.offsetHeight;document.documentElement.style.setProperty('--khip-h',h+'px');document.body.style.paddingBottom=(h+16)+'px'};
-  sync();window.addEventListener('resize',sync);if(window.ResizeObserver)new ResizeObserver(sync).observe(bar);
+  // App-shell layout: the page scrolls inside #khip-page and the bar sits below it as a normal
+  // flex row, so nothing (toolbars, content height changes, fades) can ever move the bar.
+  const body=document.body,me=document.currentScript;
+  body.classList.add('khip-shell');
+  let page=document.getElementById('khip-page');
+  if(!page){page=document.createElement('div');page.id='khip-page';
+    [...body.childNodes].forEach(n=>{if(n!==me&&n!==bar)page.appendChild(n)});body.appendChild(page)}
+  body.appendChild(bar);
+  const sync=()=>document.documentElement.style.setProperty('--khip-h',bar.offsetHeight+'px');
+  sync();addEventListener('resize',sync);if(window.ResizeObserver)new ResizeObserver(sync).observe(bar);
   const inp=bar.querySelector('input');
   bar.querySelector('form').addEventListener('submit',e=>{e.preventDefault();const v=inp.value.trim();if(v){wa(v);inp.value=''}});
   bar.addEventListener('click',e=>{
     const b=e.target.closest('[data-go]');if(!b)return;const k=b.dataset.go,el=document.getElementById(k);
-    if(k==='top')document.getElementById('app-top')?scrollTo({top:0,behavior:'smooth'}):location.href='index.html';
+    if(k==='top')document.getElementById('app-top')?page.scrollTo({top:0,behavior:'smooth'}):location.href='index.html';
     else el&&el.offsetParent!==null?el.scrollIntoView({behavior:'smooth'}):location.href='index.html#'+k;
   });
   let pi=0,ci=0,del=false;
