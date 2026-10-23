@@ -11,29 +11,8 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/light/style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/7.2.3/css/flag-icons.min.css">
 <script src="https://cdn.tailwindcss.com"></script>
-<script>tailwind.config={theme:{extend:{fontFamily:{display:['"Cormorant Garamond"','Georgia','serif'],sans:['Jost','system-ui','sans-serif']},colors:{ink:'#1b2433',gold:'#a8844f',brand:{50:'#eff6ff',100:'#dbeafe',600:'#1d4ed8',700:'#1e40af'}}}}}</script>
-<style type="text/tailwindcss">
-.wrap{@apply max-w-6xl mx-auto px-5 md:px-8}
-.band{@apply py-14 md:py-20}
-.h2{@apply font-display text-3xl md:text-[2.6rem] leading-tight font-medium text-ink}
-.rule{@apply block w-12 h-px bg-gold mt-3 mb-7}
-.card{@apply bg-white rounded-2xl border border-stone-200/80 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl}
-.slider{@apply flex gap-4 overflow-x-auto snap-x pb-3;scrollbar-width:none}
-.slider::-webkit-scrollbar{display:none}
-.slider>*{@apply snap-start flex-shrink-0}
-</style>
-<style>
-.no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{scrollbar-width:none}
-html{scroll-behavior:smooth;scroll-padding-top:72px}
-body{background:#f7f6f3;color:rgba(11,18,40,.8)}.khip{font-family:Jost,system-ui,sans-serif;font-weight:500;color:#173a7a;letter-spacing:.03em}
-:focus-visible{outline:2px solid #1d4ed8;outline-offset:2px}
-.slide{opacity:0;transition:opacity 1s ease}.slide.on{opacity:1}
-.slide.on img{animation:kb 9s ease-out forwards}
-@keyframes kb{from{transform:scale(1)}to{transform:scale(1.07)}}
-.rv{opacity:0;transform:translateY(20px);transition:opacity .9s ease,transform .9s cubic-bezier(.16,1,.3,1)}.rv.in{opacity:1;transform:none}
-.fu{opacity:0;transform:translateY(28px);transition:opacity .9s ease var(--d,0s),transform .9s cubic-bezier(.16,1,.3,1) var(--d,0s)}.fu.in{opacity:1;transform:none}
-.sheet{transition:transform .5s cubic-bezier(.16,1,.3,1),opacity .4s ease}.sheet.closed{opacity:0;transform:translateY(32px)}
-</style>
+<script src="tailwind-config.js"></script>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body class="font-sans font-light antialiased">
 <div id="app-top"></div>
