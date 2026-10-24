@@ -62,9 +62,9 @@ const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const SC={
  carousel:{label:'Carousel',icon:'fa-images',one:'slide',title:'title',req:['title'],f:[['title','Title'],['subtitle','Subtitle'],['tag','Tag'],['image','Image','img']]},
- jurisdictions:{label:'Countries',icon:'fa-globe-africa',one:'country',title:'country',req:['country'],f:[['country','Country'],['code','Country code, 2 letters (eg, ae, sa)'],['tag','Tag'],['brief','Overview','area'],['details','Filing details','area']]},
+ jurisdictions:{label:'Countries',icon:'fa-globe-africa',one:'country',title:'country',req:['country'],f:[['country','Country'],['code','Country code, 2 letters (eg, ae, sa)'],['tag','Tag'],['brief','Overview (the country card shows the first 5 lines)','area'],['details','Filing details','area']]},
  news:{label:'News',icon:'fa-newspaper',one:'article',title:'title',req:['title','excerpt'],f:[['title','Title'],['date','Date','date'],['image','Image','img'],['excerpt','Short summary','area'],['text','Full article','area']]},
- services:{label:'Services',icon:'fa-balance-scale',one:'service',title:'title',req:['title','description'],f:[['title','Title'],['icon','Icon (optional, e.g. ph-lightbulb)'],['description','Short description (on the card)','area'],['details','Detailed text (shown when "More" is pressed)','area']]},
+ services:{label:'Services',icon:'fa-balance-scale',one:'service',title:'title',req:['title','description'],f:[['title','Title'],['icon','Icon (optional, e.g. ph-lightbulb)'],['description','Short description (on the card)','area'],['details','Detailed text (shown when "More" is pressed)','area'],['page','Full page link (optional, e.g. patents.html)']]},
  products:{label:'Products',icon:'fa-file-contract',one:'product',title:'title',req:['title'],f:[['title','Title'],['category','Category'],['price','Price (or "Inquire")'],['image','Image','img']]},
  testimonials:{label:'Testimonials',icon:'fa-quote-left',one:'testimonial',title:'name',req:['name','text'],f:[['name','Client name'],['role','Role and company'],['text','Quote','area']]},
  employees:{label:'Team',icon:'fa-users',one:'team member',title:'name',req:['name','position'],f:[['name','Name'],['position','Position'],['image','Photo','img']]}
@@ -112,7 +112,7 @@ function tabs(){
 const inp='w-full px-3 py-2 text-sm rounded-lg border border-gray-300 bg-white font-normal';
 function fld(base,[k,l,t]){
   const p=base+k,v=get(D,p);let h;
-  if(t==='area')h=`<textarea data-p="${p}" aria-label="${esc(l)}" rows="5" class="${inp}">${esc(v)}</textarea>`;
+  if(t==='area')h=`<div class="flex items-center gap-1 mb-1"><button type="button" onmousedown="event.preventDefault()" data-act="fmt" data-k="b" data-t="${p}" title="Bold" class="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 text-sm font-bold">B</button><button type="button" onmousedown="event.preventDefault()" data-act="fmt" data-k="h" data-t="${p}" title="Subtitle" class="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 text-xs font-bold">H</button><button type="button" onmousedown="event.preventDefault()" data-act="fmt" data-k="l" data-t="${p}" title="Bullet list" class="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200"><i class="fas fa-list-ul text-xs"></i></button><span class="text-[11px] text-gray-500 ml-2">**bold** &nbsp; ## subtitle &nbsp; - bullet</span></div><textarea data-p="${p}" aria-label="${esc(l)}" rows="5" class="${inp}">${esc(v)}</textarea>`;
   else if(t==='img')h=`<div class="flex items-center gap-2"><img data-prev="${p}" src="${esc(imgSrc(v))}" alt="" onerror="this.style.visibility='hidden'" class="w-12 h-12 rounded-lg object-cover bg-gray-200 flex-shrink-0"><input data-p="${p}" aria-label="${esc(l)}" value="${esc(v)}" list="assets" placeholder="File name in assets, or upload" class="${inp}"><label class="flex-shrink-0 text-xs bg-brand-50 text-brand-700 font-bold px-3 py-2.5 rounded-lg cursor-pointer hover:bg-brand-100"><i class="fas fa-upload"></i><input type="file" accept="image/*" data-up="${p}" class="hidden"></label></div>`;
   else h=`<input data-p="${p}" aria-label="${esc(l)}" type="${t==='date'?'date':'text'}" value="${esc(v)}" class="${inp}">`;
   return `<div><span class="text-xs font-bold text-gray-700">${esc(l)}</span>${h}</div>`;
@@ -130,6 +130,18 @@ function view(){
     <div class="p-4 pt-1 space-y-3 border-t">${s.f.map(f=>fld(`${tab}.${i}.`,f)).join('')}</div></details>`).join('');
 }
 
+function fmt(k,p){
+  const ta=document.querySelector(`textarea[data-p="${p}"]`);if(!ta)return;
+  const s=ta.selectionStart,e=ta.selectionEnd,v=ta.value;
+  if(k==='b'){const sel=v.slice(s,e)||'bold text';ta.value=v.slice(0,s)+'**'+sel+'**'+v.slice(e);ta.setSelectionRange(s+2,s+2+sel.length)}
+  else{
+    const ls=v.lastIndexOf('\n',s-1)+1;let le=v.indexOf('\n',e);if(le<0)le=v.length;
+    const B=/^\s*[-*\u2022]\s+/,H=/^\s*##\s+/;
+    const block=v.slice(ls,le).split('\n').map(l=>k==='h'?(H.test(l)?l.replace(H,''):'## '+l.replace(B,'')):(B.test(l)?l.replace(B,''):'- '+l.replace(H,''))).join('\n');
+    ta.value=v.slice(0,ls)+block+v.slice(le);ta.setSelectionRange(ls,ls+block.length);
+  }
+  ta.focus();ta.dispatchEvent(new Event('input',{bubbles:true}));
+}
 function validate(){
   for(const [k,s] of Object.entries(SC))for(const [i,x] of (D[k]||[]).entries())for(const f of s.req)
     if(!String(x[f]??'').trim()){tab=k;openItem=`${k}.${i}`;tabs();view();return `${s.label}, item ${i+1}: "${f}" is required.`}
@@ -167,6 +179,7 @@ document.addEventListener('click',e=>{
   else if(a==='add'){const s=SC[tab];const o={id:String(Math.max(0,...arr.map(x=>+x.id||0))+1)};s.f.forEach(([k])=>o[k]='');arr.push(o);openItem=`${tab}.${arr.length-1}`;mark();tabs();view();document.querySelector('details[open] input')?.focus()}
   else if(a==='del'){if(confirm(`Delete "${arr[i][SC[tab].title]||'this item'}"?`)){arr.splice(i,1);openItem=null;mark();tabs();view()}}
   else if(a==='up'||a==='down'){const j=a==='up'?i-1:i+1;[arr[i],arr[j]]=[arr[j],arr[i]];openItem=`${tab}.${j}`;mark();view()}
+  else if(a==='fmt')fmt(t.dataset.k,t.dataset.t);
   else if(a==='save')save();
   else if(a==='backup'){const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([JSON.stringify(D,null,2)],{type:'application/json'}));l.download='app-data-backup.json';l.click()}
   else if(a==='out'){if(!dirty||confirm('You have unsaved changes. Sign out anyway?')){sessionStorage.removeItem('khip-admin-t');dirty=false;location.reload()}}

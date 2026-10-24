@@ -27,8 +27,8 @@
       "country": "Egypt",
       "code": "eg",
       "tag": "Jurisdiction",
-      "brief": "Egypt is modernizing its IP framework to attract investment. It is a member of the Paris Convention and the PCT.\n\nDirect filings can claim priority within 12 months. PCT applications can enter the national phase within 30 months.",
-      "details": "Required documents:\nPower of attorney, legalized by the Egyptian consulate (4 months).\nCertified priority document (3 months).\n\nLanguage:\nEnglish at filing. Arabic translation of the specification, claims and drawings within 6 months.\n\nDeadlines:\nRequest for examination within 3 months of notification. Annuities are paid yearly."
+      "brief": "Egypt is modernizing its IP framework to attract investment.\nIt is a member of the **Paris Convention** and the **PCT**.\nDirect filings can claim priority within **12 months**.\nPCT applications can enter the national phase within **30 months**.\nWe guide you through every step.",
+      "details": "## Required documents\n- **Power of attorney**, legalized by the Egyptian consulate (4 months)\n- **Deed of assignment**, legalized (4 months)\n- **Certified priority document** (3 months)\n\n## Language\nEnglish at filing. Arabic translation of the specification, claims and drawings within **6 months**.\n\n## Deadlines\n- Request for examination: within **3 months** of notification\n- Annuity fees: paid **every year**"
     },
     {
       "id": "2",
@@ -48,22 +48,6 @@
     },
     {
       "id": "4",
-      "country": "Jordan",
-      "code": "jo",
-      "tag": "Jurisdiction",
-      "brief": "Sample overview for Jordan. Replace this text with a short introduction to the IP system in Jordan, the main treaties it belongs to, and the usual filing routes for foreign applicants.\n\nA second paragraph can explain how long registration typically takes and what makes Jordan important for your clients.",
-      "details": "Required documents:\nPower of attorney (sample): legalization requirements and time frame.\nDeed of assignment (sample): when it is needed.\nCertified priority document (sample): deadline from filing.\n\nLanguage requirements:\nSample text describing translation rules in Jordan.\n\nDeadlines:\nRequest for examination: sample deadline.\nAnnuity fees: sample payment schedule.\n\nExamination process:\nSample description of formal and substantive examination, office actions and appeal options in Jordan."
-    },
-    {
-      "id": "5",
-      "country": "Kuwait",
-      "code": "kw",
-      "tag": "Jurisdiction",
-      "brief": "Sample overview for Kuwait. Replace this text with a short introduction to the IP system in Kuwait, the main treaties it belongs to, and the usual filing routes for foreign applicants.\n\nA second paragraph can explain how long registration typically takes and what makes Kuwait important for your clients.",
-      "details": "Required documents:\nPower of attorney (sample): legalization requirements and time frame.\nDeed of assignment (sample): when it is needed.\nCertified priority document (sample): deadline from filing.\n\nLanguage requirements:\nSample text describing translation rules in Kuwait.\n\nDeadlines:\nRequest for examination: sample deadline.\nAnnuity fees: sample payment schedule.\n\nExamination process:\nSample description of formal and substantive examination, office actions and appeal options in Kuwait."
-    },
-    {
-      "id": "6",
       "country": "Qatar",
       "code": "qa",
       "tag": "Jurisdiction",
@@ -71,15 +55,7 @@
       "details": "Required documents:\nPower of attorney (sample): legalization requirements and time frame.\nDeed of assignment (sample): when it is needed.\nCertified priority document (sample): deadline from filing.\n\nLanguage requirements:\nSample text describing translation rules in Qatar.\n\nDeadlines:\nRequest for examination: sample deadline.\nAnnuity fees: sample payment schedule.\n\nExamination process:\nSample description of formal and substantive examination, office actions and appeal options in Qatar."
     },
     {
-      "id": "7",
-      "country": "Bahrain",
-      "code": "bh",
-      "tag": "Jurisdiction",
-      "brief": "Sample overview for Bahrain. Replace this text with a short introduction to the IP system in Bahrain, the main treaties it belongs to, and the usual filing routes for foreign applicants.\n\nA second paragraph can explain how long registration typically takes and what makes Bahrain important for your clients.",
-      "details": "Required documents:\nPower of attorney (sample): legalization requirements and time frame.\nDeed of assignment (sample): when it is needed.\nCertified priority document (sample): deadline from filing.\n\nLanguage requirements:\nSample text describing translation rules in Bahrain.\n\nDeadlines:\nRequest for examination: sample deadline.\nAnnuity fees: sample payment schedule.\n\nExamination process:\nSample description of formal and substantive examination, office actions and appeal options in Bahrain."
-    },
-    {
-      "id": "8",
+      "id": "5",
       "country": "Oman",
       "code": "om",
       "tag": "Jurisdiction",
@@ -87,12 +63,52 @@
       "details": "Required documents:\nPower of attorney (sample): legalization requirements and time frame.\nDeed of assignment (sample): when it is needed.\nCertified priority document (sample): deadline from filing.\n\nLanguage requirements:\nSample text describing translation rules in Oman.\n\nDeadlines:\nRequest for examination: sample deadline.\nAnnuity fees: sample payment schedule.\n\nExamination process:\nSample description of formal and substantive examination, office actions and appeal options in Oman."
     },
     {
-      "id": "9",
+      "id": "6",
+      "country": "Bahrain",
+      "code": "bh",
+      "tag": "Jurisdiction",
+      "brief": "Sample overview for Bahrain. Replace this text with a short introduction to the IP system in Bahrain, the main treaties it belongs to, and the usual filing routes for foreign applicants.\n\nA second paragraph can explain how long registration typically takes and what makes Bahrain important for your clients.",
+      "details": "Required documents:\nPower of attorney (sample): legalization requirements and time frame.\nDeed of assignment (sample): when it is needed.\nCertified priority document (sample): deadline from filing.\n\nLanguage requirements:\nSample text describing translation rules in Bahrain.\n\nDeadlines:\nRequest for examination: sample deadline.\nAnnuity fees: sample payment schedule.\n\nExamination process:\nSample description of formal and substantive examination, office actions and appeal options in Bahrain."
+    },
+    {
+      "id": "7",
+      "country": "Kuwait",
+      "code": "kw",
+      "tag": "Jurisdiction",
+      "brief": "Sample overview for Kuwait. Replace this text with a short introduction to the IP system in Kuwait, the main treaties it belongs to, and the usual filing routes for foreign applicants.\n\nA second paragraph can explain how long registration typically takes and what makes Kuwait important for your clients.",
+      "details": "Required documents:\nPower of attorney (sample): legalization requirements and time frame.\nDeed of assignment (sample): when it is needed.\nCertified priority document (sample): deadline from filing.\n\nLanguage requirements:\nSample text describing translation rules in Kuwait.\n\nDeadlines:\nRequest for examination: sample deadline.\nAnnuity fees: sample payment schedule.\n\nExamination process:\nSample description of formal and substantive examination, office actions and appeal options in Kuwait."
+    },
+    {
+      "id": "8",
+      "country": "Jordan",
+      "code": "jo",
+      "tag": "Jurisdiction",
+      "brief": "Sample overview for Jordan. Replace this text with a short introduction to the IP system in Jordan, the main treaties it belongs to, and the usual filing routes for foreign applicants.\n\nA second paragraph can explain how long registration typically takes and what makes Jordan important for your clients.",
+      "details": "Required documents:\nPower of attorney (sample): legalization requirements and time frame.\nDeed of assignment (sample): when it is needed.\nCertified priority document (sample): deadline from filing.\n\nLanguage requirements:\nSample text describing translation rules in Jordan.\n\nDeadlines:\nRequest for examination: sample deadline.\nAnnuity fees: sample payment schedule.\n\nExamination process:\nSample description of formal and substantive examination, office actions and appeal options in Jordan."
+    },
+    {
+      "country": "Algeria",
+      "code": "dz",
+      "tag": "Jurisdiction",
+      "brief": "Sample overview for Algeria. Replace this text with a short introduction to the IP system in Algeria, the main treaties it belongs to, and the usual filing routes for foreign applicants.\n\nA second paragraph can explain how long registration typically takes and what makes Algeria important for your clients.",
+      "details": "Required documents:\nPower of attorney (sample): legalization requirements and time frame.\nDeed of assignment (sample): when it is needed.\nCertified priority document (sample): deadline from filing.\n\nLanguage requirements:\nSample text describing translation rules in Algeria.\n\nDeadlines:\nRequest for examination: sample deadline.\nAnnuity fees: sample payment schedule.\n\nExamination process:\nSample description of formal and substantive examination, office actions and appeal options in Algeria.",
+      "id": "9"
+    },
+    {
+      "id": "10",
       "country": "Morocco",
       "code": "ma",
       "tag": "Jurisdiction",
       "brief": "Sample overview for Morocco. Replace this text with a short introduction to the IP system in Morocco, the main treaties it belongs to, and the usual filing routes for foreign applicants.\n\nA second paragraph can explain how long registration typically takes and what makes Morocco important for your clients.",
       "details": "Required documents:\nPower of attorney (sample): legalization requirements and time frame.\nDeed of assignment (sample): when it is needed.\nCertified priority document (sample): deadline from filing.\n\nLanguage requirements:\nSample text describing translation rules in Morocco.\n\nDeadlines:\nRequest for examination: sample deadline.\nAnnuity fees: sample payment schedule.\n\nExamination process:\nSample description of formal and substantive examination, office actions and appeal options in Morocco."
+    },
+    {
+      "country": "Tunisia",
+      "code": "tn",
+      "tag": "Jurisdiction",
+      "brief": "Sample overview for Tunisia. Replace this text with a short introduction to the IP system in Tunisia, the main treaties it belongs to, and the usual filing routes for foreign applicants.\n\nA second paragraph can explain how long registration typically takes and what makes Tunisia important for your clients.",
+      "details": "Required documents:\nPower of attorney (sample): legalization requirements and time frame.\nDeed of assignment (sample): when it is needed.\nCertified priority document (sample): deadline from filing.\n\nLanguage requirements:\nSample text describing translation rules in Tunisia.\n\nDeadlines:\nRequest for examination: sample deadline.\nAnnuity fees: sample payment schedule.\n\nExamination process:\nSample description of formal and substantive examination, office actions and appeal options in Tunisia.",
+      "id": "11"
     }
   ],
   "news": [
@@ -151,14 +167,16 @@
       "title": "Patents",
       "icon": "ph-lightbulb",
       "description": "Exclusive rights for new inventions, filed directly or through the PCT.",
-      "details": "We prepare, file and prosecute patent applications in Egypt and across the region, including PCT national phase entries.\n\nOur service includes patentability advice, drafting support, responses to office actions, annuity payments and post-grant matters.\n\nSample text: replace with your own detailed description."
+      "details": "We prepare, file and prosecute patent applications in Egypt and across the region, including PCT national phase entries.\n\nOur service includes patentability advice, drafting support, responses to office actions, annuity payments and post-grant matters.\n\nSample text: replace with your own detailed description.",
+      "page": "patents.html"
     },
     {
       "id": "2",
       "title": "Trademarks",
       "icon": "ph-seal-check",
       "description": "Protect the names, logos and symbols that identify your goods and services.",
-      "details": "We search, file and manage trademark registrations, renewals, oppositions and recordals.\n\nOur team also advises on portfolio strategy and coordinates filings in multiple countries.\n\nSample text: replace with your own detailed description."
+      "details": "We search, file and manage trademark registrations, renewals, oppositions and recordals.\n\nOur team also advises on portfolio strategy and coordinates filings in multiple countries.\n\nSample text: replace with your own detailed description.",
+      "page": "trademarks.html"
     },
     {
       "id": "3",
@@ -186,7 +204,8 @@
       "title": "Translation",
       "icon": "ph-translate",
       "description": "Accredited legal and technical translation, including Arabic patent texts.",
-      "details": "KH Translation provides accredited, fast and precise translation of patents, contracts and legal documents.\n\nSample text: replace with your own detailed description."
+      "details": "KH Translation provides accredited, fast and precise translation of patents, contracts and legal documents.\n\nSample text: replace with your own detailed description.",
+      "page": "translation.html"
     }
   ],
   "products": [
