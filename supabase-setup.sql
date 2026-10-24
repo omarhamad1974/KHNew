@@ -68,7 +68,7 @@ using (bucket_id = 'client-files' and public.is_admin());
 -- 5. Make yourself the first admin (change the email, then run the whole script)
 insert into public.admins (user_id, email)
 select id, email from auth.users
-where lower(email) = lower('YOU@YOUR-DOMAIN.COM')
+where lower(email) = lower('omar.hamad@gmail.com')
 on conflict (user_id) do nothing;
 
 -- Check: this should return one row with your email.
