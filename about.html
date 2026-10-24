@@ -156,7 +156,7 @@ function openProcess(n){
   $('m-body').innerHTML=`<div class="flex items-center gap-4 pr-10"><span class="text-4xl">${flag(n)}</span><h3 id="m-title" class="font-display text-3xl font-semibold text-ink">${esc(n)} Process</h3></div>`
     +(j.brief?`<div class="bg-stone-50 p-5 rounded-2xl border border-stone-200"><h4 class="font-display text-lg font-semibold text-ink mb-1">Overview</h4><div class="text-sm leading-relaxed">${KRich.rich(j.brief)}</div></div>`:'')
     +`<div><h4 class="font-display text-lg font-semibold text-ink mb-1">Filing guidelines</h4><div class="text-sm leading-relaxed">${KRich.rich(j.details||j.brief||'Filing guidelines for '+n+' are available on request. Message us and we will guide you through the process.')}</div></div>`
-    +`<button type="button" data-inq="${esc(n)}" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white py-3 rounded-full text-sm transition"><i class="ph-light ph-whatsapp-logo"></i> Inquire about ${esc(n)}</button>`;
+    +`<button type="button" data-inq="${esc(n)}" class="w-full bg-[#d9c8a4] hover:bg-[#cdb98f] text-[#1b2433] py-3 rounded-full text-sm transition"><i class="ph-light ph-whatsapp-logo"></i> Inquire about ${esc(n)}</button>`;
   $('modal').classList.remove('opacity-0','pointer-events-none');$('sheet').classList.remove('closed');$('m-scroll').scrollTop=0;
   document.body.classList.add('lock');$('sheet').querySelector('button').focus({preventScroll:true});
 }
