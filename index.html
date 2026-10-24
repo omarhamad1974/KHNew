@@ -42,7 +42,6 @@
 
   <section id="jurisdictions" class="band bg-white hidden"><div class="wrap">
     <div class="flex items-end justify-between gap-4"><div><h2 class="h2">Jurisdictions</h2><span class="rule"></span></div><span id="jur-count" class="text-sm text-stone-500 mb-9"></span></div>
-    <input id="jur-search" type="search" placeholder="Search jurisdictions" aria-label="Search jurisdictions" class="w-full md:w-72 mb-4 px-4 py-2.5 text-sm rounded-full border border-stone-300 bg-stone-50">
     <div id="jur-chips" class="relative flex gap-2.5 overflow-x-auto no-scrollbar pb-3"></div>
     <div id="jur-card" class="mt-2 rounded-3xl bg-stone-50 border border-stone-200 p-6 md:p-9"></div>
   </div></section>
@@ -175,8 +174,7 @@ function setSlide(i){
 }
 
 function chips(){
-  const q=$('jur-search').value.trim().toLowerCase();
-  const m=jur.map((j,i)=>[j,i]).filter(([j])=>!q||(j.country||'').toLowerCase().includes(q));
+  const m=jur.map((j,i)=>[j,i]);
   window.jm=m.map(x=>x[1]);$('jur-count').textContent=`${m.length} of ${jur.length} jurisdictions`;
   $('jur-chips').innerHTML=m.map(([j,i])=>`<button data-act="jur" data-i="${i}" id="chip-${i}" class="flex items-center gap-2 px-4 py-2 rounded-full text-sm flex-shrink-0 bg-white border border-stone-300 transition"><span class="text-base">${flag(j)}</span>${esc(j.country)}</button>`).join('')||'<p class="text-sm py-2">No matching country. Message us and we will check for you.</p>';
 }
@@ -197,7 +195,7 @@ function pick(i){
 // Countries advance by themselves every 3 seconds
 setInterval(()=>{
   const sec=$('jurisdictions'),m=window.jm||[];
-  if(REDUCED||paused(sec)||m.length<2||$('jur-search').value||!$('modal').classList.contains('pointer-events-none'))return;
+  if(REDUCED||paused(sec)||m.length<2||!$('modal').classList.contains('pointer-events-none'))return;
   pick(m[(m.indexOf(jc)+1)%m.length]);
 },3000);
 
@@ -241,7 +239,6 @@ document.addEventListener('keydown',e=>{
     if(e.shiftKey&&a===f[0]){e.preventDefault();f.at(-1).focus()}else if(!e.shiftKey&&a===f.at(-1)){e.preventDefault();f[0].focus()}
   }
 });
-$('jur-search').addEventListener('input',()=>{chips();const q=$('jur-search').value.trim().toLowerCase(),f=jur.findIndex(j=>(j.country||'').toLowerCase().includes(q));if(f>-1)pick(f)});
 // Fade-up on scroll: sections, and individual .fu items
 const io=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}}),{threshold:.08});
 const observeFu=()=>document.querySelectorAll('.fu:not(.in)').forEach(e=>io.observe(e));
