@@ -12,9 +12,8 @@
   const box=document.createElement('div');box.className='auth-box';
   const wrap=document.querySelector('header .wrap');
   if(wrap&&wrap.lastElementChild){const last=wrap.lastElementChild,w=document.createElement('div');w.className='flex items-center gap-2 md:gap-3';wrap.replaceChild(w,last);w.append(box,last)}
-  const paint=()=>{box.innerHTML=user
-    ?'<a class="auth-btn" href="my-stuff.html" aria-label="My files"><i class="ph-light ph-folder-open"></i><span>My files</span></a><button class="auth-ico" data-a="out" aria-label="Sign out"><i class="ph-light ph-sign-out"></i></button>'
-    :'<button class="auth-btn" data-a="login" aria-label="Login"><i class="ph-light ph-user"></i><span>Login</span></button>'};
+  // Sign-in lives behind the "My files" button in the bottom bar; the header only offers sign-out once signed in.
+  const paint=()=>{box.innerHTML=user?'<button class="auth-ico" data-a="out" aria-label="Sign out" title="Sign out"><i class="ph-light ph-sign-out"></i></button>':''};
   box.addEventListener('click',async e=>{const b=e.target.closest('[data-a]');if(!b)return;
     if(b.dataset.a==='login')open('login');
     else{await sb.auth.signOut();if(/my-stuff/.test(location.pathname))location.href='index.html'}});
@@ -27,7 +26,7 @@
   back.addEventListener('click',e=>{if(e.target===back||e.target.closest('.auth-x'))close()});
   addEventListener('keydown',e=>{if(e.key==='Escape')close()});
   function open(mode){
-    const T={login:['Sign in','Access your files.'],reset:['Reset password','We will email you a reset link.'],newpw:['Set your password','Choose a password with at least 8 characters.'],signup:['Create account','Use your email address.']}[mode];
+    const T={login:['Sign in','Access your files. You will stay signed in on this device until you sign out.'],reset:['Reset password','We will email you a reset link.'],newpw:['Set your password','Choose a password with at least 8 characters.'],signup:['Create account','Use your email address.']}[mode];
     const body=back.querySelector('#auth-body'),em=mode!=='newpw',pw=mode!=='reset';
     body.innerHTML=`<h2 id="auth-t" class="auth-h">${T[0]}</h2><p class="auth-p">${T[1]}</p>
       <form novalidate>${em?'<input class="auth-in" name="email" type="email" placeholder="Email" autocomplete="email" required>':''}${pw?`<input class="auth-in" name="password" type="password" placeholder="Password" autocomplete="${mode==='login'?'current-password':'new-password'}" required>`:''}
@@ -39,7 +38,7 @@
       msg('');btn.disabled=true;
       try{
         if(!sb)throw new Error('Sign-in is not set up yet.');
-        if(mode==='login'){const {error}=await sb.auth.signInWithPassword({email,password:p});if(error)throw new Error('Incorrect email or password.');close()}
+        if(mode==='login'){const {error}=await sb.auth.signInWithPassword({email,password:p});if(error)throw new Error('Incorrect email or password.');close();if(!/my-stuff/.test(location.pathname))location.href='my-stuff.html'}
         else if(mode==='reset'){await sb.auth.resetPasswordForEmail(email,{redirectTo:base+'my-stuff.html'});msg('If this email is registered, a reset link is on its way.',1)}
         else if(mode==='signup'){const {error}=await sb.auth.signUp({email,password:p,options:{emailRedirectTo:base+'my-stuff.html'}});if(error)throw error;msg('Check your email to confirm your account.',1)}
         else{if(p.length<8)throw new Error('Use at least 8 characters.');const {error}=await sb.auth.updateUser({password:p});if(error)throw error;close();location.href='my-stuff.html'}
@@ -53,7 +52,7 @@
       await Promise.all([window.supabase?0:load(LIB),window.KHIP_SUPABASE?0:load('supabase-config.js')]);
       C=window.KHIP_SUPABASE;
       if(!C||/YOUR-/.test(C.url||'')){console.warn('KHIP: add your Supabase URL and anon key to supabase-config.js');return}
-      sb=window.supabase.createClient(C.url,C.anonKey);
+      sb=window.supabase.createClient(C.url,C.anonKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:'khip-auth'}});
       const {data}=await sb.auth.getSession();user=data.session?data.session.user:null;paint();
       sb.auth.onAuthStateChange((ev,s)=>{user=s?s.user:null;paint();subs.forEach(f=>f(user));
         if(ev==='PASSWORD_RECOVERY'||(ev==='SIGNED_IN'&&invite&&!shown)){shown=true;open('newpw')}});

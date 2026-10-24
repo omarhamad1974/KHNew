@@ -98,3 +98,11 @@ body.lock #khip-page{overflow:hidden}
 .auth-go:hover{background:#1d4ed8}.auth-go:disabled{opacity:.6;cursor:wait}
 .auth-links{display:flex;justify-content:space-between;gap:1rem;margin-top:1rem;font-size:.8125rem}
 .auth-links a{color:#1e40af;text-decoration:underline;text-underline-offset:3px}
+
+/* ---------- Reduced motion: no slide-ins, zooms or fades for people who ask for less movement ---------- */
+@media(prefers-reduced-motion:reduce){
+  html,#khip-page{scroll-behavior:auto}
+  .rv,.fu{opacity:1;transform:none;transition:none}
+  .slide,.slide.on img,.card,.sheet{transition:none;animation:none}
+  .card:hover{transform:none}
+}
