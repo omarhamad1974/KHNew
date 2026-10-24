@@ -8,12 +8,12 @@
   css('styles.css','styles.css');css('phosphor','https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/light/style.css');
   let sb=null,user=null,C=null,shown=false;const subs=[];
 
-  // Header buttons: Login, or My stuff + sign out
+  // Header buttons: Login, or My files + sign out
   const box=document.createElement('div');box.className='auth-box';
   const wrap=document.querySelector('header .wrap');
   if(wrap&&wrap.lastElementChild){const last=wrap.lastElementChild,w=document.createElement('div');w.className='flex items-center gap-2 md:gap-3';wrap.replaceChild(w,last);w.append(box,last)}
   const paint=()=>{box.innerHTML=user
-    ?'<a class="auth-btn" href="my-stuff.html" aria-label="My stuff"><i class="ph-light ph-folder-open"></i><span>My stuff</span></a><button class="auth-ico" data-a="out" aria-label="Sign out"><i class="ph-light ph-sign-out"></i></button>'
+    ?'<a class="auth-btn" href="my-stuff.html" aria-label="My files"><i class="ph-light ph-folder-open"></i><span>My files</span></a><button class="auth-ico" data-a="out" aria-label="Sign out"><i class="ph-light ph-sign-out"></i></button>'
     :'<button class="auth-btn" data-a="login" aria-label="Login"><i class="ph-light ph-user"></i><span>Login</span></button>'};
   box.addEventListener('click',async e=>{const b=e.target.closest('[data-a]');if(!b)return;
     if(b.dataset.a==='login')open('login');

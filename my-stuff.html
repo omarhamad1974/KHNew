@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My stuff | KHIP Intellectual Properties</title>
+<title>My files | KHIP Intellectual Properties</title>
 <meta name="robots" content="noindex"><meta name="description" content="Your private files from KHIP.">
 <meta name="theme-color" content="#1d4ed8">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,7 +25,7 @@
 </header>
 <main>
 <section class="band"><div class="wrap">
-  <div class="fu"><h1 class="font-display text-5xl md:text-7xl font-medium text-ink leading-[1.05]">My stuff</h1><span class="rule mt-5"></span>
+  <div class="fu"><h1 class="font-display text-5xl md:text-7xl font-medium text-ink leading-[1.05]">My files</h1><span class="rule mt-5"></span>
   <p id="who" class="text-base md:text-lg max-w-xl">Your private files from KHIP, ready to download.</p></div>
   <div id="crumb" class="mt-8 flex flex-wrap items-center gap-2 text-sm"></div>
   <div id="files" class="mt-4 grid gap-3" aria-live="polite"></div>
@@ -52,7 +52,7 @@ async function show(){
   $('files').innerHTML='<div class="card p-8 text-center text-stone-500">Loading your files...</div>';
   const {data,error}=await sb.storage.from(bucket).list([root,...path].join('/'),{limit:500,sortBy:{column:'name',order:'asc'}});
   if(error)return note('We could not load your files. Please refresh and try again.');
-  $('crumb').innerHTML=`<button data-up="-1" class="underline underline-offset-4">My stuff</button>`+path.map((p,i)=>`<span>/</span><button data-up="${i}" class="underline underline-offset-4">${esc(p)}</button>`).join('');
+  $('crumb').innerHTML=`<button data-up="-1" class="underline underline-offset-4">My files</button>`+path.map((p,i)=>`<span>/</span><button data-up="${i}" class="underline underline-offset-4">${esc(p)}</button>`).join('');
   const items=(data||[]).filter(f=>!f.name.startsWith('.')).sort((a,b)=>(a.id===null?0:1)-(b.id===null?0:1));
   if(!items.length)return note('No files here yet. We will add your documents as soon as they are ready.');
   $('files').innerHTML=items.map((f,i)=>{
