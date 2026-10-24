@@ -1,6 +1,6 @@
 {
   "about": "KHIP delivers high-performance IP legal solutions designed for fast mobile navigation.",
-  "aboutMainText": "KHIP is dedicated to delivering high-performance IP and legal services across the Middle East.",
+  "aboutMainText": "KHIP helps protecting inventions through practices that genuinely comprehend Intellectual property. KHIP represents a wide range of clients from individual inventors to multinational companies. Serving great innovators, helping to protect countless ideas, nurture discoveries, bring new\nconcepts to market, and secure the most profitable resources.",
   "carousel": [
     {
       "id": "1",
@@ -15,6 +15,13 @@
       "subtitle": "Discover legal and IP services.",
       "tag": "Featured",
       "image": "./assets/slider2.jpg"
+    },
+    {
+      "id": "3",
+      "title": "Making a difference ",
+      "subtitle": "To people lives and people business ",
+      "tag": "",
+      "image": "mvm9bed7-65080.jpg"
     }
   ],
   "jurisdictions": [
@@ -41,6 +48,14 @@
       "tag": "Jurisdiction",
       "brief": "IP guidelines available upon inquiry.",
       "details": "PCT Filing Requirements\nA Power of Attorney executed in the name of the applicant duly notarized and (Apostilled or legalized up to the Saudi Consulate) (to be used for all subsequent filings for the company).\n\nSpecification in English and Arabic.\n\nInformation\nPriority: The time limit for the PCT national phase entry is 30 months from the earliest date of priority for national phases.\n\nExamination: The Request for examination must be filed once the formal examination has finalized and the invitation for paying substantive examination is issued.\n\nAnnuities: Annuities fees must be paid every year during the first 3 month of the calendar year (from January 1 to March 31) calculated from the international filing date for PCT application. It is still possible to pay the annuity within 3 months after the deadline (April 1 to June 30) with penalty for late payment fee.\n\nLegalization: The Power of attorney and the supporting documents are no longer necessary to be legalized up to the Consulate of Saudi Arabia if the applicant’s country is a member of The Hague Convention. The documents only need to be Apostilled."
+    },
+    {
+      "id": "4",
+      "country": "Oman",
+      "code": "",
+      "tag": "",
+      "brief": "Egypt boasts a rich history of innovation, with recent efforts focused on modernizing intellectual property laws to spur economic growth and technological advancement. Positioned in the heart of the Middle East, Egypt is actively enhancing its IP framework to attract investment and become a hub for creativity and entrepreneurship, leveraging its burgeoning market and increased emphasis on IP protection.\n\nEgypt's robust legal framework ensures comprehensive patent protection, benefiting both local and international businesses operating within the country. Amidst an expanding economy and increasing globalization, Egypt presents a dynamic marketplace ripe with opportunities for establishing a strong base. It's imperative for entrepreneurs and enterprises to grasp the complexities of Egypt's patent system and its protective measures to thrive in this diverse and evolving market. Notably, Egypt's membership in the Paris Convention permits direct application filing within a 12-month period from the initial priority application, while its participation in the PCT treaty facilitates the acceptance of all PCT applications for national phase entry within 30 months from the first priority application.",
+      "details": ""
     }
   ],
   "news": [
@@ -50,6 +65,14 @@
       "image": "./assets/slider1.jpg",
       "excerpt": "KHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egypt",
       "text": "KHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egypt\n\nKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egyptKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egyptKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egypt\n\nKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egyptKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egypt\n\nKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egyptKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egyptKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egypt"
+    },
+    {
+      "id": "2",
+      "title": "IP future in the middle east ",
+      "date": "2026-10-24",
+      "image": "slider1.jpg",
+      "excerpt": "What will be the future of IP in the region and middle east ",
+      "text": "What will be the future of IP in the region and middle east What will be the future of IP in the region and middle east What will be the future of IP in the region and middle east "
     }
   ],
   "services": [
@@ -117,6 +140,12 @@
       "name": "Magdy Gamal",
       "position": "Senior Project Manager",
       "image": "./assets/Magdy-Gamal.jpg"
+    },
+    {
+      "id": "5",
+      "name": "Rania Gamal",
+      "position": "Translation Department Technical Head",
+      "image": "Rania-Gamal.jpg"
     }
   ]
 }
