@@ -304,7 +304,7 @@ if(tk&&$('f-o').value){$('f-t').value=tk;$('f-s').checked=true;connect({o:$('f-o
 const K=(()=>{
   const C=window.KHIP_SUPABASE||{},BUCKET=C.bucket||'client-files';
   const configured=!!(C.url&&C.anonKey&&!/YOUR-/.test(C.url)&&window.supabase);
-  let sb=null,me=null,clients=[],folders=[],noFn=false,cur=null,path=[],started=false,recovery=/type=recovery/.test(location.hash);
+  let sb=null,me=null,clients=[],folders=[],noFn=false,cur=null,curLabel='',path=[],started=false,sectors=[],subs={},sectErr=false,tabK='clients',recovery=/type=recovery/.test(location.hash);
   const redirect=location.origin+location.pathname.replace(/[^/]*$/,'')+'my-stuff.html';
   const adminUrl=location.origin+location.pathname+'#clients';
   const main=()=>$('k-main');
@@ -385,16 +385,20 @@ const K=(()=>{
   async function load(){
     main().innerHTML='<p class="text-sm text-gray-500 p-4">Loading clients...</p>';
     noFn=false;clients=[];folders=[];
-    const [fr]=await Promise.all([
+    const [fr,sr,br]=await Promise.all([
       sb.storage.from(BUCKET).list('',{limit:1000,sortBy:{column:'name',order:'asc'}}),
+      sb.from('sectors').select('id,name').order('name'),
+      sb.from('subscriptions').select('user_id,sector_id'),
       fn('list').then(r=>{clients=r.clients||[]}).catch(e=>{if(e.message==='NOFN')noFn=true;else toast(e.message,false)})
     ]);
-    folders=(fr.data||[]).filter(f=>f.id===null).map(f=>f.name);
+    folders=(fr.data||[]).filter(f=>f.id===null&&f.name!=='sectors').map(f=>f.name);
+    sectErr=!!(sr.error||br.error);sectors=sectErr?[]:(sr.data||[]);subs={};
+    (br.data||[]).forEach(r=>(subs[r.user_id]=subs[r.user_id]||new Set()).add(r.sector_id));
     if(fr.error)toast('Could not read the bucket: '+fr.error.message,false);
   }
   const rowsFor=()=>{
     const m=new Map();
-    clients.forEach(c=>m.set(c.email,{email:c.email,account:true,confirmed:c.confirmed,last:c.last_sign_in_at,folder:false}));
+    clients.forEach(c=>m.set(c.email,{id:c.id,email:c.email,account:true,confirmed:c.confirmed,last:c.last_sign_in_at,folder:false}));
     folders.forEach(n=>{const k=n.toLowerCase(),r=m.get(k);if(r)r.folder=true;else m.set(k,{email:k,account:false,folder:true})});
     return [...m.values()].sort((a,b)=>a.email.localeCompare(b.email));
   };
@@ -405,9 +409,13 @@ const K=(()=>{
   async function home(){
     cur=null;path=[];await load();paintHome();
   }
-  function paintHome(){
+  const paintHome=()=>tabK==='sectors'?paintSectors():paintClients();
+  const nav=()=>`<div class="flex gap-1.5">${[['clients','Clients','fa-users'],['sectors','Sectors','fa-layer-group']].map(([k,l,i])=>`<button data-k="tab" data-t="${k}" class="text-xs font-bold px-4 py-2 rounded-xl ${k===tabK?'bg-gray-900 text-white':'bg-white border border-gray-200 hover:bg-gray-50'}"><i class="fas ${i}"></i> ${l}</button>`).join('')}</div>`
+    +(sectErr?'<div class="text-xs text-amber-900 bg-amber-50 border border-amber-200 rounded-2xl p-4"><b>Sectors are not set up yet.</b> Run the latest <code>supabase-setup.sql</code> in the Supabase SQL Editor (it is safe to run again).</div>':'');
+  const chips=r=>r.account&&sectors.length?'<div class="basis-full flex flex-wrap items-center gap-1.5 pt-2 border-t border-gray-100"><span class="text-[11px] text-gray-500 mr-1">Sectors</span>'+sectors.map(x=>{const on=subs[r.id]&&subs[r.id].has(x.id);return `<button data-k="sub" data-u="${esc(r.id)}" data-s="${esc(x.id)}" aria-pressed="${!!on}" class="text-[11px] font-bold px-2.5 py-1 rounded-full border ${on?'bg-brand-600 border-brand-600 text-white':'bg-white border-gray-300 text-gray-600 hover:bg-gray-50'}">${on?'<i class="fas fa-check"></i> ':''}${esc(x.name)}</button>`}).join('')+'</div>':'';
+  function paintClients(){
     const rows=rowsFor().filter(r=>!filter||r.email.includes(filter.toLowerCase()));
-    main().innerHTML=
+    main().innerHTML=nav()+
     (noFn?`<div class="text-xs text-amber-900 bg-amber-50 border border-amber-200 rounded-2xl p-4"><b>Account tools are not deployed yet.</b> You can still manage files in existing folders. To invite clients from here, deploy the <code>admin-clients</code> function (see README.md, step 4).</div>`:'')
     +`<form data-k-form="invite" class="bg-white p-4 rounded-2xl border border-gray-200 space-y-2"><label class="block text-xs font-bold">Invite a new client<span class="block font-normal text-gray-500">They receive an email to set a password. A private folder named after their email is created.</span></label>
       <div class="flex gap-2"><input name="email" type="email" required placeholder="client@company.com" autocomplete="off" class="${inp}"><button class="flex-shrink-0 text-xs bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 text-white font-bold px-4 py-2 rounded-lg whitespace-nowrap"><i class="fas fa-paper-plane"></i> ${noFn?'Create folder':'Send invite'}</button></div></form>`
@@ -420,7 +428,17 @@ const K=(()=>{
         <button data-k="open" data-e="${esc(r.email)}" class="text-xs bg-brand-50 text-brand-700 hover:bg-brand-100 font-bold px-3 py-2 rounded-lg"><i class="fas fa-folder-open"></i> Files</button>
         ${r.account?`<button data-k="resend" data-e="${esc(r.email)}" data-c="${r.confirmed?1:0}" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-lg" title="${r.confirmed?'Send a password-reset email':'Send the invite again'}"><i class="fas fa-envelope"></i></button><button data-k="remove" data-e="${esc(r.email)}" class="w-8 h-8 rounded-lg bg-red-50 text-red-600" aria-label="Remove account" title="Remove account"><i class="fas fa-user-xmark text-xs"></i></button>`
         :(noFn?'':`<button data-k="invite-folder" data-e="${esc(r.email)}" class="text-xs bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold px-3 py-2 rounded-lg">Invite</button>`)}
-      </div></div>`).join('');
+      </div>${chips(r)}</div>`).join('');
+  }
+  const slug=n=>String(n).normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+  function paintSectors(){
+    const count=id=>Object.values(subs).filter(x=>x.has(id)).length;
+    main().innerHTML=nav()
+    +`<form data-k-form="sector" class="bg-white p-4 rounded-2xl border border-gray-200 space-y-2"><label class="block text-xs font-bold">Add a sector<span class="block font-normal text-gray-500">A shared library. Everything you upload to it is visible to every client subscribed to that sector. Tick sectors per client on the Clients tab.</span></label>
+      <div class="flex gap-2"><input name="name" required maxlength="40" placeholder="e.g. Construction" autocomplete="off" class="${inp}"><button class="flex-shrink-0 text-xs bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 text-white font-bold px-4 py-2 rounded-lg whitespace-nowrap"><i class="fas fa-plus"></i> Add sector</button></div></form>`
+    +`<h2 class="font-extrabold text-lg pt-2">Sectors <span class="text-sm font-normal text-gray-500">(${sectors.length})</span></h2>`
+    +(sectors.length?'':'<p class="text-sm text-gray-600 bg-white p-4 rounded-2xl border">No sectors yet.</p>')
+    +sectors.map(x=>`<div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-3 flex items-center gap-3"><i class="fas fa-layer-group text-brand-600"></i><div class="flex-1 min-w-0"><p class="font-bold text-sm truncate">${esc(x.name)}</p><p class="text-[11px] text-gray-500">${count(x.id)} subscriber${count(x.id)===1?'':'s'} &middot; folder <code>sectors/${esc(x.id)}</code></p></div><button data-k="opensector" data-s="${esc(x.id)}" class="text-xs bg-brand-50 text-brand-700 hover:bg-brand-100 font-bold px-3 py-2 rounded-lg"><i class="fas fa-folder-open"></i> Files</button><button data-k="delsector" data-s="${esc(x.id)}" class="w-8 h-8 rounded-lg bg-red-50 text-red-600" aria-label="Delete sector"><i class="fas fa-trash text-xs"></i></button></div>`).join('');
   }
   async function invite(email,btn){
     email=email.trim().toLowerCase();btn&&(btn.disabled=true);
@@ -435,13 +453,13 @@ const K=(()=>{
 
   // ---- file browser ----
   const prefix=()=>[cur,...path].join('/');
-  async function openClient(email){cur=email;path=[];await files()}
+  async function openRoot(root,label){cur=root;curLabel=label;path=[];await files()}
   async function files(){
     main().innerHTML='<p class="text-sm text-gray-500 p-4">Loading...</p>';
     const {data,error}=await sb.storage.from(BUCKET).list(prefix(),{limit:1000,sortBy:{column:'name',order:'asc'}});
     if(error){toast(error.message,false);return paintHome()}
     const list=(data||[]).filter(f=>!f.name.startsWith('.')).sort((a,b)=>(a.id===null?0:1)-(b.id===null?0:1));
-    const crumbs=`<button data-k="home" class="underline underline-offset-4">Clients</button><span>/</span><button data-k="up" data-i="-1" class="underline underline-offset-4">${esc(cur)}</button>`+path.map((p,i)=>`<span>/</span><button data-k="up" data-i="${i}" class="underline underline-offset-4">${esc(p)}</button>`).join('');
+    const crumbs=`<button data-k="home" class="underline underline-offset-4">${tabK==='sectors'?'Sectors':'Clients'}</button><span>/</span><button data-k="up" data-i="-1" class="underline underline-offset-4">${esc(curLabel||cur)}</button>`+path.map((p,i)=>`<span>/</span><button data-k="up" data-i="${i}" class="underline underline-offset-4">${esc(p)}</button>`).join('');
     main().innerHTML=`<div class="flex flex-wrap items-center gap-2 text-sm font-bold">${crumbs}</div>
     <div id="drop" class="bg-white rounded-2xl border border-gray-200 p-4 flex flex-wrap items-center gap-2">
       <label class="text-xs bg-brand-600 hover:bg-brand-700 text-white font-bold px-4 py-2.5 rounded-xl cursor-pointer"><i class="fas fa-upload"></i> Upload files<input id="k-file" type="file" multiple class="hidden"></label>
@@ -484,7 +502,19 @@ const K=(()=>{
       if(k==='signout'){await sb.auth.signOut()}
       else if(k==='refresh'){cur?await files():await home()}
       else if(k==='home')await home();
-      else if(k==='open')await openClient(em);
+      else if(k==='open'){tabK='clients';await openRoot(em,em)}
+      else if(k==='tab'){tabK=t.dataset.t;paintHome()}
+      else if(k==='opensector'){const x=sectors.find(v=>v.id===t.dataset.s);tabK='sectors';await openRoot('sectors/'+x.id,x.name)}
+      else if(k==='sub'){
+        const u=t.dataset.u,sid=t.dataset.s,on=subs[u]&&subs[u].has(sid);t.disabled=true;
+        const r=on?await sb.from('subscriptions').delete().eq('user_id',u).eq('sector_id',sid):await sb.from('subscriptions').insert({user_id:u,sector_id:sid});
+        if(r.error)throw r.error;
+        (subs[u]=subs[u]||new Set())[on?'delete':'add'](sid);paintHome();
+      }
+      else if(k==='delsector'){const x=sectors.find(v=>v.id===t.dataset.s);
+        if(confirm(`Delete the sector "${x.name}"?\n\nIts subscriptions and ALL files inside it are removed. This cannot be undone.`)){
+          await removePaths(await listAll('sectors/'+x.id));
+          const r=await sb.from('sectors').delete().eq('id',x.id);if(r.error)throw r.error;toast('Sector deleted');await home()}}
       else if(k==='up'){path=path.slice(0,+t.dataset.i+1);await files()}
       else if(k==='in'){path.push(n);await files()}
       else if(k==='invite-folder')await invite(em,t);
@@ -497,8 +527,14 @@ const K=(()=>{
     }catch(x){toast(x.message==='NOFN'?'The admin-clients function is not deployed yet (README, step 4).':x.message,false);t.disabled=false}
   });
   document.addEventListener('submit',async e=>{
-    const f=e.target.closest('[data-k-form="invite"]');if(!f)return;e.preventDefault();
-    await invite(f.email.value,f.querySelector('button'));
+    const f=e.target.closest('[data-k-form]');if(!f)return;e.preventDefault();
+    if(f.dataset.kForm==='invite')return invite(f.email.value,f.querySelector('button'));
+    const name=f.name.value.trim(),id=slug(name),btn=f.querySelector('button');
+    if(!id)return toast('Use letters or numbers in the sector name.',false);
+    if(sectors.some(x=>x.id===id))return toast('That sector already exists.',false);
+    btn.disabled=true;
+    try{const r=await sb.from('sectors').insert({id,name});if(r.error)throw r.error;toast('Sector added');await home()}
+    catch(x){toast(x.message,false)}finally{btn.disabled=false}
   });
   document.addEventListener('input',e=>{if(e.target.id==='k-filter'){filter=e.target.value;const pos=e.target.selectionStart;paintHome();const el=$('k-filter');el.focus();el.setSelectionRange(pos,pos)}});
   document.addEventListener('change',e=>{if(e.target.id==='k-file'){uploadFiles(e.target.files);e.target.value=''}});

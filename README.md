@@ -48,6 +48,7 @@ My files opens a sign-in pop-up when the visitor is signed out and the files pag
 ### How access works
 - Files sit in the private `client-files` bucket under `client-email@example.com/...` (lowercase email).
 - A client can read only inside the folder named after their own email.
+- Shared **sectors** (starter: Construction, Engineering) live in `sectors/<id>/...`. A client reads a sector only while subscribed; any number of subscriptions per client. Manage them in admin: **Client files, Sectors** tab (libraries) and the sector buttons under each client (subscriptions).
 - Only accounts listed in `public.admins` can upload, replace or delete. To add another admin, create the user in the dashboard and run `insert into public.admins (user_id,email) select id,email from auth.users where email='them@khip.com';`
 
 ## What changed in this version
@@ -55,6 +56,7 @@ My files opens a sign-in pop-up when the visitor is signed out and the files pag
 - `supabase-setup.sql`: repeatable; adds the admin role and admin file rules. New `supabase/functions/admin-clients`.
 - Public site: formatting (`**bold**`, `##`, `-`) renders; carousel arrows and swipe; YouTube icon; reduced-motion support; dynamic footer year; My files search and sort.
 - New bottom bar (above), sign-in as a pop-up from My files, persistent sessions; sections renamed IP Practices, Latest news, Jurisdictions.
+- Sectors: shared libraries with per-client subscriptions; My files shows a card per subscribed sector.
 - Validation script and workflow moved to where GitHub can run them.
 
 ## Checks

@@ -16,8 +16,11 @@ This manual covers everything needed to take the system from a folder of files t
 | Invite function | Creates, re-invites and removes client logins safely | `supabase/functions/admin-clients` (runs inside Supabase) |
 
 Rules the system relies on:
-- Files are stored in the private bucket `client-files`, in a folder named after the client's lowercase email: `name@company.com/contract.pdf`.
-- A client can read only inside their own folder. Only admins can upload, replace or delete.
+- There is **one** private bucket, `client-files`. Folders inside it are only name prefixes, not separate buckets.
+- Private documents sit in a folder named after the client's lowercase email: `name@company.com/contract.pdf`.
+- Shared documents sit in a **sector** library: `sectors/construction/...`, `sectors/engineering/...`. A client can read a sector only while subscribed to it, and can hold any number of subscriptions.
+- A client sees their private folder and one card per subscribed sector on the My files page.
+- A client can read only their own folder and the sectors they subscribe to. Only admins can upload, replace, delete or change subscriptions.
 - Passwords are never stored by the site. Supabase handles them.
 
 ### Bottom bar buttons (final)
@@ -79,7 +82,7 @@ Commit the change. (The anon key is meant to be public; the database rules prote
 3. The last result should list one row: your email. If it is empty, the email did not match the user created in 2.5; fix it and run again (running again is safe).
 4. Check **Storage**: a private bucket `client-files` should exist.
 
-What the script does: creates the private bucket (50 MB per file), the `admins` list and the `is_admin()` check, a rule that lets each client read only their own folder, and rules that let admins upload, replace and delete.
+What the script does: creates the private bucket (50 MB per file), the `admins` list and the `is_admin()` check, a rule that lets each client read only their own folder, the `sectors` and `subscriptions` tables with the starter sectors Construction and Engineering, a rule that lets a client read a sector only while subscribed, and rules that let admins upload, replace and delete.
 
 ### 2.7 Supabase: deploy the invite function
 The function lets the admin page invite, re-invite and remove client logins without exposing the secret service key. Run once on your computer (needs Node.js):
@@ -141,22 +144,34 @@ Page text that is not in the admin (About page paragraphs, Patents, Trademarks, 
 
 Status labels: **Invite pending** (has not set a password yet), **Active**, **Folder only** (a folder exists but no login; press Invite to create one).
 
-### 3.3 Managing files
+### 3.3 Sectors and subscriptions
+Sectors are shared libraries (the starter ones are Construction and Engineering). Upload a document once and every subscriber sees it.
+
+**Example:** Alice subscribes to both sectors, Bob only to Construction. Alice sees two sector cards plus her own files; Bob sees one sector card plus his own files; a client with no subscription sees only their own files.
+
+1. `admin.html`, **Client files**, tab **Sectors**: add a sector (for example "Oil & Gas"), open **Files** to upload and organise its documents, or delete a sector (this also deletes its files).
+2. Tab **Clients**: under each client with a login, the sector buttons toggle that client's subscriptions. Blue with a tick means subscribed. A change takes effect the next time the client opens or refreshes My files.
+3. The Sectors tab shows how many subscribers each sector has.
+4. To end a subscription, press the sector button again. The client keeps their private folder; only the shared sector disappears for them.
+
+Notes: a sector name becomes its folder name (lowercase, letters, numbers and dashes). Only clients with a login can be subscribed. Subscriptions can be changed at any time without re-inviting.
+
+### 3.4 Managing files
 - Upload: button, or drag files onto the page. Maximum 50 MB per file on the free plan.
 - File names with spaces or non-Latin letters are converted to safe names (for example an Arabic name becomes `file-xxxx.pdf`). Name important files in Latin letters before uploading if the name matters.
 - If a name already exists, `-2`, `-3` ... is added; nothing is overwritten.
 - Download opens a temporary link (valid for one minute). Delete asks for confirmation and cannot be undone.
 
-### 3.4 Client problems
+### 3.5 Client problems
 - Did not get the email: check spam; then press the envelope button on the client row (re-sends the invite, or sends a reset email if they already have a password).
 - Forgot password: client uses **Forgot password?** in the sign-in pop-up, or you press the envelope button.
 - Changed email address: invite the new address, move or re-upload files into the new folder, then remove the old account.
 - Stop access: remove the account (person icon). Their files stay until you delete them.
 
-### 3.5 What clients see
-Bottom bar, **My files**: if not signed in a sign-in pop-up opens; after signing in they go to their files. Afterwards the same browser opens My files directly. The small sign-out icon appears in the header when signed in.
+### 3.6 What clients see
+Bottom bar, **My files**: if not signed in a sign-in pop-up opens; after signing in they go to their files: one card for each subscribed sector, then their private folders and files. Afterwards the same browser opens My files directly. The small sign-out icon appears in the header when signed in.
 
-### 3.6 Adding another admin
+### 3.7 Adding another admin
 Create the user in Supabase (**Authentication, Users**), then in the SQL Editor:
 ```sql
 insert into public.admins (user_id, email)
@@ -179,6 +194,8 @@ To remove an admin: `delete from public.admins where lower(email) = lower('colle
 | "Account tools are not deployed yet" | Deploy the function (2.7). |
 | Invite link opens but says expired or invalid | Link already used or the address is not in Redirect URLs (2.8). Send a new one. |
 | "email rate limit exceeded" | Built-in email limit; set up SMTP (2.8). |
+| "Sectors are not set up yet" in admin | Run the latest `supabase-setup.sql` (2.6); it is safe to run again. |
+| Client does not see a sector | They are not subscribed (3.3), or they have not refreshed My files since you changed it. |
 | Client sees "No files here yet" | Folder name does not match their email exactly (lowercase) or nothing uploaded. |
 | Upload fails with "Invalid key" | File name has unsupported characters; the admin renames most automatically. Rename and retry. |
 | Upload fails with "exceeded the maximum allowed size" | File over 50 MB. Compress or split it. |
@@ -194,7 +211,7 @@ To remove an admin: `delete from public.admins where lower(email) = lower('colle
 - Do not send sensitive files through the website's WhatsApp box; it only opens WhatsApp.
 - Backups: use the download icon in the content admin regularly; the repository history also keeps every version. For client files, keep your original copies; consider a periodic download of the bucket from Supabase **Storage**.
 - Free-plan Supabase projects pause after a week without activity. If the portal says it cannot load files, open the Supabase dashboard and restore the project.
-- When a team member leaves: remove them as admin (3.6), revoke their GitHub token, and change shared passwords.
+- When a team member leaves: remove them as admin (3.7), revoke their GitHub token, and change shared passwords.
 
 ## 6. File map
 | File | Purpose |
@@ -204,7 +221,7 @@ To remove an admin: `delete from public.admins where lower(email) = lower('colle
 | `admin.html` | Admin (content and client files) |
 | `app-data.json` | All editable content (`app-data.sample.json` is a fuller example) |
 | `supabase-config.js` | Your Supabase URL and anon key |
-| `supabase-setup.sql` | Database and storage rules, run once |
+| `supabase-setup.sql` | Database, sectors and storage rules, run once (safe to repeat) |
 | `supabase/functions/admin-clients/index.ts` | Invite function |
 | `auth.js`, `footer.js`, `rich.js`, `styles.css`, `tailwind-config.js` | Shared scripts and styles |
 | `scripts/validate.js`, `.github/workflows/validate.yml` | Automatic content check |
