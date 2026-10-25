@@ -1,6 +1,6 @@
 {
-  "about": "KHIP delivers high-performance IP legal solutions designed for fast mobile navigation.",
-  "aboutMainText": "KHIP helps protecting inventions through practices that genuinely comprehend Intellectual property. KHIP represents a wide range of clients from individual inventors to multinational companies. Serving great innovators, helping to protect countless ideas, nurture discoveries, bring new\nconcepts to market, and secure the most profitable resources.",
+  "about": "",
+  "aboutMainText": "**KHIP** provides comprehensive intellectual property protection services tailored to a diverse client portfolio, ranging from individual entrepreneurs and independent inventors to multinational corporations. Grounded in a deep, strategic understanding of global IP frameworks, our firm acts as a trusted partner throughout the innovation lifecycle, safeguarding original concepts, nurturing early-stage discoveries, and facilitating successful market entry to secure maximum commercial value and strategic advantage.",
   "carousel": [
     {
       "id": "1",
@@ -329,5 +329,13 @@
       "position": "Office clerk",
       "image": ""
     }
+  ],
+  "social": {
+    "linkedin": "https://www.linkedin.com/company/khip/"
+  },
+  "chatPrompts": [
+    "How can KHIP help you?",
+    "Drop us a message about your inquiry",
+    "kHIP is pleased to answer your questions"
   ]
 }
