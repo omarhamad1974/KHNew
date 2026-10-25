@@ -362,6 +362,11 @@
     },
     "custom": [],
     "sectionWidth": 67,
-    "sections": {}
+    "sections": {
+      "home-about": {
+        "mode": "color",
+        "color": "role:accentSoft"
+      }
+    }
   }
 }
