@@ -246,7 +246,7 @@
       "id": "11",
       "name": "Yasmine Saeed",
       "position": " Project Manager & Sr. Reviewer",
-      "image": ""
+      "image": "Yasmine Saeed.jpg"
     },
     {
       "id": "12",
@@ -336,15 +336,15 @@
       "id": "26",
       "name": "Yonan",
       "position": "Office clerk",
-      "image": ""
+      "image": "Younan.jpg"
     }
   ],
   "social": {
     "linkedin": "https://www.linkedin.com/company/khip/"
   },
   "chatPrompts": [
-    "How can KHIP help you?",
     "Drop us a message about your inquiry",
-    "kHIP is pleased to answer your questions"
+    "KHIP is pleased to answer your questions",
+    "15+ years of experience make a difference"
   ]
 }
