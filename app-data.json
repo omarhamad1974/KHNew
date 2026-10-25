@@ -365,7 +365,19 @@
     "sections": {
       "home-about": {
         "mode": "color",
-        "color": "role:sand"
+        "color": "role:surface"
+      },
+      "home-news": {
+        "mode": "color",
+        "color": "role:accentSoft"
+      },
+      "about-map": {
+        "mode": "color",
+        "color": "role:ink"
+      },
+      "about-team": {
+        "mode": "color",
+        "color": "role:accentSoft"
       }
     }
   }
