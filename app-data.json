@@ -350,13 +350,13 @@
   "theme": {
     "colors": {
       "title": "#173a7a",
-      "ink": "#1b2433",
+      "ink": "#173a7a",
       "gold": "#a8844f",
       "accent": "#1d4ed8",
       "accentDark": "#1e40af",
       "accentSoft": "#eff6ff",
       "sand": "#d9c8a4",
-      "page": "#f7f6f3",
+      "page": "#ffffff",
       "surface": "#ffffff",
       "text": "#3a4051"
     },
@@ -365,7 +365,7 @@
     "sections": {
       "home-about": {
         "mode": "color",
-        "color": "role:surface"
+        "color": "#f6f5f4"
       },
       "home-news": {
         "mode": "color",
