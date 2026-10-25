@@ -20,7 +20,7 @@
     if(g&&secs.length){
       if(!g.dataset.icons)g.dataset.icons=JSON.stringify([...g.querySelectorAll('.card')].map(c=>([...(c.querySelector('i')||{classList:[]}).classList].find(x=>x!=='ph-light'&&/^ph-/.test(x))||'')));
       const ic=JSON.parse(g.dataset.icons);
-      g.innerHTML=secs.map((s,i)=>`<div class="fu in"><div class="card h-full p-7"><div class="w-12 h-12 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center"><i class="ph-light ${E(ic[i]||FALL[i%FALL.length])} text-2xl"></i></div><h3 class="font-display text-2xl font-semibold text-ink mt-4">${E(s.t)}</h3><div class="text-sm md:text-[15px] leading-relaxed mt-2 [&>p]:mt-0">${window.KRich.rich(s.b.join('\n').trim())}</div></div></div>`).join('');
+      g.innerHTML=secs.map((s,i)=>`<div class="fu in"><div class="card h-full p-7"><div class="w-12 h-12 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center"><i class="ph-light ${E(ic[i]||FALL[i%FALL.length])} text-2xl"></i></div><h3 class="font-display text-2xl font-semibold text-title mt-4">${E(s.t)}</h3><div class="text-sm md:text-[15px] leading-relaxed mt-2 [&>p]:mt-0">${window.KRich.rich(s.b.join('\n').trim())}</div></div></div>`).join('');
       document.querySelectorAll('[data-pc-static]').forEach(e=>e.remove());
     }
   }

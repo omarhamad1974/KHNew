@@ -110,6 +110,7 @@ details[open]>summary .chev{transform:rotate(90deg)}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="supabase-config.js"></script>
+<script src="theme.js"></script>
 <script>
 /* ============================ shared ============================ */
 const $=id=>document.getElementById(id);
@@ -172,7 +173,7 @@ async function connect(creds){
 }
 
 function tabs(){
-  const all=[['general','General','fa-house'],...Object.entries(SC).map(([k,v])=>[k,v.label,v.icon])];
+  const all=[['general','General','fa-house'],['colors','Colors','fa-palette'],['backgrounds','Backgrounds','fa-fill-drip'],...Object.entries(SC).map(([k,v])=>[k,v.label,v.icon])];
   $('tabs').innerHTML=all.map(([k,l,i])=>`<button data-act="tab" data-k="${k}" class="flex-shrink-0 text-xs font-bold px-3 py-2 rounded-xl ${k===tab?'bg-brand-600 text-white':'bg-gray-100 hover:bg-gray-200'}"><i class="fas ${i}"></i> ${l}${SC[k]?` (${(D[k]||[]).length})`:''}</button>`).join('');
 }
 const tb=(k,p,title,inner,cls='')=>`<button type="button" onmousedown="event.preventDefault()" data-act="fmt" data-k="${k}" data-t="${p}" title="${title}" class="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 ${cls}">${inner}</button>`;
@@ -187,6 +188,8 @@ function fld(base,[k,l,t],req=[]){
 function view(){
   const m=$('view');
   if(tab==='general'){m.innerHTML=`<div class="bg-white p-4 rounded-2xl border border-gray-200 space-y-3">${GEN.map(f=>fld('',f)).join('')}</div>`;return}
+  if(tab==='colors')return viewColors();
+  if(tab==='backgrounds')return viewBg();
   const s=SC[tab],arr=D[tab]=D[tab]||[];
   m.innerHTML=`<div class="flex items-center justify-between"><h2 class="font-extrabold text-lg">${s.label}</h2><button data-act="add" class="text-xs bg-[#d9c8a4] hover:bg-[#cdb98f] text-[#1b2433] font-bold px-3.5 py-2 rounded-xl"><i class="fas fa-plus"></i> Add ${s.one}</button></div>`
   +(arr.length>5?`<input id="filter" type="search" placeholder="Search ${s.label.toLowerCase()}" aria-label="Search ${s.label.toLowerCase()}" value="${esc(q)}" class="${inp}">`:'')
@@ -205,6 +208,84 @@ function items(){
     <button data-act="del" data-i="${i}" aria-label="Delete" class="w-8 h-8 rounded-lg bg-red-50 text-red-600"><i class="fas fa-trash text-xs"></i></button></summary>
     <div class="p-4 pt-1 space-y-3 border-t">${s.f.map(f=>fld(`${tab}.${i}.`,f,s.req)).join('')}</div></details>`).join('');
 }
+
+/* ---------- Colors and Backgrounds (saved as "theme" in app-data.json; applied by theme.js) ---------- */
+const TH=window.KTHEME;
+const PRESETS=[
+ ['classic','Classic (current)',TH.DEFAULTS],
+ ['ocean','Ocean',{title:'#0f3a5f',ink:'#10263b',gold:'#b08d57',accent:'#0e7490',accentDark:'#155e75',accentSoft:'#ecfeff',sand:'#e3d5b8',page:'#f5f7f8',surface:'#ffffff',text:'#35424d'}],
+ ['graphite','Graphite',{title:'#1c2f5e',ink:'#1f2328',gold:'#b88a44',accent:'#3b5bdb',accentDark:'#2f49b0',accentSoft:'#eef2ff',sand:'#d6c7a1',page:'#f4f4f2',surface:'#ffffff',text:'#3b3f46'}]
+];
+const hexc='w-24 px-2 py-2 text-xs rounded-lg border border-gray-300 bg-white font-mono';
+const bgOpen=new Set();
+function theme(){
+  const t=D.theme=D.theme||{};t.colors=t.colors||{};t.custom=t.custom||[];t.sections=t.sections||{};
+  if(t.sectionWidth==null||t.sectionWidth==='')t.sectionWidth=67;
+  for(const k in TH.DEFAULTS)if(!TH.HEX.test(t.colors[k]||''))t.colors[k]=TH.DEFAULTS[k];
+  return t;
+}
+function cleanTheme(){ // before saving: drop backgrounds that are set back to "Default"
+  if(!D.theme||!D.theme.sections)return;
+  for(const k of Object.keys(D.theme.sections)){const m=(D.theme.sections[k]||{}).mode;if(m!=='color'&&m!=='image')delete D.theme.sections[k]}
+}
+const normHex=v=>{v=String(v||'').trim();if(/^#?[0-9a-f]{3}$/i.test(v)){v=v.replace('#','');v='#'+v.split('').map(c=>c+c).join('')}else if(/^#?[0-9a-f]{6}$/i.test(v))v='#'+v.replace('#','');else return '';return v.toLowerCase()};
+function viewColors(){
+  const t=theme(),sw=c=>`<span class="inline-block w-4 h-4 rounded-sm border border-black/10" style="background:${c}"></span>`;
+  const row=([k,name,use])=>{const v=t.colors[k],d=TH.DEFAULTS[k];
+    return `<div class="flex items-center gap-3 py-2.5 border-b border-gray-100 last:border-0"><input type="color" data-p="theme.colors.${k}" value="${v}" aria-label="${esc(name)} color" class="w-11 h-11 p-0 border border-gray-300 rounded-lg bg-white cursor-pointer flex-shrink-0"><div class="min-w-0 flex-1"><p class="text-sm font-bold">${esc(name)}</p><p class="text-[11px] text-gray-500">${esc(use)}</p></div><input data-hex="theme.colors.${k}" value="${v}" maxlength="7" aria-label="${esc(name)} hex code" class="${hexc}"><button data-act="col-reset" data-k="${k}" ${v.toLowerCase()===d?'disabled':''} title="Back to the default ${d}" aria-label="Reset ${esc(name)} to the default" class="w-9 h-9 rounded-lg bg-gray-100 disabled:opacity-30 flex-shrink-0"><i class="fas fa-rotate-left text-xs"></i></button></div>`};
+  const cust=(c,i)=>`<div class="flex items-center gap-3 py-2 border-b border-gray-100 last:border-0"><input type="color" data-p="theme.custom.${i}.hex" value="${esc(c.hex)}" aria-label="Color ${i+1}" class="w-11 h-11 p-0 border border-gray-300 rounded-lg bg-white cursor-pointer flex-shrink-0"><input data-p="theme.custom.${i}.name" value="${esc(c.name)}" placeholder="Name, e.g. Winter blue" aria-label="Name of color ${i+1}" class="${inp} flex-1 min-w-0"><input data-hex="theme.custom.${i}.hex" value="${esc(c.hex)}" maxlength="7" aria-label="Hex code of color ${i+1}" class="${hexc}"><button data-act="cc-del" data-i="${i}" aria-label="Delete this color" class="w-9 h-9 rounded-lg bg-red-50 text-red-600 flex-shrink-0"><i class="fas fa-trash text-xs"></i></button></div>`;
+  $('view').innerHTML=`<div class="bg-white p-4 rounded-2xl border border-gray-200">
+    <h2 class="font-extrabold text-lg">Color palette</h2>
+    <p class="text-xs text-gray-600 mt-1">These colors are used everywhere on the website. The starting values are the colors the site has always used; change any of them, then press Save to GitHub.</p>
+    <p class="text-xs font-bold mt-3 mb-1.5">Ready-made palettes</p>
+    <div class="flex flex-wrap gap-2">${PRESETS.map(([k,n,c])=>`<button data-act="preset" data-k="${k}" class="flex items-center gap-2 text-xs font-bold bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-xl">${['title','ink','gold','accent','sand'].map(r=>sw(c[r])).join('')}<span>${esc(n)}</span></button>`).join('')}</div>
+  </div>
+  <div class="bg-white px-4 py-2 rounded-2xl border border-gray-200">${TH.ROLES.map(row).join('')}
+    <div class="py-3"><button data-act="col-reset-all" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl"><i class="fas fa-rotate-left"></i> Reset all colors to the defaults</button></div></div>
+  <div class="bg-white p-4 rounded-2xl border border-gray-200">
+    <div class="flex items-center justify-between gap-2"><div><h2 class="font-extrabold text-lg">Your own colors</h2><p class="text-xs text-gray-600">Add colors to the palette. You can pick them as a section background (Backgrounds tab).</p></div><button data-act="cc-add" class="text-xs bg-[#d9c8a4] hover:bg-[#cdb98f] text-[#1b2433] font-bold px-3.5 py-2 rounded-xl flex-shrink-0"><i class="fas fa-plus"></i> Add color</button></div>
+    <div class="mt-2">${t.custom.length?t.custom.map(cust).join(''):'<p class="text-xs text-gray-500 py-3">No extra colors yet.</p>'}</div>
+  </div>
+  <div class="bg-white p-4 rounded-2xl border border-gray-200">
+    <h2 class="font-extrabold text-lg">Section width</h2>
+    <p class="text-xs text-gray-600">How wide the page sections are on tablet and desktop, as a share of the screen (67% is about two thirds). Phones always use the full width.</p>
+    <div class="flex items-center gap-3 mt-3"><input type="range" min="50" max="100" step="1" data-p="theme.sectionWidth" data-out="sw-out" value="${esc(t.sectionWidth)}" aria-label="Section width" class="flex-1"><span id="sw-out" class="text-sm font-bold w-12 text-right">${esc(t.sectionWidth)}%</span></div>
+  </div>`;
+}
+const BGMODES=[['default','Default (no change)'],['color','Color'],['image','Photo (covers the section)']];
+const TONES=[['auto','Automatic'],['dark','Dark text'],['light','Light text']];
+function palOptions(t,sel){
+  const roles=TH.ROLES.map(([k,n])=>`<option value="role:${k}" ${sel==='role:'+k?'selected':''}>${esc(n)} (${t.colors[k]})</option>`).join('');
+  const cust=t.custom.map(c=>`<option value="custom:${esc(c.id)}" ${sel==='custom:'+c.id?'selected':''}>${esc(c.name||'Color')} (${esc(c.hex)})</option>`).join('');
+  return `<optgroup label="Site colors">${roles}</optgroup>${cust?`<optgroup label="Your colors">${cust}</optgroup>`:''}<option value="__custom" ${TH.HEX.test(sel)?'selected':''}>Other color...</option>`;
+}
+function bgStyle(t,s){
+  if(s.mode==='color'){const c=TH.resolve(s.color,t);return c?`background:${c}`:''}
+  if(s.mode==='image'&&s.image){const ov=Math.min(85,Math.max(0,parseFloat(s.overlay)||0))/100,i=imgSrc(s.image);return `background:${ov?`linear-gradient(rgba(27,36,51,${ov}),rgba(27,36,51,${ov})),`:''}url('${i}') center/cover no-repeat`}
+  return '';
+}
+function viewBg(){
+  const t=theme();
+  $('view').innerHTML=`<div class="bg-white p-4 rounded-2xl border border-gray-200"><h2 class="font-extrabold text-lg">Section backgrounds</h2><p class="text-xs text-gray-600 mt-1">Give any section a background color from your palette, or a photo that covers the whole section. Leave it on Default to keep the normal look. On dark colors and darkened photos the text turns light by itself.</p></div>`
+  +TH.SECTIONS.map(([key,label])=>{
+    const s=t.sections[key]||{},mode=s.mode==='color'||s.mode==='image'?s.mode:'default',pre=bgStyle(t,s);
+    const base=`theme.sections.${key}.`;
+    let body=`<label class="block text-xs font-bold">Background<select data-p="${base}mode" data-rr="1" data-sec="${key}" class="${inp} mt-1">${BGMODES.map(([v,n])=>`<option value="${v}" ${v===mode?'selected':''}>${n}</option>`).join('')}</select></label>`;
+    if(mode==='color'){
+      const sel=s.color||'role:accentSoft';
+      body+=`<div class="flex items-end gap-2"><label class="block text-xs font-bold flex-1">Color<select data-bgsel="${key}" class="${inp} mt-1">${palOptions(t,sel)}</select></label>${TH.HEX.test(sel)?`<input type="color" data-p="${base}color" value="${esc(sel)}" aria-label="Custom color" class="w-11 h-11 p-0 border border-gray-300 rounded-lg bg-white cursor-pointer flex-shrink-0">`:''}</div>`;
+    }
+    if(mode==='image'){
+      body+=fld(base,['image','Photo (file name in assets, or upload)','img'])
+        +`<label class="block text-xs font-bold">Darken the photo: <span id="ov-${key}">${esc(s.overlay||0)}</span>%<input type="range" min="0" max="85" step="5" data-p="${base}overlay" data-out="ov-${key}" data-pct="1" value="${esc(s.overlay||0)}" class="mt-1 w-full"></label>`;
+    }
+    if(mode!=='default')body+=`<label class="block text-xs font-bold">Text color on this section<select data-p="${base}tone" class="${inp} mt-1">${TONES.map(([v,n])=>`<option value="${v}" ${(s.tone||'auto')===v?'selected':''}>${n}</option>`).join('')}</select></label>`
+      +`<div class="h-12 rounded-xl border border-gray-200" style="${pre}" role="img" aria-label="Preview of the background"></div>`;
+    const badge=mode==='default'?'Default':mode==='color'?'Color':'Photo';
+    return `<details data-bg="${key}" ${bgOpen.has(key)?'open':''} class="bg-white rounded-2xl border border-gray-200 shadow-sm"><summary class="flex items-center gap-2 p-3 cursor-pointer"><i class="fas fa-chevron-right chev text-[10px] text-gray-400"></i><span class="flex-1 min-w-0 font-bold text-sm truncate">${esc(label)}</span><span class="text-[11px] font-bold px-2 py-1 rounded-lg ${mode==='default'?'bg-gray-100 text-gray-500':'bg-brand-50 text-brand-700'}">${badge}</span></summary><div class="p-4 pt-2 space-y-3 border-t">${body}</div></details>`;
+  }).join('');
+}
+document.addEventListener('toggle',e=>{const d=e.target;if(d&&d.dataset&&d.dataset.bg){d.open?bgOpen.add(d.dataset.bg):bgOpen.delete(d.dataset.bg)}},true);
 
 function fmt(k,p){
   const ta=document.querySelector(`textarea[data-p="${p}"]`);if(!ta)return;
@@ -235,6 +316,7 @@ function bad(k,i,f,msg){
 }
 async function save(){
   const err=validate();if(err)return toast(err,false);
+  cleanTheme();
   $('save').disabled=true;$('state').textContent='Saving...';
   try{
     const j=await api(S.p,{method:'PUT',body:{message:'Update content via admin page',content:b64(new TextEncoder().encode(JSON.stringify(D,null,2)+'\n')),sha,branch:S.b}});
@@ -268,13 +350,30 @@ async function upload(file,p){
 
 document.addEventListener('input',e=>{
   if(e.target.id==='filter'){q=e.target.value;items();return}
+  const hp=e.target.dataset.hex;
+  if(hp&&D){ // typed hex code: update the color box next to it once it is valid
+    const v=normHex(e.target.value);e.target.classList.toggle('bad',!v&&e.target.value.length>=4);
+    if(v){set(D,hp,v);const c=document.querySelector(`input[type=color][data-p="${hp}"]`);if(c)c.value=v;mark();const rb=document.querySelector(`[data-act="col-reset"][data-k="${hp.split('.').pop()}"]`);if(rb)rb.disabled=hp.startsWith('theme.colors.')&&v===TH.DEFAULTS[hp.split('.').pop()]}
+    return;
+  }
+  if(e.target.dataset.out){const o=$(e.target.dataset.out);if(o)o.textContent=e.target.value+(e.target.dataset.pct?'':'%')}
+  if(e.target.type==='color'&&e.target.dataset.p){const h=document.querySelector(`[data-hex="${e.target.dataset.p}"]`);if(h)h.value=e.target.value;if(e.target.dataset.p.startsWith('theme.colors.')){const k=e.target.dataset.p.split('.').pop(),rb=document.querySelector(`[data-act="col-reset"][data-k="${k}"]`);if(rb)rb.disabled=e.target.value.toLowerCase()===TH.DEFAULTS[k]}}
   const p=e.target.dataset.p;if(!p||!D)return;
   e.target.classList.remove('bad');
   set(D,p,e.target.dataset.lines?e.target.value.split('\n').map(x=>x.trim()).filter(Boolean):e.target.value);mark();
   if(p.endsWith('image')){const im=document.querySelector(`[data-prev="${p}"]`);if(im){im.style.visibility='';im.src=imgSrc(e.target.value)}}
   if(/\.(title|country|name)$/.test(p)){const sm=e.target.closest('details')?.querySelector('summary span');if(sm)sm.textContent=e.target.value||'Untitled'}
 });
-document.addEventListener('change',e=>{const p=e.target.dataset.p;if(p&&p.endsWith('image')&&e.target.value){const v=e.target.value.trim().replace(/^\.\/assets\//,'');e.target.value=v;set(D,p,v)}const f=e.target.files?.[0];if(f&&e.target.dataset.up){upload(f,e.target.dataset.up);e.target.value=''}});
+document.addEventListener('change',e=>{
+  const bs=e.target.dataset.bgsel;
+  if(bs&&D){const s=theme().sections[bs]=theme().sections[bs]||{};
+    if(e.target.value==='__custom'){s.color=TH.resolve(s.color,D.theme)||'#cccccc'}else s.color=e.target.value;
+    mark();view();return}
+  if(e.target.dataset.rr&&D){const k=e.target.dataset.sec,s=theme().sections[k]=theme().sections[k]||{};
+    if(e.target.value==='color'&&!s.color)s.color='role:accentSoft';
+    if(e.target.value==='image'&&s.overlay==null)s.overlay=0;
+    mark();view();return}
+  const p=e.target.dataset.p;if(p&&p.endsWith('image')&&e.target.value){const v=e.target.value.trim().replace(/^\.\/assets\//,'');e.target.value=v;set(D,p,v)}const f=e.target.files?.[0];if(f&&e.target.dataset.up){upload(f,e.target.dataset.up);e.target.value=''}});
 document.addEventListener('click',e=>{
   const t=e.target.closest('[data-act]');if(!t)return;
   const a=t.dataset.act,i=+t.dataset.i,arr=D&&D[tab];
@@ -284,6 +383,11 @@ document.addEventListener('click',e=>{
   else if(a==='dup'){const c=JSON.parse(JSON.stringify(arr[i]));c.id=String(Math.max(0,...arr.map(x=>+x.id||0))+1);const k=SC[tab].title;c[k]=(c[k]||'')+' (copy)';arr.splice(i+1,0,c);openItem=`${tab}.${i+1}`;mark();tabs();view()}
   else if(a==='del'){if(confirm(`Delete "${arr[i][SC[tab].title]||'this item'}"?`)){arr.splice(i,1);openItem=null;mark();tabs();view()}}
   else if(a==='up'||a==='down'){const j=a==='up'?i-1:i+1;[arr[i],arr[j]]=[arr[j],arr[i]];openItem=`${tab}.${j}`;mark();view()}
+  else if(a==='col-reset'){theme().colors[t.dataset.k]=TH.DEFAULTS[t.dataset.k];mark();view()}
+  else if(a==='col-reset-all'){if(confirm('Set every site color back to its default?')){Object.assign(theme().colors,TH.DEFAULTS);mark();view()}}
+  else if(a==='preset'){const pr=PRESETS.find(x=>x[0]===t.dataset.k);if(pr&&confirm(`Use the "${pr[1]}" palette? It replaces the site colors above (your own colors are kept).`)){Object.assign(theme().colors,pr[2]);mark();view()}}
+  else if(a==='cc-add'){theme().custom.push({id:'c'+Date.now().toString(36),name:'',hex:'#8aa6d6'});mark();view()}
+  else if(a==='cc-del'){const c=theme().custom[i];if(c&&confirm(`Delete "${c.name||c.hex}"? Sections that use it go back to their normal background.`)){theme().custom.splice(i,1);mark();view()}}
   else if(a==='fmt')fmt(t.dataset.k,t.dataset.t);
   else if(a==='save')save();
   else if(a==='discard'){if(confirm('Discard all unsaved changes and reload from GitHub?')){dirty=false;connect(S)}}

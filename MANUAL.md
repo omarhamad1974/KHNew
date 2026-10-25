@@ -27,7 +27,7 @@ Rules the system relies on:
 | Button | Goes to |
 |---|---|
 | Home | Top of the home page |
-| Services | The **IP Practices** section |
+| IP Services | The **IP Services** section |
 | News | The **Latest news** section |
 | Jurisdiction | The **Jurisdictions** section (formerly Countries) |
 | About | The main About page (about.html) |
@@ -130,6 +130,8 @@ Launch checklist: [ ] token created and stored  [ ] `supabase-config.js` filled 
 Open `admin.html`, area **Website content**, enter owner, repository, branch (`main`) and the token. Tick "Keep me signed in for this browser tab" to avoid retyping while the tab is open.
 
 - **General**: home page text, tagline, LinkedIn and YouTube links, and the suggestions typed into the WhatsApp box (one per line).
+- **Colors**: change the site palette (ten colors, starting at the current ones), choose a ready-made palette, add your own named colors, and set the section width on tablet and desktop. The small arrow next to a color puts it back to its default.
+- **Backgrounds**: for each section choose Default, a Color from the palette, or a Photo that covers the section (upload or pick from `assets/`, optionally darkened). Save to GitHub to publish.
 - **Carousel, Jurisdictions, News, Services, Products, Testimonials, Team**: add, duplicate, reorder with arrows, delete. Required fields are marked with a red star.
 - Formatting inside text boxes: `**bold**`, a line starting with `## ` is a subtitle, a line starting with `- ` is a bullet. The B, H and list buttons insert them. Card previews on the site show plain text; the full pop-up shows the formatting.
 - Photos: use the upload button, or type a file name already in `assets/`. Large photos are reduced automatically; the limit after reduction is 3 MB.

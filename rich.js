@@ -12,7 +12,7 @@ window.KRich=(function(){
       if(b){if(!open){out+='<ul class="list-disc pl-5 space-y-1 my-2">';open=true}out+='<li>'+inl(b[1])+'</li>';continue}
       if(open){out+='</ul>';open=false}
       const h=l.match(HEAD);
-      if(h)out+='<h4 class="font-display text-xl font-semibold text-ink mt-4 mb-1">'+inl(h[1])+'</h4>';
+      if(h)out+='<h4 class="font-display text-xl font-semibold text-title mt-4 mb-1">'+inl(h[1])+'</h4>';
       else if(!l.trim())out+='<div class="h-3"></div>';
       else out+='<p>'+inl(l)+'</p>';
     }

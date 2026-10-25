@@ -7,9 +7,9 @@
   window.KHIP={wa,setPrompts:a=>{if(a&&a.length)prompts=a}};
   if(!document.querySelector('link[href*="phosphor"]')){const l=document.createElement('link');l.rel='stylesheet';l.href='https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/light/style.css';document.head.appendChild(l)}
   if(!document.querySelector('link[href*="styles.css"]')){const l=document.createElement('link');l.rel='stylesheet';l.href='styles.css';document.head.appendChild(l)}
-  const nav=[['top','ph-house','Home'],['services','ph-seal-check','Services'],['news','ph-newspaper','News'],['jurisdictions','ph-globe-hemisphere-west','Jurisdiction'],['about','ph-info','About']];
+  const nav=[['top','ph-house','Home'],['services','ph-seal-check','IP Services'],['news','ph-newspaper','News'],['jurisdictions','ph-globe-hemisphere-west','Jurisdiction'],['about','ph-info','About']];
   const bar=document.createElement('div');bar.id='khip-bar';
-  bar.innerHTML=`<div class="kin"><form><div class="kf"><i class="ph-light ph-whatsapp-logo"></i><input aria-label="Message KHIP on WhatsApp" autocomplete="off"><button class="ks">Send</button></div></form><nav>${nav.map(([k,i,l])=>`<button type="button" data-go="${k}"><i class="ph-light ${i}"></i>${l}</button>`).join('')}</nav></div>`;
+  bar.innerHTML=`<div class="kin"><form><div class="kf"><i class="ph-light ph-whatsapp-logo"></i><input aria-label="Message KHIP on WhatsApp" autocomplete="off"><button type="submit" class="ks" aria-label="Send message" title="Send"><i class="ph-light ph-paper-plane-right"></i></button></div></form><nav>${nav.map(([k,i,l])=>`<button type="button" data-go="${k}"><i class="ph-light ${i}"></i>${l}</button>`).join('')}</nav></div>`;
   // App-shell layout: the page scrolls inside #khip-page and the bar sits below it as a normal
   // flex row, so nothing (toolbars, content height changes, fades) can ever move the bar.
   const body=document.body,me=document.currentScript;
