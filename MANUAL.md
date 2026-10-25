@@ -30,7 +30,9 @@ Rules the system relies on:
 | Services | The **IP Practices** section |
 | News | The **Latest news** section |
 | Jurisdiction | The **Jurisdictions** section (formerly Countries) |
-| My files | Opens the sign-in pop-up; once signed in, opens the files page |
+| About | The main About page (about.html) |
+
+The client sign-in pop-up is no longer in the bottom bar. Clients can still sign in by opening `my-stuff.html` directly.
 
 On other pages (About, Patents, ...) the first four buttons take the visitor to the matching home page section.
 

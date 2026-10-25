@@ -22,9 +22,16 @@ Open `https://YOUR-SITE/admin.html`. It has two areas, switched from the dark ba
 - Arabic or other non-Latin file names are replaced with a safe name (Supabase storage rejects them); the original extension is kept.
 - Re-send an invite, or send a password reset, with the envelope button. Remove an account with the person icon (their files stay until you delete them).
 
+## Services: three editable parts
+In admin, Services tab, each service has three text parts (Patents, Trademarks and Translation are filled in already):
+1. **Brief**: the short text on the home page card (also the top of the pop-up).
+2. **Pop-up content**: the extra information in the pop-up that opens from the home page card or from the About page cards.
+3. **Dedicated page content**: the text of the full page (`patents.html`, `trademarks.html`, `translation.html`). Text before the first `## ` line is the introduction; each `## Heading` becomes a card. Leave it empty to keep the text written in the page itself.
+The **Dedicated page file** field (for example `patents.html`) connects a service to its page and shows the "More information" button.
+
 ## Site navigation (bottom bar)
-Home, Services (IP Practices section), News (Latest news section), Jurisdiction (Jurisdictions section, formerly Countries), My files.
-My files opens a sign-in pop-up when the visitor is signed out and the files page when signed in. Sessions persist in the browser (auto-refreshed), so clients sign in once per device until they sign out.
+Home, Services (IP Practices section), News (Latest news section), Jurisdiction (Jurisdictions section, formerly Countries), About (about.html). The Send button sits inside the WhatsApp text box.
+Client sign-in is no longer in the bar: clients open `my-stuff.html` directly, which offers a Login button when signed out. Sessions persist in the browser (auto-refreshed), so clients sign in once per device until they sign out.
 
 ## One-time Supabase setup
 

@@ -7,9 +7,9 @@
   window.KHIP={wa,setPrompts:a=>{if(a&&a.length)prompts=a}};
   if(!document.querySelector('link[href*="phosphor"]')){const l=document.createElement('link');l.rel='stylesheet';l.href='https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/light/style.css';document.head.appendChild(l)}
   if(!document.querySelector('link[href*="styles.css"]')){const l=document.createElement('link');l.rel='stylesheet';l.href='styles.css';document.head.appendChild(l)}
-  const nav=[['top','ph-house','Home'],['services','ph-seal-check','Services'],['news','ph-newspaper','News'],['jurisdictions','ph-globe-hemisphere-west','Jurisdiction'],['files','ph-folder-open','My files']];
+  const nav=[['top','ph-house','Home'],['services','ph-seal-check','Services'],['news','ph-newspaper','News'],['jurisdictions','ph-globe-hemisphere-west','Jurisdiction'],['about','ph-info','About']];
   const bar=document.createElement('div');bar.id='khip-bar';
-  bar.innerHTML=`<div class="kin"><form><div class="kf"><i class="ph-light ph-whatsapp-logo"></i><input aria-label="Message KHIP on WhatsApp" autocomplete="off"></div><button class="ks">Send</button></form><nav>${nav.map(([k,i,l])=>`<button type="button" data-go="${k}"><i class="ph-light ${i}"></i>${l}</button>`).join('')}</nav></div>`;
+  bar.innerHTML=`<div class="kin"><form><div class="kf"><i class="ph-light ph-whatsapp-logo"></i><input aria-label="Message KHIP on WhatsApp" autocomplete="off"><button class="ks">Send</button></div></form><nav>${nav.map(([k,i,l])=>`<button type="button" data-go="${k}"><i class="ph-light ${i}"></i>${l}</button>`).join('')}</nav></div>`;
   // App-shell layout: the page scrolls inside #khip-page and the bar sits below it as a normal
   // flex row, so nothing (toolbars, content height changes, fades) can ever move the bar.
   const body=document.body,me=document.currentScript;
@@ -24,16 +24,10 @@
   bar.querySelector('form').addEventListener('submit',e=>{e.preventDefault();const v=inp.value.trim();if(v){wa(v);inp.value=''}});
   bar.addEventListener('click',e=>{
     const b=e.target.closest('[data-go]');if(!b)return;const k=b.dataset.go,el=document.getElementById(k);
-    if(k==='files'){files();return}
+    if(k==='about'){/about\.html/.test(location.pathname)?page.scrollTo({top:0,behavior:'smooth'}):location.href='about.html';return}
     if(k==='top')document.getElementById('app-top')?page.scrollTo({top:0,behavior:'smooth'}):location.href='index.html';
     else el&&el.offsetParent!==null?el.scrollIntoView({behavior:'smooth'}):location.href='index.html#'+k;
   });
-  // My files: signed in -> the files page; otherwise the sign-in modal (waits for the saved session to load first)
-  async function files(){
-    const A=window.KHIPAuth;if(!A){location.href='my-stuff.html';return}
-    await A.ready;
-    if(A.user()){if(!/my-stuff/.test(location.pathname))location.href='my-stuff.html'}else A.open();
-  }
   let pi=0,ci=0,del=false;
   (function tick(){
     if(document.activeElement===inp||inp.value){inp.placeholder='Message KHIP on WhatsApp';return setTimeout(tick,1000)}
