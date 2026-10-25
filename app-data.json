@@ -365,7 +365,7 @@
     "sections": {
       "home-about": {
         "mode": "color",
-        "color": "role:accentSoft"
+        "color": "role:sand"
       }
     }
   }
