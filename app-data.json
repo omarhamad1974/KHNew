@@ -167,8 +167,8 @@
       "icon": "",
       "description": "Watch your trademarks anywhere \n",
       "details": "This is the new watcher service ",
-      "page": "Watcher.html",
-      "pageContent": "This is the watcher service "
+      "page": "watcher.html",
+      "pageContent": "**bold text**This is the watcher service "
     }
   ],
   "products": [],
