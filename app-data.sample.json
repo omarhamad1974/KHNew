@@ -118,7 +118,8 @@
       "date": "2026-10-15",
       "image": "https://placehold.co/600x400/1d4ed8/ffffff?text=Brussels",
       "excerpt": "Our team joined regional IP firms at a Brussels event on cross-border filing.",
-      "text": "Our team joined regional IP firms at a Brussels event on cross-border filing.\n\nThis is sample article text. Write the full story here: what happened, who was involved and why it matters to your clients.\n\nA third paragraph can add details, quotes or next steps, and a closing line can invite readers to get in touch."
+      "text": "Our team joined regional IP firms at a Brussels event on cross-border filing.\n\nThis is sample article text. Write the full story here: what happened, who was involved and why it matters to your clients.\n\nA third paragraph can add details, quotes or next steps, and a closing line can invite readers to get in touch.",
+      "category": "General"
     },
     {
       "id": "2",
@@ -126,7 +127,8 @@
       "date": "2026-09-28",
       "image": "https://placehold.co/600x400/1d4ed8/ffffff?text=PPH",
       "excerpt": "Applicants can now request faster examination based on a positive Japanese or Chinese result.",
-      "text": "Applicants can now request faster examination based on a positive Japanese or Chinese result.\n\nThis is sample article text. Write the full story here: what happened, who was involved and why it matters to your clients.\n\nA third paragraph can add details, quotes or next steps, and a closing line can invite readers to get in touch."
+      "text": "Applicants can now request faster examination based on a positive Japanese or Chinese result.\n\nThis is sample article text. Write the full story here: what happened, who was involved and why it matters to your clients.\n\nA third paragraph can add details, quotes or next steps, and a closing line can invite readers to get in touch.",
+      "category": "General"
     },
     {
       "id": "3",
@@ -134,7 +136,8 @@
       "date": "2026-09-10",
       "image": "https://placehold.co/600x400/1d4ed8/ffffff?text=Translation",
       "excerpt": "A short guide to the Arabic translation deadlines for patents in Egypt, the UAE and Saudi Arabia.",
-      "text": "A short guide to the Arabic translation deadlines for patents in Egypt, the UAE and Saudi Arabia.\n\nThis is sample article text. Write the full story here: what happened, who was involved and why it matters to your clients.\n\nA third paragraph can add details, quotes or next steps, and a closing line can invite readers to get in touch."
+      "text": "A short guide to the Arabic translation deadlines for patents in Egypt, the UAE and Saudi Arabia.\n\nThis is sample article text. Write the full story here: what happened, who was involved and why it matters to your clients.\n\nA third paragraph can add details, quotes or next steps, and a closing line can invite readers to get in touch.",
+      "category": "General"
     },
     {
       "id": "4",
@@ -142,7 +145,8 @@
       "date": "2026-08-22",
       "image": "https://placehold.co/600x400/1d4ed8/ffffff?text=Trademarks",
       "excerpt": "Everything you need to prepare before filing a trademark in the Gulf countries.",
-      "text": "Everything you need to prepare before filing a trademark in the Gulf countries.\n\nThis is sample article text. Write the full story here: what happened, who was involved and why it matters to your clients.\n\nA third paragraph can add details, quotes or next steps, and a closing line can invite readers to get in touch."
+      "text": "Everything you need to prepare before filing a trademark in the Gulf countries.\n\nThis is sample article text. Write the full story here: what happened, who was involved and why it matters to your clients.\n\nA third paragraph can add details, quotes or next steps, and a closing line can invite readers to get in touch.",
+      "category": "General"
     },
     {
       "id": "5",
@@ -150,7 +154,8 @@
       "date": "2026-08-05",
       "image": "https://placehold.co/600x400/1d4ed8/ffffff?text=Team",
       "excerpt": "We are pleased to welcome a new head of our IP department to the KHIP family.",
-      "text": "We are pleased to welcome a new head of our IP department to the KHIP family.\n\nThis is sample article text. Write the full story here: what happened, who was involved and why it matters to your clients.\n\nA third paragraph can add details, quotes or next steps, and a closing line can invite readers to get in touch."
+      "text": "We are pleased to welcome a new head of our IP department to the KHIP family.\n\nThis is sample article text. Write the full story here: what happened, who was involved and why it matters to your clients.\n\nA third paragraph can add details, quotes or next steps, and a closing line can invite readers to get in touch.",
+      "category": "General"
     },
     {
       "id": "6",
@@ -158,7 +163,8 @@
       "date": "2026-07-18",
       "image": "https://placehold.co/600x400/1d4ed8/ffffff?text=Workshop",
       "excerpt": "We hosted a hands-on session on protecting early-stage inventions and brand names.",
-      "text": "We hosted a hands-on session on protecting early-stage inventions and brand names.\n\nThis is sample article text. Write the full story here: what happened, who was involved and why it matters to your clients.\n\nA third paragraph can add details, quotes or next steps, and a closing line can invite readers to get in touch."
+      "text": "We hosted a hands-on session on protecting early-stage inventions and brand names.\n\nThis is sample article text. Write the full story here: what happened, who was involved and why it matters to your clients.\n\nA third paragraph can add details, quotes or next steps, and a closing line can invite readers to get in touch.",
+      "category": "General"
     }
   ],
   "services": [
@@ -319,5 +325,13 @@
     "custom": [],
     "sectionWidth": 67,
     "sections": {}
-  }
+  },
+  "newsCategories": [
+    "General",
+    "KHIP News",
+    "Intellectual Property",
+    "Patents",
+    "Trademarks",
+    "Translation"
+  ]
 }

@@ -61,6 +61,9 @@ Client sign-in is no longer in the bar: clients open `my-stuff.html` directly, w
 - Only accounts listed in `public.admins` can upload, replace or delete. To add another admin, create the user in the dashboard and run `insert into public.admins (user_id,email) select id,email from auth.users where email='them@khip.com';`
 
 ## What changed in this version
+- About page: the Contact card now includes a small Google Maps map of the office.
+- Image uploads in the admin: carousel (about 15:8), news (2:1) and team (square) photos are resized and center-cropped to their frame before upload. The pages also show every image with "cover" fitting, so older images fill their frames too.
+- News labels: each article has a **Category** (General, KHIP News, Intellectual Property, Patents, Trademarks, Translation by default). Edit the list under General > News categories. The label shows on the news card and in the article, and an open article ends with a **Related news** slider (same category) that moves every 5 seconds.
 - Colors and backgrounds: new `theme.js` (loaded by every page) applies the palette, section backgrounds and section width saved in `app-data.json` under `theme`. New admin tabs **Colors** and **Backgrounds**. All titles use the "Titles" color (dark blue by default).
 - Layout: on tablet and desktop the page sections are 2/3 of their previous width; the home logo is half its previous size; About page: logo above the title, "Our Regional Coverage", "KHIP Value", team slider (4 across, 1 on mobile, moves every 10 seconds), redesigned Contact with LinkedIn only; Team removed from the home menu.
 - Pop-ups: the jurisdiction pop-up no longer repeats the Overview, and any long pop-up scrolls inside itself.
