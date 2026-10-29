@@ -1,0 +1,302 @@
+{
+  "aboutMainText": "",
+  "about": "",
+  "chatPrompts": [],
+  "newsCategories": [
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+  ],
+  "ui": {},
+  "carousel": [
+    {
+      "id": "1",
+      "title": "",
+      "subtitle": "",
+      "tag": ""
+    },
+    {
+      "id": "2",
+      "title": "",
+      "subtitle": "",
+      "tag": ""
+    },
+    {
+      "id": "3",
+      "title": "",
+      "subtitle": "",
+      "tag": ""
+    }
+  ],
+  "jurisdictions": [
+    {
+      "id": "1",
+      "country": "",
+      "tag": "",
+      "brief": "",
+      "details": ""
+    },
+    {
+      "id": "2",
+      "country": "",
+      "tag": "",
+      "brief": "",
+      "details": ""
+    },
+    {
+      "id": "3",
+      "country": "",
+      "tag": "",
+      "brief": "",
+      "details": ""
+    },
+    {
+      "id": "5",
+      "country": "",
+      "tag": "",
+      "brief": "",
+      "details": ""
+    },
+    {
+      "id": "6",
+      "country": "",
+      "tag": "",
+      "brief": "",
+      "details": ""
+    },
+    {
+      "id": "4",
+      "country": "",
+      "tag": "",
+      "brief": "",
+      "details": ""
+    },
+    {
+      "id": "7",
+      "country": "",
+      "tag": "",
+      "brief": "",
+      "details": ""
+    },
+    {
+      "id": "8",
+      "country": "",
+      "tag": "",
+      "brief": "",
+      "details": ""
+    },
+    {
+      "id": "9",
+      "country": "",
+      "tag": "",
+      "brief": "",
+      "details": ""
+    },
+    {
+      "id": "10",
+      "country": "",
+      "tag": "",
+      "brief": "",
+      "details": ""
+    },
+    {
+      "id": "11",
+      "country": "",
+      "tag": "",
+      "brief": "",
+      "details": ""
+    }
+  ],
+  "news": [
+    {
+      "id": "1",
+      "title": "",
+      "excerpt": "",
+      "text": ""
+    },
+    {
+      "id": "2",
+      "title": "",
+      "excerpt": "",
+      "text": ""
+    }
+  ],
+  "services": [
+    {
+      "id": "1",
+      "title": "",
+      "description": "",
+      "details": "",
+      "pageContent": ""
+    },
+    {
+      "id": "2",
+      "title": "",
+      "description": "",
+      "details": "",
+      "pageContent": ""
+    },
+    {
+      "id": "3",
+      "title": "",
+      "description": "",
+      "details": "",
+      "pageContent": ""
+    }
+  ],
+  "testimonials": [
+    {
+      "id": "1",
+      "name": "",
+      "role": "",
+      "text": ""
+    },
+    {
+      "id": "2",
+      "name": "",
+      "role": "",
+      "text": ""
+    },
+    {
+      "id": "3",
+      "name": "",
+      "role": "",
+      "text": ""
+    }
+  ],
+  "employees": [
+    {
+      "id": "1",
+      "name": "",
+      "position": ""
+    },
+    {
+      "id": "2",
+      "name": "",
+      "position": ""
+    },
+    {
+      "id": "3",
+      "name": "",
+      "position": ""
+    },
+    {
+      "id": "4",
+      "name": "",
+      "position": ""
+    },
+    {
+      "id": "5",
+      "name": "",
+      "position": ""
+    },
+    {
+      "id": "6",
+      "name": "",
+      "position": ""
+    },
+    {
+      "id": "7",
+      "name": "",
+      "position": ""
+    },
+    {
+      "id": "8",
+      "name": "",
+      "position": ""
+    },
+    {
+      "id": "9",
+      "name": "",
+      "position": ""
+    },
+    {
+      "id": "10",
+      "name": "",
+      "position": ""
+    },
+    {
+      "id": "11",
+      "name": "",
+      "position": ""
+    },
+    {
+      "id": "12",
+      "name": "",
+      "position": ""
+    },
+    {
+      "id": "13",
+      "name": "",
+      "position": ""
+    },
+    {
+      "id": "14",
+      "name": "",
+      "position": ""
+    },
+    {
+      "id": "15",
+      "name": "",
+      "position": ""
+    },
+    {
+      "id": "16",
+      "name": "",
+      "position": ""
+    },
+    {
+      "id": "17",
+      "name": "",
+      "position": ""
+    },
+    {
+      "id": "18",
+      "name": "",
+      "position": ""
+    },
+    {
+      "id": "19",
+      "name": "",
+      "position": ""
+    },
+    {
+      "id": "20",
+      "name": "",
+      "position": ""
+    },
+    {
+      "id": "21",
+      "name": "",
+      "position": ""
+    },
+    {
+      "id": "22",
+      "name": "",
+      "position": ""
+    },
+    {
+      "id": "23",
+      "name": "",
+      "position": ""
+    },
+    {
+      "id": "24",
+      "name": "",
+      "position": ""
+    },
+    {
+      "id": "25",
+      "name": "",
+      "position": ""
+    },
+    {
+      "id": "26",
+      "name": "",
+      "position": ""
+    }
+  ]
+}
