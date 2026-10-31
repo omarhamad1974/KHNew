@@ -374,6 +374,10 @@
       },
       "about-team": {
         "hidden": true
+      },
+      "trademarks-intro": {
+        "mode": "color",
+        "color": "role:accent"
       }
     },
     "sectionWidthTablet": "86",
