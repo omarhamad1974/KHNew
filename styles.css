@@ -18,6 +18,11 @@ body{background:rgb(var(--c-page-rgb));color:rgb(var(--c-text-rgb))}
 /* Header brand line: KHIP larger, the rest of the line in the same dark blue */
 .khip-lg{font-size:1.3em;line-height:1}
 .brand-ink{color:rgb(var(--c-title0-rgb))}
+/* Header logo (image) */
+.site-logo-link{display:block;flex-shrink:1;min-width:0}
+.site-logo{display:block;width:clamp(9.5rem,40vw,14.5rem);height:auto}
+/* Links to a service that is switched off in admin (Services, Hide) stay hidden; service-page.js shows the rest */
+[data-svc-page][hidden]{display:none!important}
 
 /* ---------- App shell: page scrolls inside #khip-page, the bar never moves ---------- */
 body.khip-shell{height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
@@ -132,7 +137,7 @@ header .wrap{width:100%;max-width:76rem}
 @media(prefers-reduced-motion:reduce){
   html,#khip-page{scroll-behavior:auto}
   .rv,.fu{opacity:1;transform:none;transition:none}
-  .slide,.slide.on img,.card,.sheet,#news-list>.ncard,.tcard,.tm-track,.ct-tile{transition:none;animation:none}
+  .slide,.slide.on img,.card,.sheet,#news-list>.ncard,.tcard,.tm-track,.ct-tile,.sl-dot{transition:none;animation:none}
   .card:hover{transform:none}
 }
 
@@ -163,6 +168,31 @@ header .wrap{width:100%;max-width:76rem}
 @media(min-width:768px){.tm-track{--g:1rem}}
 .tm-btn{width:2.5rem;height:2.5rem;border-radius:999px;border:1px solid rgb(var(--c-ink-rgb) / .25);background:#fff;color:rgb(var(--c-ink-rgb));display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
 .tm-btn:hover{background:rgb(var(--c-ink-rgb));color:#fff;border-color:rgb(var(--c-ink-rgb))}
+
+/* ---------- Slider controls (previous / next) and indicators (dots) ---------- */
+.sl-row{display:flex;align-items:center;justify-content:center;gap:1rem;margin-top:1.25rem}
+.sl-row.hidden{display:none}
+.sl-btn{flex:0 0 auto;width:2.5rem;height:2.5rem;border-radius:999px;border:1px solid rgb(var(--c-ink-rgb) / .25);background:#fff;color:rgb(var(--c-ink-rgb));display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s,color .2s,border-color .2s,transform .2s}
+.sl-btn:hover{background:rgb(var(--c-ink-rgb));color:#fff;border-color:rgb(var(--c-ink-rgb))}
+.sl-btn:active{transform:scale(.94)}
+.sl-btn i{font-size:1.125rem}
+.sl-dots{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.5rem;min-height:2.5rem;max-width:100%}
+.sl-dot{position:relative;flex:0 0 auto;width:.5rem;height:.5rem;padding:0;border:0;border-radius:999px;background:rgb(var(--c-ink-rgb) / .22);cursor:pointer;transition:width .4s ease,background-color .4s ease}
+.sl-dot::before{content:"";position:absolute;inset:-.7rem -.25rem}
+.sl-dot:hover{background:rgb(var(--c-ink-rgb) / .45)}
+.sl-dot.on{width:1.75rem;background:rgb(var(--c-ink-rgb))}
+.sec-light .sl-dot{background:rgba(255,255,255,.35)}.sec-light .sl-dot.on{background:#fff}
+#rel-ctl{margin-top:.25rem}
+/* Home page hero slider */
+.hero-arrow{position:absolute;top:50%;z-index:5;width:2.75rem;height:2.75rem;margin-top:-1.375rem;border:0;border-radius:999px;background:rgba(255,255,255,.82);color:rgb(var(--c-ink-rgb));display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(4px);box-shadow:0 6px 18px -6px rgba(0,0,0,.45);transition:background .2s,transform .2s}
+.hero-arrow:hover{background:#fff}.hero-arrow:active{transform:scale(.94)}
+.hero-arrow.prev{inset-inline-start:.75rem}.hero-arrow.next{inset-inline-end:.75rem}
+@media(max-width:639px){.hero-arrow{width:2.25rem;height:2.25rem;margin-top:-1.125rem}.hero-arrow.prev{inset-inline-start:.5rem}.hero-arrow.next{inset-inline-end:.5rem}}
+.hero-bar{position:absolute;z-index:5;inset-inline:0;bottom:.9rem;display:flex;justify-content:center;pointer-events:none}
+.hero-bar .sl-dots{min-height:0;pointer-events:auto}
+.hero-bar .sl-dot{background:rgba(255,255,255,.5)}.hero-bar .sl-dot:hover{background:rgba(255,255,255,.8)}.hero-bar .sl-dot.on{background:#fff}
+.hero-pause{position:absolute;z-index:5;top:.75rem;inset-inline-end:.75rem;width:2.25rem;height:2.25rem;border:0;border-radius:999px;background:rgba(255,255,255,.7);color:rgb(var(--c-ink-rgb));display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s}
+.hero-pause:hover{background:#fff}.hero-pause i{font-size:1.05rem}
 
 /* ---------- Contact (about page) ---------- */
 .ct-tile{display:flex;align-items:center;gap:1rem;padding:1rem 1.25rem;border-radius:1rem;background:rgb(var(--c-page-rgb));border:1px solid rgba(231,229,228,.9);transition:border-color .2s,transform .2s,box-shadow .2s}

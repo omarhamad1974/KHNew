@@ -18,7 +18,7 @@
 <body class="font-sans font-light antialiased">
 <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-xl border-b border-stone-200">
   <div class="wrap py-3 flex items-center justify-between">
-    <a href="index.html" class="font-display text-[clamp(.95rem,4.2vw,1.5rem)] font-semibold whitespace-nowrap tracking-wide"><span class="khip khip-lg">KHIP</span> <span class="mx-1.5 font-light brand-ink">|</span><span class="font-medium brand-ink">Intellectual Properties</span></a>
+    <a href="index.html" class="site-logo-link" aria-label="Khaled Hamada Intellectual Property, home"><img src="assets/khaled-hamada-ip-logo.png" width="757" height="127" alt="Khaled Hamada Intellectual Property" class="site-logo" decoding="async"></a>
     <nav class="hidden lg:flex gap-8 text-sm text-stone-600" aria-label="Main">
       <a href="index.html" class="hover:text-brand-600 transition">Home</a><a href="#map" class="hover:text-brand-600 transition">Our Regional Scope</a><a href="#value" class="hover:text-brand-600 transition">Value</a><a href="#advantages" class="hover:text-brand-600 transition">Advantages</a><a href="#team" class="hover:text-brand-600 transition">Team</a><a href="#contact" class="hover:text-brand-600 transition">Contact</a>
     <a href="my-stuff.html" class="hover:text-brand-600 transition">My files</a></nav>
@@ -81,6 +81,7 @@
         <span id="team-count" class="text-sm text-stone-500 min-w-[5.5rem] text-center" aria-live="polite"></span>
         <button type="button" data-team="1" class="tm-btn" aria-label="Next team members"><i class="ph-light ph-arrow-right text-lg"></i></button>
       </div>
+      <div id="team-dots" class="sl-dots mt-1" role="group" aria-label="Team pages"></div>
     </div>
   </div></section>
 
@@ -130,7 +131,8 @@ const io=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.targ
 const observe=()=>document.querySelectorAll('.fu:not(.in)').forEach(e=>io.observe(e));
 
 function render(D){
-  J=D.jurisdictions||[];SV=D.services||[];
+  J=D.jurisdictions||[];SV=(D.services||[]).filter(x=>!x.hidden);
+  document.querySelectorAll('[data-svc]').forEach(b=>{b.hidden=!SV.some(x=>String(x.title).toLowerCase()===b.dataset.svc.toLowerCase())});
   team(D.employees||[]);
   observe();
   if(location.hash==='#team')setTimeout(()=>$('team').scrollIntoView(),80);
@@ -151,6 +153,9 @@ function teamGo(i){
   const last=Math.min(tN,tI+pv);
   $('team-count').textContent=tN?(pv>1?`${tI+1}\u2013${last} / ${tN}`:`${tI+1} / ${tN}`):'';
   document.querySelectorAll('[data-team]').forEach(b=>b.classList.toggle('hidden',tN<=pv));
+  const pages=tN>pv?Math.ceil(tN/pv):0,at=tI>=max?pages-1:Math.floor(tI/pv),dc=$('team-dots');
+  if(dc.children.length!==pages)dc.innerHTML=Array.from({length:pages},(_,k)=>`<button type="button" class="sl-dot" data-tpage="${k}" aria-label="Team page ${k+1}"></button>`).join('');
+  [...dc.children].forEach((d,k)=>{d.classList.toggle('on',k===at);if(k===at)d.setAttribute('aria-current','true');else d.removeAttribute('aria-current')});
   tr.querySelectorAll('.tm-item').forEach((el,k)=>el.setAttribute('aria-hidden',k<tI||k>=tI+pv?'true':'false'));
 }
 function teamStep(dir){
@@ -161,7 +166,7 @@ function teamStep(dir){
   const box=$('team-box'),hold=()=>{tHold=true},free=()=>{tHold=false;tWait=Date.now()+2500};
   ['mouseenter','focusin','touchstart'].forEach(v=>box.addEventListener(v,hold,{passive:true}));
   ['mouseleave','focusout','touchend'].forEach(v=>box.addEventListener(v,free,{passive:true}));
-  box.addEventListener('click',e=>{const b=e.target.closest('[data-team]');if(b)teamStep(+b.dataset.team)});
+  box.addEventListener('click',e=>{const b=e.target.closest('[data-team]');if(b)teamStep(+b.dataset.team);const d=e.target.closest('[data-tpage]');if(d)teamGo(+d.dataset.tpage*perView())});
   let x0=null;
   box.addEventListener('touchstart',e=>{x0=e.touches[0].clientX},{passive:true});
   box.addEventListener('touchend',e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>40)teamStep(dx<0?1:-1)},{passive:true});
@@ -195,7 +200,7 @@ const ORDER=['Egypt','UAE','Saudi Arabia','Qatar','Oman','Bahrain','Kuwait','Jor
 $('map-chips').innerHTML=ORDER.filter(n=>paths.some(p=>p.dataset.n===n)).map(n=>`<button data-n="${esc(n)}" class="text-xs border border-stone-300 hover:border-brand-600 hover:text-brand-600 rounded-full px-3.5 py-1.5 transition">${esc(n)}</button>`).join('');
 $('map-chips').addEventListener('click',e=>{const b=e.target.closest('button');if(b)choose(b.dataset.n)});
 // "View Filing Requirements" button opens the filing information in a modal on this same page
-const CODES={egypt:'eg',uae:'ae','saudi arabia':'sa',jordan:'jo',kuwait:'kw',qatar:'qa',bahrain:'bh',oman:'om',morocco:'ma',tunisia:'tn',algeria:'dz'};
+const CODES={egypt:'eg',uae:'ae','saudi arabia':'sa',jordan:'jo',kuwait:'kw',qatar:'qa',bahrain:'bh',bahrian:'bh',oman:'om',morocco:'ma',tunisia:'tn',algeria:'dz'};
 const norm=s=>{s=String(s||'').trim().toLowerCase();return s==='united arab emirates'?'uae':s};
 const flag=n=>{const c=CODES[norm(n)];return c?`<span class="fi fi-${c} rounded-sm shadow-sm" role="img" aria-label="${esc(n)} flag"></span>`:'<i class="ph-light ph-globe-hemisphere-west text-brand-600"></i>'};
 function showModal(html){

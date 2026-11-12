@@ -139,7 +139,7 @@ const SC={
  carousel:{label:'Carousel',icon:'fa-images',one:'slide',title:'title',req:['title'],f:[['title','Title'],['subtitle','Subtitle'],['tag','Tag'],['image','Image','img']]},
  jurisdictions:{label:'Jurisdictions',icon:'fa-globe-africa',one:'country',title:'country',req:['country'],f:[['country','Country'],['code','Country code, 2 letters (eg, ae, sa)'],['tag','Tag'],['brief','Overview (the country card shows the first 5 lines)','area'],['details','Filing details','area']]},
  news:{label:'News',icon:'fa-newspaper',one:'article',title:'title',req:['title','excerpt'],f:[['title','Title'],['date','Date','date'],['category','Category (label)','select'],['image','Image','img'],['excerpt','Short summary','area'],['text','Full article','area']]},
- services:{label:'Services',icon:'fa-balance-scale',one:'service',title:'title',req:['title','description'],f:[['title','Title'],['icon','Icon (optional, e.g. ph-lightbulb)'],['description','1. Brief (on the home page card, and the top of the pop-up)','area'],['details','2. Pop-up content (more information, shown when the card is opened)','area'],['page','Dedicated page file (e.g. patents.html). Adds the "More information" button'],['pageContent','3. Dedicated page content. Text before the first ## is the introduction; each ## Heading becomes a card on the page','area']]},
+ services:{label:'Services',icon:'fa-balance-scale',one:'service',title:'title',req:['title','description'],f:[['title','Title'],['icon','Icon (optional, e.g. ph-lightbulb)'],['description','1. Brief (on the home page card, and the top of the pop-up)','area'],['details','2. Pop-up content (more information, shown when the card is opened)','area'],['page','Dedicated page file (e.g. patents.html). Adds the "More information" button'],['hidden','Hide this service on the website (home page, About page and its links)','check'],['pageContent','3. Dedicated page content. Text before the first ## is the introduction; each ## Heading becomes a card on the page','area']]},
 };
 const GEN=[['aboutMainText','About text (home page)','area'],['about','Short tagline'],['social.linkedin','LinkedIn URL'],['social.youtube','YouTube URL'],['chatPrompts','Suggestions typed into the WhatsApp box (one per line)','lines'],['newsCategories','News categories / labels (one per line)','lines']];
 const DEFCATS=['General','KHIP News','Intellectual Property','Patents','Trademarks','Translation'];
@@ -182,7 +182,9 @@ function tabs(){
 }
 const tb=(k,p,title,inner,cls='')=>`<button type="button" onmousedown="event.preventDefault()" data-act="fmt" data-k="${k}" data-t="${p}" title="${title}" class="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 ${cls}">${inner}</button>`;
 function fld(base,[k,l,t],req=[]){
-  const p=base+k,v=get(D,p),star=req.includes(k)&&lang!=='ar'?'<span class="text-red-600" title="Required"> *</span>':'';let h;const xa=lang==='ar'?'dir="rtl"':'',ref=lang==='ar'?enRef(p):'';
+  const p=base+k,v=get(D,p);
+  if(t==='check')return `<label class="flex items-start gap-2 text-xs font-bold text-gray-700 bg-gray-50 border border-gray-200 rounded-lg p-3 cursor-pointer"><input type="checkbox" data-p="${p}" data-bool="1" ${v===true?'checked':''} class="mt-0.5"><span>${esc(l)}</span></label>`;
+  const star=req.includes(k)&&lang!=='ar'?'<span class="text-red-600" title="Required"> *</span>':'';let h;const xa=lang==='ar'?'dir="rtl"':'',ref=lang==='ar'?enRef(p):'';
   if(t==='area')h=`<div class="flex items-center gap-1 mb-1">${tb('b',p,'Bold','B','text-sm font-bold')}${tb('h',p,'Subtitle','H','text-xs font-bold')}${tb('l',p,'Bullet list','<i class="fas fa-list-ul text-xs"></i>')}<span class="text-[11px] text-gray-500 ml-2">**bold** &nbsp; ## subtitle &nbsp; - bullet</span></div><textarea data-p="${p}" ${xa} aria-label="${esc(l)}" rows="5" class="${inp}">${esc(v)}</textarea>`;
   else if(t==='lines')h=`<textarea data-p="${p}" ${xa} data-lines="1" aria-label="${esc(l)}" rows="4" class="${inp}">${esc(Array.isArray(v)?v.join('\n'):v)}</textarea>`;
   else if(t==='select'){const o=((D.newsCategories||[]).filter(Boolean).length?D.newsCategories.filter(Boolean):DEFCATS).slice(),cur=v||o[0];if(cur&&!o.includes(cur))o.push(cur);h=`<select data-p="${p}" ${xa} aria-label="${esc(l)}" class="${inp}">${o.map(x=>`<option ${x===cur?'selected':''}>${esc(x)}</option>`).join('')}</select>`}
@@ -440,6 +442,7 @@ document.addEventListener('input',e=>{
   if(e.target.dataset.out){const o=$(e.target.dataset.out);if(o)o.textContent=e.target.value+(e.target.dataset.pct?'':'%')}
   if(e.target.type==='color'&&e.target.dataset.p){const h=document.querySelector(`[data-hex="${e.target.dataset.p}"]`);if(h)h.value=e.target.value;if(e.target.dataset.p.startsWith('theme.colors.')){const k=e.target.dataset.p.split('.').pop(),rb=document.querySelector(`[data-act="col-reset"][data-k="${k}"]`);if(rb)rb.disabled=e.target.value.toLowerCase()===TH.DEFAULTS[k]}}
   const p=e.target.dataset.p;if(!p||!D)return;
+  if(e.target.dataset.bool){set(D,p,e.target.checked);mark();return}
   e.target.classList.remove('bad');
   set(D,p,e.target.dataset.lines?e.target.value.split('\n').map(x=>x.trim()).filter(Boolean):e.target.value);mark();
   if(p.endsWith('image')){const im=document.querySelector(`[data-prev="${p}"]`);if(im){im.style.visibility='';im.src=imgSrc(e.target.value)}}
@@ -460,7 +463,7 @@ document.addEventListener('click',e=>{
   const a=t.dataset.act,i=+t.dataset.i,arr=D&&D[tab];
   if(t.closest('summary'))e.preventDefault();
   if(a==='tab'){tab=t.dataset.k;openItem=null;q='';tabs();view()}
-  else if(a==='add'){const s=SC[tab];const o={id:String(Math.max(0,...arr.map(x=>+x.id||0))+1)};s.f.forEach(([k])=>o[k]='');if(tab==='news')o.category=(D.newsCategories||[]).filter(Boolean)[0]||'General';arr.push(o);openItem=`${tab}.${arr.length-1}`;q='';mark();tabs();view();document.querySelector('details[open] input')?.focus()}
+  else if(a==='add'){const s=SC[tab];const o={id:String(Math.max(0,...arr.map(x=>+x.id||0))+1)};s.f.forEach(([k,,t])=>{if(t!=='check')o[k]=''});if(tab==='news')o.category=(D.newsCategories||[]).filter(Boolean)[0]||'General';arr.push(o);openItem=`${tab}.${arr.length-1}`;q='';mark();tabs();view();document.querySelector('details[open] input')?.focus()}
   else if(a==='dup'){const c=JSON.parse(JSON.stringify(arr[i]));c.id=String(Math.max(0,...arr.map(x=>+x.id||0))+1);const k=SC[tab].title;c[k]=(c[k]||'')+' (copy)';arr.splice(i+1,0,c);openItem=`${tab}.${i+1}`;mark();tabs();view()}
   else if(a==='del'){if(confirm(`Delete "${arr[i][SC[tab].title]||'this item'}"?`)){arr.splice(i,1);openItem=null;mark();tabs();view()}}
   else if(a==='up'||a==='down'){const j=a==='up'?i-1:i+1;[arr[i],arr[j]]=[arr[j],arr[i]];openItem=`${tab}.${j}`;mark();view()}

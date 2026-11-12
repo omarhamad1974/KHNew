@@ -3,7 +3,7 @@
 (function(){
   const PHONE="201006552255";
   const T=(k,d)=>window.KLang?KLang.t(k):d;
-  let prompts=window.KLang?KLang.t('prompts'):["Hello KHIP, I'd like to register a trademark in Egypt","How long does a patent filing take in the UAE?","Can you translate my patent into Arabic?","What documents do I need for a PCT national phase entry?"];
+  let prompts=window.KLang?KLang.t('prompts'):["Hello KHIP, I'd like to register a trademark in Egypt","How long does a patent filing take in the UAE?","How can I check if my trademark is available in Saudi Arabia?","What documents do I need for a PCT national phase entry?"];
   const wa=t=>window.open(`https://wa.me/${PHONE}?text=${encodeURIComponent(t)}`,'_blank','noopener');
   window.KHIP={wa,setPrompts:a=>{if(a&&a.length)prompts=a}};
   if(!document.querySelector('link[href*="phosphor"]')){const l=document.createElement('link');l.rel='stylesheet';l.href='https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/light/style.css';document.head.appendChild(l)}

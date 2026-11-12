@@ -10,7 +10,7 @@ window.KLang=(function(){
   const LS='khip-lang',CS='khip-langs',AR_FILE='./app-data.ar.json';
   const DICT={
     en:{
-      brand:'Intellectual Properties',nav_about:'About',nav_jur:'Jurisdictions',nav_services:'IP Services',nav_news:'News',nav_files:'My files',
+      nav_about:'About',nav_jur:'Jurisdictions',nav_services:'IP Services',nav_news:'News',nav_files:'My files',
       bar_home:'Home',bar_services:'IP Services',bar_news:'News',bar_jur:'Jurisdiction',bar_about:'About',bar_files:'My files',
       more:'More',jur_title:'Jurisdictions',svc_title:'IP Services',news_title:'Latest news',testi_title:'Client endorsements',
       load_err:"We couldn't load the latest content.",try_again:'Try again',close:'Close',
@@ -19,10 +19,11 @@ window.KLang=(function(){
       more_info:'More information',inquire_about:'Inquire about {x}',wa_service:'Hello KHIP! I would like to inquire about {x}.',
       wa_jur:'IP filings and legal procedures in {x}',general:'General',msg_wa:'Message KHIP on WhatsApp',send:'Send',
       switch_to:'العربية',flag_aria:'{x} flag',testimonial_n:'Testimonial {x}',news_n:'News {x}',
-      prompts:["Hello KHIP, I'd like to register a trademark in Egypt","How long does a patent filing take in the UAE?","Can you translate my patent into Arabic?","What documents do I need for a PCT national phase entry?"]
+      prev:'Previous',next:'Next',pause:'Pause slideshow',play:'Play slideshow',slide_n:'Slide {x}',
+      prompts:["Hello KHIP, I'd like to register a trademark in Egypt","How long does a patent filing take in the UAE?","How can I check if my trademark is available in Saudi Arabia?","What documents do I need for a PCT national phase entry?"]
     },
     ar:{
-      brand:'للملكية الفكرية',nav_about:'من نحن',nav_jur:'الاختصاصات القضائية',nav_services:'خدمات الملكية الفكرية',nav_news:'الأخبار',nav_files:'ملفاتي',
+      nav_about:'من نحن',nav_jur:'الاختصاصات القضائية',nav_services:'خدمات الملكية الفكرية',nav_news:'الأخبار',nav_files:'ملفاتي',
       bar_home:'الرئيسية',bar_services:'الخدمات',bar_news:'الأخبار',bar_jur:'الدول',bar_about:'من نحن',bar_files:'ملفاتي',
       more:'المزيد',jur_title:'الاختصاصات القضائية',svc_title:'خدمات الملكية الفكرية',news_title:'آخر الأخبار',testi_title:'آراء العملاء',
       load_err:'تعذر تحميل أحدث المحتوى.',try_again:'حاول مرة أخرى',close:'إغلاق',
@@ -31,7 +32,8 @@ window.KLang=(function(){
       more_info:'مزيد من المعلومات',inquire_about:'استفسر عن {x}',wa_service:'مرحباً KHIP! أود الاستفسار عن {x}.',
       wa_jur:'إجراءات تسجيل الملكية الفكرية والإجراءات القانونية في {x}',general:'عام',msg_wa:'راسل KHIP عبر واتساب',send:'إرسال',
       switch_to:'English',flag_aria:'علم {x}',testimonial_n:'الرأي {x}',news_n:'الخبر {x}',
-      prompts:['مرحباً KHIP، أود تسجيل علامة تجارية في مصر','كم يستغرق تقديم طلب براءة اختراع في الإمارات؟','هل يمكنكم ترجمة براءة الاختراع الخاصة بي إلى العربية؟','ما المستندات المطلوبة لدخول المرحلة الوطنية لمعاهدة PCT؟']
+      prev:'السابق',next:'التالي',pause:'إيقاف العرض مؤقتاً',play:'تشغيل العرض',slide_n:'الشريحة {x}',
+      prompts:['مرحباً KHIP، أود تسجيل علامة تجارية في مصر','كم يستغرق تقديم طلب براءة اختراع في الإمارات؟','كيف أتحقق من توفر علامتي التجارية في السعودية؟','ما المستندات المطلوبة لدخول المرحلة الوطنية لمعاهدة PCT؟']
     }
   };
   if(document.currentScript&&document.currentScript.hasAttribute('data-passive'))return {DICT}; // admin page: word lists only, no language switching
