@@ -26,21 +26,26 @@
     ['home-services','Home page: IP Services'],
     ['home-news','Home page: Latest news'],
     ['home-testimonials','Home page: Client endorsements'],
+    ['home-faq','Home page: FAQ'],
     ['about-intro','About page: About KHIP'],
     ['about-map','About page: Jurisdictions'],
     ['about-value','About page: KHIP Value'],
     ['about-quote','About page: Quote'],
     ['about-advantages','About page: KHIP advantages'],
     ['about-team','About page: Our team'],
+    ['about-faq','About page: FAQ'],
     ['about-contact','About page: Contact'],
     ['patents-intro','Patents page: Introduction'],
     ['patents-details','Patents page: Details'],
+    ['patents-faq','Patents page: FAQ'],
     ['patents-contact','Patents page: Contact'],
     ['trademarks-intro','Trademarks page: Introduction'],
     ['trademarks-details','Trademarks page: Details'],
+    ['trademarks-faq','Trademarks page: FAQ'],
     ['trademarks-contact','Trademarks page: Contact'],
     ['translation-intro','Translation page: Introduction'],
     ['translation-details','Translation page: Details'],
+    ['translation-faq','Translation page: FAQ'],
     ['translation-contact','Translation page: Contact']
   ];
   const HEX=/^#[0-9a-f]{6}$/i;
@@ -64,6 +69,16 @@
     for(const k in c)r.setProperty(vname(k),parts(c[k]).join(' '));
     const w=Math.min(100,Math.max(40,parseFloat((T||{}).sectionWidth)||66.667));
     r.setProperty('--sec-wn',(w/100).toFixed(4));
+    hero((T||{}).hero);
+  }
+  // Hero slider height: {unit:'px'|'vh', mobile, tablet, desktop}. Missing or invalid = the built-in heights.
+  const HERO={px:[100,900],vh:[15,100]};
+  function hero(H){
+    const r=document.documentElement,u=H&&H.unit==='vh'?'vh':'px',lim=HERO[u];
+    const val=k=>{const n=parseFloat(H&&H[k]);return isFinite(n)?Math.min(lim[1],Math.max(lim[0],n))+u:''};
+    const m=val('mobile'),t=val('tablet'),d=val('desktop');
+    if(H&&m&&t&&d){r.style.setProperty('--hero-h-m',m);r.style.setProperty('--hero-h-t',t);r.style.setProperty('--hero-h-d',d);r.classList.add('hero-custom')}
+    else{['--hero-h-m','--hero-h-t','--hero-h-d'].forEach(k=>r.style.removeProperty(k));r.classList.remove('hero-custom')}
   }
   function paint(T){
     const S=(T||{}).sections||{},ink=palette(T).ink;
@@ -89,7 +104,7 @@
     });
   }
   function apply(D){const T=(D&&D.theme)||{};vars(T);paint(T)}
-  window.KTHEME={DEFAULTS,ROLES,SECTIONS,HEX,resolve,lum,palette,apply};
+  window.KTHEME={DEFAULTS,ROLES,SECTIONS,HEX,HERO,resolve,lum,palette,apply};
   // The admin page uses the definitions only; it must not recolour itself.
   if(/admin\.html$/.test(location.pathname))return;
   let cached=null;try{cached=JSON.parse(localStorage.getItem(CACHE))}catch{}

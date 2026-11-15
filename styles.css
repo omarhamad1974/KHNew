@@ -145,8 +145,8 @@ header .wrap{width:100%;max-width:76rem}
 /* Dark backgrounds: titles and text turn light; white cards, chips and frames keep dark text */
 .sec-light{--c-title-rgb:255 255 255;color:rgba(255,255,255,.88)}
 .sec-light :is(.text-stone-500,.text-stone-600,.text-stone-700){color:rgba(255,255,255,.72)}
-.sec-light :is(.card,.tframe,.keep-dark,.bg-white,.bg-stone-50,.bg-stone-100,.bg-surface){--c-title-rgb:var(--c-title0-rgb);color:rgb(var(--c-text-rgb))}
-.sec-light :is(.card,.tframe,.keep-dark) :is(.text-stone-500,.text-stone-600,.text-stone-700){color:#78716c}
+.sec-light :is(.card,.tframe,.keep-dark,.faq-item,.bg-white,.bg-stone-50,.bg-stone-100,.bg-surface){--c-title-rgb:var(--c-title0-rgb);color:rgb(var(--c-text-rgb))}
+.sec-light :is(.card,.tframe,.keep-dark,.faq-item) :is(.text-stone-500,.text-stone-600,.text-stone-700){color:#78716c}
 .sec-light .rule{background:rgb(var(--c-sand-rgb))}
 
 /* ---------- Pop-ups: a long pop-up scrolls inside itself ---------- */
@@ -238,3 +238,21 @@ html[dir=rtl] .auth-x{right:auto;left:.75rem}
 .mn-btn i{font-size:1.125rem;flex:0 0 auto}
 .mn-btn:hover{background:rgb(var(--c-ink-rgb));color:#fff;border-color:rgb(var(--c-ink-rgb))}
 .mn-btn:active{transform:scale(.97)}
+
+/* Hero height set in admin (Carousel tab). Without it the page keeps its built-in heights. */
+html.hero-custom #carousel{height:var(--hero-h-m)}
+@media(min-width:640px){html.hero-custom #carousel{height:var(--hero-h-t)}}
+@media(min-width:1024px){html.hero-custom #carousel{height:var(--hero-h-d)}}
+
+/* FAQ section (faq.js) */
+.faq-list{max-width:52rem}
+.faq-item{background:#fff;color:rgb(var(--c-text-rgb));border:1px solid rgba(231,229,228,.9);border-radius:1rem;box-shadow:0 1px 2px rgba(0,0,0,.05);margin-bottom:.75rem;overflow:hidden}
+.faq-item>summary{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 1.25rem;cursor:pointer;list-style:none;font-family:"Cormorant Garamond",Georgia,serif;font-size:1.3rem;font-weight:600;line-height:1.3;color:rgb(var(--c-title-rgb))}
+.faq-item>summary::-webkit-details-marker{display:none}
+.faq-item>summary i{flex-shrink:0;font-size:1.25rem;color:rgb(var(--c-accent-rgb));transition:transform .25s}
+.faq-item[open]>summary i{transform:rotate(180deg)}
+.faq-item>summary:hover{background:rgba(0,0,0,.02)}
+.faq-item>summary:focus-visible{outline:2px solid rgb(var(--c-accent-rgb));outline-offset:-2px;border-radius:1rem}
+.faq-a{padding:0 1.25rem 1.15rem;font-size:.95rem;line-height:1.7}
+.faq-a p{margin:.45rem 0 0}.faq-a ul{margin-top:.5rem}
+@media(prefers-reduced-motion:reduce){.faq-item>summary i{transition:none}}

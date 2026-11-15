@@ -10,8 +10,11 @@ Open `https://YOUR-SITE/admin.html`. It has two areas, switched from the dark ba
 
 **Website content** (saves to `app-data.json` on GitHub)
 - Sign in with a GitHub fine-grained token (Contents: read and write, for this repository only). The repository name field starts as `Hot-Info`; enter your GitHub username or organization once and the browser remembers it.
-- Tabs: General, **Colors**, **Backgrounds**, Carousel, Jurisdictions, News, Services, Products, Testimonials, Team.
+- Tabs: General, **Colors**, **Backgrounds**, Carousel, Jurisdictions, News, Services, Products, Testimonials, Team, **FAQ**.
 - **Colors**: the site palette. Ten colors (titles, dark, gold, accent blue, sand, page and section backgrounds, body text) start at the colors the site always used; change any of them, pick a ready-made palette, or add your own named colors. Also sets the **section width** on tablet and desktop (67% is about two thirds).
+- **Carousel**: the slides, plus a **Hero height** card at the top (phone / tablet / desktop, in pixels or % of screen height, with ready-made sizes and a reset).
+- **Import slides** (Carousel tab): add the home page slides from a Word, Markdown or spreadsheet file. Word: a **Heading 1** per slide, then `Subtitle:` and `Tag:` lines and the picture. Markdown: `# Title` plus the same lines (`Image: photo.jpg`). Spreadsheet: columns `Title, Subtitle, Tag, Image`. You review, then add at the end / top or replace the current slides.
+- **FAQ**: questions and answers for the Home, About, Patents, Trademarks and Translation pages (pick the page with the buttons). Each page shows an open-and-close list; a page with no questions shows no FAQ. Stored as `faq` in `app-data.json`: `{ "title": "", "intro": "", "pages": { "patents": { "hidden": false, "title": "", "intro": "", "items": [ { "id": "1", "q": "Question", "a": "Answer" } ] } } }`.
 - **Backgrounds**: give any section (home, About, Patents, Trademarks, Translation) a background color from the palette, or a photo that covers the section (with an optional darkening slider). Text turns light on dark backgrounds by itself; the "Text color" option overrides that.
 - Text boxes support `**bold**`, `## subtitle` and `- bullet` (use the B, H and list buttons).
 - Photos: upload from your device (large photos are shrunk automatically) or pick one already in `assets/`.

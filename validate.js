@@ -12,5 +12,19 @@ for(const [k,fields] of Object.entries(need)){
   });
 }
 if(!d.about&&!d.aboutMainText)errs.push('missing about text');
+const H=(d.theme||{}).hero;
+if(H!==undefined){
+  if(H.unit&&!['px','vh'].includes(H.unit))errs.push('theme.hero.unit must be px or vh');
+  const lim=H.unit==='vh'?[15,100]:[100,900];
+  ['mobile','tablet','desktop'].forEach(k=>{const n=Number(H[k]);if(!(n>=lim[0]&&n<=lim[1]))errs.push(`theme.hero.${k}: must be between ${lim[0]} and ${lim[1]}`)});
+}
+if(d.faq!==undefined){
+  const P=['home','about','patents','trademarks','translation'],pg=(d.faq||{}).pages||{};
+  for(const k of Object.keys(pg)){
+    if(!P.includes(k)){errs.push(`faq.pages.${k}: unknown page (use ${P.join(', ')})`);continue}
+    if(!Array.isArray(pg[k].items||[])){errs.push(`faq.pages.${k}.items: must be a list`);continue}
+    (pg[k].items||[]).forEach((x,i)=>{if(!String(x.q||'').trim()||!String(x.a||'').trim())errs.push(`faq.pages.${k}.items[${i}]: needs both q (question) and a (answer)`)});
+  }
+}
 if(errs.length){console.error(errs.join('\n'));process.exit(1)}
 console.log('app-data.json OK');

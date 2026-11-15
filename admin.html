@@ -117,6 +117,7 @@ details[open]>summary .chev{transform:rotate(90deg)}
 <script src="supabase-config.js"></script>
 <script src="theme.js"></script>
 <script src="news-import.js"></script>
+<script src="slider-import.js"></script>
 <script src="lang.js" data-passive></script>
 <script>
 /* ============================ shared ============================ */
@@ -178,8 +179,8 @@ async function connect(creds){
 }
 
 function tabs(){
-  const all=[['general','General','fa-house'],...(lang==='ar'?[['ui','Interface text','fa-language']]:[['colors','Colors','fa-palette'],['backgrounds','Backgrounds','fa-fill-drip']]),...Object.entries(SC).map(([k,v])=>[k,v.label,v.icon])];
-  $('tabs').innerHTML=all.map(([k,l,i])=>`<button data-act="tab" data-k="${k}" class="flex-shrink-0 text-xs font-bold px-3 py-2 rounded-xl ${k===tab?'bg-brand-600 text-white':'bg-gray-100 hover:bg-gray-200'}"><i class="fas ${i}"></i> ${l}${SC[k]?` (${(D[k]||[]).length})`:''}</button>`).join('');
+  const all=[['general','General','fa-house'],...(lang==='ar'?[['ui','Interface text','fa-language']]:[['colors','Colors','fa-palette'],['backgrounds','Backgrounds','fa-fill-drip']]),...Object.entries(SC).map(([k,v])=>[k,v.label,v.icon]),...(lang==='ar'?[]:[['faq','FAQ','fa-circle-question']])];
+  $('tabs').innerHTML=all.map(([k,l,i])=>`<button data-act="tab" data-k="${k}" class="flex-shrink-0 text-xs font-bold px-3 py-2 rounded-xl ${k===tab?'bg-brand-600 text-white':'bg-gray-100 hover:bg-gray-200'}"><i class="fas ${i}"></i> ${l}${SC[k]?` (${(D[k]||[]).length})`:k==='faq'?` (${faqTotal()})`:''}</button>`).join('');
 }
 const tb=(k,p,title,inner,cls='')=>`<button type="button" onmousedown="event.preventDefault()" data-act="fmt" data-k="${k}" data-t="${p}" title="${title}" class="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 ${cls}">${inner}</button>`;
 function fld(base,[k,l,t],req=[]){
@@ -199,8 +200,9 @@ function view(){
   if(tab==='ui')return viewUi();
   if(tab==='colors')return viewColors();
   if(tab==='backgrounds')return viewBg();
+  if(tab==='faq')return viewFaq();
   const s=SC[tab],arr=D[tab]=D[tab]||[];
-  m.innerHTML=`<div class="flex items-center justify-between"><h2 class="font-extrabold text-lg">${s.label}</h2>${lang==='ar'?'':`<div class="flex items-center gap-2">${tab==='news'?`<button data-act="import" class="text-xs bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold px-3.5 py-2 rounded-xl" title="Add many articles from Word or Markdown files"><i class="fas fa-file-import"></i> Import</button>`:''}<button data-act="add" class="text-xs bg-[#d9c8a4] hover:bg-[#cdb98f] text-[#1b2433] font-bold px-3.5 py-2 rounded-xl"><i class="fas fa-plus"></i> Add ${s.one}</button></div>`}</div>`
+  m.innerHTML=(tab==='carousel'&&lang!=='ar'?heroCard():'')+`<div class="flex items-center justify-between"><h2 class="font-extrabold text-lg">${s.label}</h2>${lang==='ar'?'':`<div class="flex items-center gap-2">${tab==='news'?`<button data-act="import" class="text-xs bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold px-3.5 py-2 rounded-xl" title="Add many articles from Word or Markdown files"><i class="fas fa-file-import"></i> Import</button>`:''}${tab==='carousel'?`<button data-act="simport" class="text-xs bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold px-3.5 py-2 rounded-xl" title="Add slides from a Word, Markdown or spreadsheet file"><i class="fas fa-file-import"></i> Import slides</button>`:''}<button data-act="add" class="text-xs bg-[#d9c8a4] hover:bg-[#cdb98f] text-[#1b2433] font-bold px-3.5 py-2 rounded-xl"><i class="fas fa-plus"></i> Add ${s.one}</button></div>`}</div>`
   +(arr.length>5?`<input id="filter" type="search" placeholder="Search ${s.label.toLowerCase()}" aria-label="Search ${s.label.toLowerCase()}" value="${esc(q)}" class="${inp}">`:'')
   +'<div id="items" class="space-y-3"></div>';
   items();
@@ -219,7 +221,7 @@ function items(){
 }
 
 /* ---------- Import articles from Word (.docx) or Markdown (.md) files (parser: news-import.js) ---------- */
-const IM={arts:[],warn:[],on:new Set(),busy:false,seq:0};
+const IM={arts:[],warn:[],on:new Set(),busy:false,seq:0,mode:'news'};   // mode: 'news' (articles) or 'slides' (hero slider); both use the same window
 const lcs=s=>String(s||'').trim().toLowerCase();
 const impThumb=a=>{const c=a.cover;if(!c)return '';if(c.kind==='url')return c.url;if(c.kind==='asset')return imgSrc(c.name);if(c.kind==='bytes'){c.prev=c.prev||URL.createObjectURL(new Blob([c.data],{type:c.mime}));return c.prev}return ''};
 function impCat(a){                                   // match the wanted category to the site's list (case-insensitive)
@@ -234,15 +236,17 @@ function impModal(html){
   if(!m){m=document.createElement('div');m.id='imp-modal';m.className='fixed inset-0 z-50 bg-black/40 flex items-end sm:items-center justify-center p-3';
     m.innerHTML='<div id="imp-box" role="dialog" aria-modal="true" aria-labelledby="imp-h" class="bg-white rounded-2xl w-full max-w-2xl max-h-[92vh] overflow-y-auto p-5 shadow-2xl"></div>';
     document.body.appendChild(m);m.addEventListener('click',e=>{if(e.target===m&&!IM.busy)impClose()});
-    m.addEventListener('dragover',e=>e.preventDefault());m.addEventListener('drop',e=>{e.preventDefault();if(!IM.busy&&e.dataTransfer.files.length)impLoad(e.dataTransfer.files)})}
+    m.addEventListener('dragover',e=>e.preventDefault());m.addEventListener('drop',e=>{e.preventDefault();if(!IM.busy&&e.dataTransfer.files.length)impLoadAny(e.dataTransfer.files)})}
   $('imp-box').innerHTML=html;
 }
 function impClose(){document.getElementById('imp-modal')?.remove();IM.arts.forEach(a=>[a.cover,...a.imgs].forEach(i=>i&&i.prev&&URL.revokeObjectURL(i.prev)));IM.arts=[];IM.on=new Set()}
 const impHead=(t,s)=>`<div class="flex items-start justify-between gap-3"><div><h2 id="imp-h" class="font-extrabold text-lg">${t}</h2><p class="text-xs text-gray-600">${s}</p></div><button type="button" data-imp="close" ${IM.busy?'disabled':''} class="w-8 h-8 rounded-lg bg-gray-100 flex-shrink-0 disabled:opacity-40" aria-label="Close"><i class="fas fa-xmark"></i></button></div>`;
 function impOpen(){
   if(lang==='ar')return;
-  IM.warn=[];impPick();
+  IM.mode='news';IM.warn=[];impPick();
 }
+const impLoadAny=f=>IM.mode==='slides'?slLoad(f):impLoad(f);
+const impRev=()=>IM.mode==='slides'?slReview():impReview();
 function impPick(err){
   impModal(`${impHead('Import articles','Add many articles at once from Word or Markdown files, with their pictures.')}
   <label id="imp-drop" class="mt-4 flex flex-col items-center justify-center gap-1 text-center border-2 border-dashed border-gray-300 hover:border-brand-600 rounded-2xl p-8 cursor-pointer bg-gray-50">
@@ -285,10 +289,10 @@ function impReview(){
   <div class="mt-4 flex items-center justify-between gap-2 sticky bottom-0 bg-white pt-2"><button type="button" data-imp="back" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-4 py-2.5 rounded-xl">Back</button>
     <button type="button" data-imp="run" ${n?'':'disabled'} class="text-xs bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white font-bold px-5 py-2.5 rounded-xl"><i class="fas fa-file-import"></i> Import ${n} article${n===1?'':'s'}</button></div>`);
 }
-async function impUpload(img,cover){
+async function impUpload(img,cover,ratio=2,W=1600){
   if(img.done)return img.done;
   let file=new File([img.data],img.name,{type:img.mime});
-  file=cover?await fit(file,2,1600):await shrink(file);
+  file=cover?await fit(file,ratio,W):await shrink(file);
   if(file.size>3e6)throw new Error(`${img.name} is over 3 MB`);
   const name=Date.now().toString(36)+(++IM.seq)+'-'+file.name.replace(/[^\w.\-]/g,'-');
   await api('assets/'+name,{method:'PUT',body:{message:'Import article image via admin page',content:b64(new Uint8Array(await file.arrayBuffer())),branch:S.b}});
@@ -321,18 +325,91 @@ async function impRun(){
    <div class="mt-4 text-right"><button type="button" data-imp="close" class="text-xs bg-brand-600 hover:bg-brand-700 text-white font-bold px-5 py-2.5 rounded-xl">Done</button></div>`);
 }
 const autoEx=t=>{const s=String(t).replace(/!\[[^\]]*\]\([^)]*\)/g,'').replace(/^\s*(##\s+|-\s+)/gm,'').replace(/\*\*/g,'').replace(/\s+/g,' ').trim();return s.length>220?s.slice(0,220).replace(/\s+\S*$/,'')+'…':s};
+/* ---------- Import hero slides from Word (.docx), Markdown (.md), text or a spreadsheet (parser: slider-import.js) ---------- */
+function slOpen(){
+  if(lang==='ar')return;
+  IM.mode='slides';IM.warn=[];slPick();
+}
+function slPick(err){
+  impModal(`${impHead('Import slides','Fill the home page slider from a Word, Markdown or spreadsheet file.')}
+  <label id="imp-drop" class="mt-4 flex flex-col items-center justify-center gap-1 text-center border-2 border-dashed border-gray-300 hover:border-brand-600 rounded-2xl p-8 cursor-pointer bg-gray-50">
+    <i class="fas fa-file-import text-2xl text-brand-600"></i><span class="text-sm font-bold">Choose your file, or drop it here</span>
+    <span class="text-xs text-gray-500">Word (.docx), Markdown (.md), text, or a spreadsheet (.xlsx, .csv). Add the picture files too if they are separate.</span>
+    <input id="imp-file" type="file" multiple accept=".docx,.md,.markdown,.txt,.zip,.xlsx,.xls,.csv,image/*" class="hidden"></label>
+  ${err?`<div class="mt-3 text-xs rounded-lg p-3 border text-red-700 bg-red-50 border-red-200 space-y-1" role="alert">${err}</div>`:''}
+  <details class="mt-4 text-xs text-gray-700 bg-gray-50 border border-gray-200 rounded-xl p-3"><summary class="font-bold cursor-pointer">How to prepare the file</summary>
+    <div class="mt-2 space-y-2 leading-relaxed">
+      <p><b>Word:</b> give every slide a title in the <b>Heading 1</b> style. Right under it type the details, one per line: <code>Subtitle:</code> <code>Tag:</code>. Put the slide's picture right there (the first picture of a slide is used). With no <code>Subtitle:</code> line, the first paragraph is used.</p>
+      <p><b>Markdown or text:</b> start each slide with <code># Title</code>, then <code>Subtitle:</code>, <code>Tag:</code> and <code>Image: photo.jpg</code> lines. Pick the picture files together with the file, or use a web address (https://...).</p>
+      <p><b>Spreadsheet:</b> one row per slide, first row <code>Title, Subtitle, Tag, Image</code>. Image is a file name (pick the pictures together with the sheet, or use one already in <code>assets</code>) or a web address.</p>
+      <p>Photos are resized to suit the slider. You see everything before it is added, and nothing is published until you press Save.</p>
+      <div class="flex flex-wrap gap-4"><button type="button" data-imp="template" class="font-bold text-brand-700 underline">Download a Markdown template</button><button type="button" data-imp="template-csv" class="font-bold text-brand-700 underline">Download a spreadsheet (CSV) template</button></div>
+    </div></details>`);
+}
+async function slLoad(files){
+  impModal(`${impHead('Import slides','Reading the files...')}<p class="mt-6 text-sm text-gray-600 text-center"><i class="fas fa-spinner fa-spin"></i> Reading ${files.length} file${files.length>1?'s':''}</p>`);
+  let r;try{r=await KSlides.parseFiles([...files],{assets:new Set(ASSETS)})}catch(e){return slPick(esc(e.message||String(e)))}
+  IM.arts=r.slides.map(x=>({title:x.title,subtitle:x.subtitle,tag:x.tag,cover:x.image,imgs:[],source:x.source,notes:x.notes||[]}));IM.warn=r.warnings;
+  if(!IM.arts.length)return slPick(`<p class="font-bold">No slides were found.</p>${IM.warn.map(w=>`<p>${esc(w)}</p>`).join('')||'<p>Start each slide with a Heading 1 title (Word) or a # Title line (Markdown), or use a spreadsheet with a Title column.</p>'}`);
+  const have=new Set((D.carousel||[]).map(x=>lcs(x.title)));
+  IM.arts.forEach(a=>a.dup=have.has(lcs(a.title)));
+  IM.on=new Set(IM.arts.map((a,i)=>i));
+  slReview();
+}
+function slReview(){
+  const n=IM.on.size,cur=(D.carousel||[]).length,chip=(t,c='bg-gray-100 text-gray-700')=>`<span class="px-2 py-0.5 rounded-full ${c}">${t}</span>`;
+  impModal(`${impHead('Review the slides',`${IM.arts.length} slide${IM.arts.length>1?'s':''} found. Untick any you do not want.`)}
+  ${IM.warn.length?`<div class="mt-3 text-xs rounded-lg p-3 border text-amber-900 bg-amber-50 border-amber-200 space-y-1">${IM.warn.map(w=>`<p>${esc(w)}</p>`).join('')}</div>`:''}
+  <div class="mt-3 flex flex-wrap items-center gap-3 text-xs"><button type="button" data-imp="all" class="font-bold text-brand-700 underline">Select all</button><button type="button" data-imp="none" class="font-bold text-brand-700 underline">Select none</button>
+    <label class="ml-auto flex items-center gap-2 font-bold">The slider has ${cur} slide${cur===1?'':'s'}. <select id="imp-mode" class="border border-gray-300 rounded-lg px-2 py-1 font-normal"><option value="end">Add the new ones at the end</option><option value="top">Add the new ones at the top</option><option value="replace">Replace all the current slides</option></select></label></div>
+  <div class="mt-3 space-y-2">${IM.arts.map((a,i)=>{
+    const th=impThumb(a);
+    return `<label class="flex gap-3 p-3 rounded-xl border ${IM.on.has(i)?'border-brand-600 bg-brand-50/40':'border-gray-200'} cursor-pointer"><input type="checkbox" data-imp-on="${i}" ${IM.on.has(i)?'checked':''} class="mt-1 flex-shrink-0">
+      ${th?`<img src="${esc(th)}" alt="" class="w-20 h-12 rounded-md object-cover bg-gray-200 flex-shrink-0">`:`<div class="w-20 h-12 rounded-md bg-gray-100 text-gray-400 flex items-center justify-center flex-shrink-0 text-[10px] text-center leading-tight">no picture</div>`}
+      <div class="min-w-0 flex-1"><div class="font-bold text-sm">${esc(a.title)}</div>${a.subtitle?`<div class="text-xs text-gray-600">${esc(a.subtitle)}</div>`:'<div class="text-xs text-amber-800">No subtitle</div>'}
+      <div class="flex flex-wrap gap-1 mt-1 text-[11px]">${a.tag?chip(esc(a.tag),'bg-brand-50 text-brand-700'):''}${a.cover?'':chip('no picture','bg-amber-100 text-amber-900')}${a.dup?chip('same title already in the slider','bg-amber-100 text-amber-900'):''}${chip(esc(a.source))}</div>
+      ${a.notes.length?`<p class="text-[11px] text-amber-800 mt-1">${a.notes.map(esc).join(' · ')}</p>`:''}</div></label>`}).join('')}</div>
+  <p class="mt-3 text-[11px] text-gray-500">A slide with no picture shows the dark background. You can add a picture afterwards in the slide's own form.</p>
+  <div class="mt-4 flex items-center justify-between gap-2 sticky bottom-0 bg-white pt-2"><button type="button" data-imp="back" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-4 py-2.5 rounded-xl">Back</button>
+    <button type="button" data-imp="run" ${n?'':'disabled'} class="text-xs bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white font-bold px-5 py-2.5 rounded-xl"><i class="fas fa-file-import"></i> Import ${n} slide${n===1?'':'s'}</button></div>`);
+}
+async function slRun(){
+  const how=$('imp-mode')?.value||'end',chosen=IM.arts.filter((a,i)=>IM.on.has(i));if(!chosen.length)return;
+  const cur=(D.carousel||[]).length;
+  if(how==='replace'&&cur&&!confirm(`Replace the ${cur} current slide${cur===1?'':'s'} with ${chosen.length} new one${chosen.length===1?'':'s'}? You can still undo it before saving (undo arrow at the top).`))return;
+  IM.busy=true;
+  const total=chosen.filter(a=>a.cover&&a.cover.kind==='bytes').length;let done=0;const fails=[];
+  const show=t=>impModal(`${impHead('Importing...','Please keep this window open.')}<div class="mt-6 text-center space-y-3"><p class="text-sm"><i class="fas fa-spinner fa-spin"></i> ${t}</p>${total?`<div class="h-2 bg-gray-100 rounded-full overflow-hidden"><div class="h-full bg-brand-600" style="width:${Math.round(done/total*100)}%"></div></div>`:''}</div>`);
+  let id=how==='replace'?0:Math.max(0,...(D.carousel||[]).map(x=>+x.id||0));const out=[];
+  for(const a of chosen){
+    show(`Slide ${out.length+1} of ${chosen.length}: ${esc(a.title)}`);
+    let image='';const im=a.cover;
+    if(im){
+      if(im.kind==='url')image=im.url;else if(im.kind==='asset')image=im.name;
+      else{try{image=await impUpload(im,true,1.6,2000)}catch(e){fails.push(`${a.title}: ${e.message||e}`)}done++}
+    }
+    out.push({id:String(++id),title:a.title,subtitle:a.subtitle||'',tag:a.tag||'',image});
+  }
+  if(how==='replace')D.carousel=out;else if(how==='top')D.carousel=[...out,...(D.carousel||[])];else D.carousel=[...(D.carousel||[]),...out];
+  IM.busy=false;mark();tab='carousel';openItem=null;q='';tabs();view();
+  impModal(`${impHead('Import finished',`${out.length} slide${out.length>1?'s were':' was'} ${how==='replace'?'put in the slider':'added'}.`)}
+   <div class="mt-4 text-sm bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-xl p-3"><i class="fas fa-circle-check"></i> Press <b>Save</b> at the top to publish them on the website.</div>
+   ${fails.length?`<div class="mt-3 text-xs rounded-lg p-3 border text-red-700 bg-red-50 border-red-200 space-y-1"><p class="font-bold">Some pictures could not be added:</p>${fails.map(f=>`<p>${esc(f)}</p>`).join('')}</div>`:''}
+   <div class="mt-4 text-right"><button type="button" data-imp="close" class="text-xs bg-brand-600 hover:bg-brand-700 text-white font-bold px-5 py-2.5 rounded-xl">Done</button></div>`);
+}
 document.addEventListener('click',e=>{
   const t=e.target.closest('[data-imp]');if(!t)return;const a=t.dataset.imp;
   if(a==='close'){if(!IM.busy)impClose()}
-  else if(a==='back')impPick();
-  else if(a==='all'){IM.on=new Set(IM.arts.map((x,i)=>i));impReview()}
-  else if(a==='none'){IM.on=new Set();impReview()}
-  else if(a==='run')impRun();
-  else if(a==='template'){const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([KImport.TEMPLATE],{type:'text/markdown'}));l.download='articles-template.md';l.click()}
+  else if(a==='back')IM.mode==='slides'?slPick():impPick();
+  else if(a==='all'){const pos=$('imp-pos')?.value,dm=$('imp-mode')?.value;IM.on=new Set(IM.arts.map((x,i)=>i));impRev();if(pos&&$('imp-pos'))$('imp-pos').value=pos;if(dm&&$('imp-mode'))$('imp-mode').value=dm}
+  else if(a==='none'){const pos=$('imp-pos')?.value,dm=$('imp-mode')?.value;IM.on=new Set();impRev();if(pos&&$('imp-pos'))$('imp-pos').value=pos;if(dm&&$('imp-mode'))$('imp-mode').value=dm}
+  else if(a==='run')IM.mode==='slides'?slRun():impRun();
+  else if(a==='template'){const sl=IM.mode==='slides',l=document.createElement('a');l.href=URL.createObjectURL(new Blob([sl?KSlides.TEMPLATE_MD:KImport.TEMPLATE],{type:'text/markdown'}));l.download=sl?'slides-template.md':'articles-template.md';l.click()}
+  else if(a==='template-csv'){const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([KSlides.TEMPLATE_CSV],{type:'text/csv'}));l.download='slides-template.csv';l.click()}
 });
 document.addEventListener('change',e=>{
-  if(e.target.id==='imp-file'&&e.target.files.length){impLoad(e.target.files);return}
-  if(e.target.dataset.impOn!==undefined){const i=+e.target.dataset.impOn;e.target.checked?IM.on.add(i):IM.on.delete(i);const pos=$('imp-pos')?.value;impReview();if(pos&&$('imp-pos'))$('imp-pos').value=pos}
+  if(e.target.id==='imp-file'&&e.target.files.length){impLoadAny(e.target.files);return}
+  if(e.target.dataset.impOn!==undefined){const i=+e.target.dataset.impOn;e.target.checked?IM.on.add(i):IM.on.delete(i);const pos=$('imp-pos')?.value,dm=$('imp-mode')?.value;impRev();if(pos&&$('imp-pos'))$('imp-pos').value=pos;if(dm&&$('imp-mode'))$('imp-mode').value=dm}
 });
 addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('imp-modal')&&!IM.busy)impClose()});
 
@@ -414,6 +491,102 @@ function viewBg(){
 }
 document.addEventListener('toggle',e=>{const d=e.target;if(d&&d.dataset&&d.dataset.bg){d.open?bgOpen.add(d.dataset.bg):bgOpen.delete(d.dataset.bg)}},true);
 
+/* ---------- Hero height (Carousel tab). Saved as theme.hero; applied by theme.js. Not set = the built-in heights ---------- */
+const HERO_DEF={unit:'px',mobile:128,tablet:208,desktop:256};
+const HERO_PRE=[['standard','Standard (as before)','px',128,208,256],['compact','Compact','px',120,160,200],['tall','Tall','px',220,340,440],['large','Large','px',300,460,600],['screen','Almost full screen','vh',60,70,80]];
+const HERO_ROWS=[['mobile','Phone','screens under 640 px wide'],['tablet','Tablet','640 to 1023 px wide'],['desktop','Desktop','1024 px wide and up']];
+const heroVal=()=>({...HERO_DEF,...((D.theme&&D.theme.hero)||{})});
+function heroEnsure(){const t=theme();if(!t.hero)t.hero={...HERO_DEF};return t.hero}
+const heroPrevH=h=>Math.round(Math.min(320,(h.unit==='vh'?h.desktop/100*800:h.desktop)*0.47));
+function heroCard(){
+  const h=heroVal(),set_=!!(D.theme&&D.theme.hero),lim=TH.HERO[h.unit]||TH.HERO.px,vh=h.unit==='vh',step=vh?1:10,u=vh?'%':'px';
+  const first=(D.carousel||[]).find(x=>x.image),pv=first?imgSrc(first.image):'';
+  const row=([k,n,sub])=>`<div><div class="flex items-baseline justify-between"><span class="text-xs font-bold">${n}</span><span class="text-[11px] text-gray-500">${sub}</span></div>
+    <div class="flex items-center gap-3 mt-1"><input type="range" data-hero="${k}" min="${lim[0]}" max="${lim[1]}" step="${step}" value="${h[k]}" aria-label="${n} height" class="flex-1">
+    <span class="flex items-center gap-1 flex-shrink-0"><input type="number" data-hero="${k}" min="${lim[0]}" max="${lim[1]}" step="${step}" value="${h[k]}" aria-label="${n} height value" class="w-20 px-2 py-1.5 text-sm rounded-lg border border-gray-300 bg-white"><span class="text-xs text-gray-600 w-6">${u}</span></span></div></div>`;
+  return `<div class="bg-white p-4 rounded-2xl border border-gray-200 space-y-3" id="hero-card">
+    <div class="flex items-start justify-between gap-3"><div><h2 class="font-extrabold text-lg">Hero height</h2>
+      <p class="text-xs text-gray-600">How tall the slider at the top of the home page is. The width is always the full page. ${set_?'':'<b>Now using the built-in heights.</b> Change anything below to set your own.'}</p></div>
+      <button data-act="hero-reset" ${set_?'':'disabled'} class="text-xs bg-gray-100 hover:bg-gray-200 disabled:opacity-40 font-bold px-3 py-2 rounded-xl flex-shrink-0" title="Go back to the built-in heights"><i class="fas fa-rotate-left"></i> Reset</button></div>
+    <div class="flex flex-wrap gap-2">${HERO_PRE.map(([k,n,un,a,b,c])=>`<button data-act="hero-pre" data-k="${k}" class="text-xs font-bold bg-brand-50 hover:bg-brand-100 text-brand-700 px-3 py-2 rounded-xl">${esc(n)} <span class="font-normal text-gray-500">${a} / ${b} / ${c}${un==='vh'?'%':''}</span></button>`).join('')}</div>
+    <label class="block text-xs font-bold">Measure the height in<select data-hero-unit="1" class="${inp} mt-1"><option value="px" ${vh?'':'selected'}>Pixels (a fixed height)</option><option value="vh" ${vh?'selected':''}>% of the screen height (grows with the screen)</option></select></label>
+    ${HERO_ROWS.map(row).join('')}
+    <div><span class="text-xs font-bold">Preview (desktop, not to scale)</span>
+      <div id="hero-prev" class="mt-1 rounded-xl overflow-hidden bg-[#1b2433] relative" style="height:${heroPrevH(h)}px;${pv?`background:linear-gradient(to top,rgba(27,36,51,.85),rgba(27,36,51,.1)),url('${esc(pv)}') center/cover no-repeat`:''}"><div class="absolute bottom-2 left-3 text-white text-xs font-bold"><span id="hero-prev-t">${h.desktop}${u}</span> tall</div></div></div>
+    <p class="text-[11px] text-gray-500">Very short heights squeeze the title; very tall ones show less of each photo's edges. Photos you upload here are cropped to a 16:10 shape, which suits every height. Press Save to publish.</p>
+  </div>`;
+}
+document.addEventListener('input',e=>{
+  const k=e.target.dataset.hero;if(!k||!D)return;
+  const h=heroEnsure(),lim=TH.HERO[h.unit]||TH.HERO.px,v=parseFloat(e.target.value);
+  if(!isFinite(v)||v<lim[0]||v>lim[1])return;                       // while typing, wait until the number is inside the allowed range
+  heroSync(h,k,Math.round(v),e.target);
+});
+document.addEventListener('change',e=>{
+  const k=e.target.dataset.hero;
+  if(k&&D){const h=heroEnsure(),lim=TH.HERO[h.unit]||TH.HERO.px;let v=parseFloat(e.target.value);if(!isFinite(v))v=h[k];heroSync(h,k,Math.round(Math.min(lim[1],Math.max(lim[0],v))),null);return}
+  if(e.target.dataset.heroUnit&&D){
+    const h=heroEnsure(),nu=e.target.value==='vh'?'vh':'px';if(nu===h.unit)return;
+    const pre=HERO_PRE.find(x=>x[2]===nu);Object.assign(h,{unit:nu,mobile:pre[3],tablet:pre[4],desktop:pre[5]});mark();view();toast(`Unit changed. The heights were reset to ${pre[1].toLowerCase()} values; adjust them if you like.`);
+  }
+});
+function heroSync(h,k,v,from){
+  h[k]=v;mark();
+  document.querySelectorAll(`#hero-card [data-hero="${k}"]`).forEach(el=>{if(el!==from)el.value=v});
+  const pv=$('hero-prev');if(pv)pv.style.height=heroPrevH(h)+'px';
+  const t=$('hero-prev-t');if(t)t.textContent=h.desktop+(h.unit==='vh'?'%':'px');
+}
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-act="hero-pre"],[data-act="hero-reset"]');if(!t||!D)return;
+  if(t.dataset.act==='hero-reset'){if(D.theme)delete D.theme.hero;mark();view();return}
+  const p=HERO_PRE.find(x=>x[0]===t.dataset.k);if(!p)return;
+  heroEnsure();D.theme.hero={unit:p[2],mobile:p[3],tablet:p[4],desktop:p[5]};mark();view();
+});
+
+/* ---------- FAQ tab: questions and answers for the Home, About, Patents, Trademarks and Translation pages (shown by faq.js) ---------- */
+const FAQ_PAGES=[['home','Home'],['about','About'],['patents','Patents'],['trademarks','Trademarks'],['translation','Translation']];
+let faqPage='home',faqOpen=null;
+const faqItems=(k=faqPage)=>(((D.faq||{}).pages||{})[k]||{}).items||[];
+const faqTotal=()=>FAQ_PAGES.reduce((n,[k])=>n+faqItems(k).filter(x=>String(x.q||'').trim()||String(x.a||'').trim()).length,0);
+function faqP(k=faqPage){const f=D.faq=D.faq||{};f.pages=f.pages||{};const p=f.pages[k]=f.pages[k]||{};p.items=p.items||[];return p}
+function cleanFaq(){            // before saving: drop blank rows and pages with nothing in them
+  const f=D.faq;if(!f||!f.pages)return;
+  for(const k of Object.keys(f.pages)){
+    const p=f.pages[k]||{};p.items=(p.items||[]).filter(x=>String(x.q||'').trim()||String(x.a||'').trim());
+    if(!p.items.length&&!String(p.title||'').trim()&&!String(p.intro||'').trim()&&!p.hidden)delete f.pages[k];
+  }
+}
+function viewFaq(){
+  const f=D.faq||{},items=faqItems(),label=FAQ_PAGES.find(x=>x[0]===faqPage)[1],base=`faq.pages.${faqPage}.`,hid=((f.pages||{})[faqPage]||{}).hidden===true;
+  const btn=(act,i,ic,t,dis,cls='bg-gray-100')=>`<button data-act="${act}" data-i="${i}" ${dis?'disabled':''} aria-label="${t}" title="${t}" class="w-8 h-8 rounded-lg ${cls} disabled:opacity-30"><i class="fas ${ic} text-xs"></i></button>`;
+  $('view').innerHTML=`<div class="bg-white p-4 rounded-2xl border border-gray-200 space-y-3">
+    <div><h2 class="font-extrabold text-lg">FAQ</h2><p class="text-xs text-gray-600">Questions and answers, shown as an open-and-close list near the bottom of a page. Each page has its own list; a page with no questions shows no FAQ section. Press Save to publish.</p></div>
+    <div class="grid sm:grid-cols-2 gap-3">${fld('faq.',['title','Section heading, all pages (empty: "Frequently asked questions")'])}${fld('faq.',['intro','Short introduction under the heading (optional, all pages)','area'])}</div></div>
+  <div class="flex flex-wrap gap-2">${FAQ_PAGES.map(([k,n])=>`<button data-act="faq-page" data-k="${k}" class="text-xs font-bold px-3.5 py-2 rounded-xl ${k===faqPage?'bg-brand-600 text-white':'bg-white border border-gray-200 hover:bg-gray-100'}">${n} <span class="opacity-70">(${faqItems(k).length})</span></button>`).join('')}</div>
+  <div class="bg-white p-4 rounded-2xl border border-gray-200 space-y-3">
+    <div class="flex items-center justify-between gap-2"><h3 class="font-extrabold text-base">${label} page</h3><button data-act="faq-add" class="text-xs bg-[#d9c8a4] hover:bg-[#cdb98f] text-[#1b2433] font-bold px-3.5 py-2 rounded-xl"><i class="fas fa-plus"></i> Add question</button></div>
+    ${(D.services||[]).some(x=>x.page===faqPage+'.html'&&x.hidden===true)?`<p class="text-xs rounded-lg p-3 border text-amber-900 bg-amber-50 border-amber-200"><b>The ${label} service is switched off</b> (Services tab, "Hide this service"), so its page sends visitors to the home page and this FAQ is not shown. Untick that option to bring the page back.</p>`:''}
+    ${fld(base,['hidden','Hide the FAQ on this page (the questions are kept)','check'])}
+    <details class="bg-gray-50 rounded-xl border border-gray-200"><summary class="p-3 text-xs font-bold cursor-pointer">Heading for this page only (optional)</summary><div class="p-3 pt-0 grid sm:grid-cols-2 gap-3">${fld(base,['title','Heading (empty: the heading above)'])}${fld(base,['intro','Introduction (empty: the introduction above)','area'])}</div></details>
+  </div>
+  <div id="faq-items" class="space-y-3">${items.length?items.map((x,i)=>`<details ${faqOpen===i?'open':''} class="bg-white rounded-2xl border border-gray-200 shadow-sm"><summary class="flex items-center gap-2 p-3 cursor-pointer"><i class="fas fa-chevron-right chev text-[10px] text-gray-400"></i><span class="flex-1 min-w-0 font-bold text-sm truncate">${esc(x.q||'New question')}</span>
+      ${btn('faq-up',i,'fa-arrow-up','Move up',!i)}${btn('faq-down',i,'fa-arrow-down','Move down',i>=items.length-1)}${btn('faq-dup',i,'fa-clone','Duplicate')}${btn('faq-del',i,'fa-trash','Delete',false,'bg-red-50 text-red-600')}</summary>
+      <div class="p-4 pt-1 space-y-3 border-t">${fld(`${base}items.${i}.`,['q','Question'],['q','a'])}${fld(`${base}items.${i}.`,['a','Answer','area'],['q','a'])}</div></details>`).join(''):`<p class="text-sm text-gray-600 bg-white p-4 rounded-2xl border">No questions on the ${label} page yet. Add the first one; until then this page shows no FAQ.</p>`}</div>`;
+}
+document.addEventListener('input',e=>{
+  const p=e.target.dataset.p;if(!p||!/^faq\.pages\.\w+\.items\.\d+\.q$/.test(p))return;
+  const sm=e.target.closest('details')?.querySelector('summary span');if(sm)sm.textContent=e.target.value||'New question';
+});
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-act^="faq-"]');if(!t||!D)return;
+  const a=t.dataset.act,i=+t.dataset.i;
+  if(a==='faq-page'){faqPage=t.dataset.k;faqOpen=null;view();return}
+  if(a==='faq-add'){const p=faqP();p.items.push({id:String(Math.max(0,...p.items.map(x=>+x.id||0))+1),q:'',a:''});faqOpen=p.items.length-1;mark();tabs();view();document.querySelector('#faq-items details[open] input')?.focus();return}
+  const p=faqP(),arr=p.items;
+  if(a==='faq-up'||a==='faq-down'){const j=a==='faq-up'?i-1:i+1;if(j<0||j>=arr.length)return;[arr[i],arr[j]]=[arr[j],arr[i]];faqOpen=j;mark();view()}
+  else if(a==='faq-dup'){const c=JSON.parse(JSON.stringify(arr[i]));c.id=String(Math.max(0,...arr.map(x=>+x.id||0))+1);arr.splice(i+1,0,c);faqOpen=i+1;mark();tabs();view()}
+  else if(a==='faq-del'){if(confirm(`Delete "${arr[i].q||'this question'}"?`)){arr.splice(i,1);faqOpen=null;mark();tabs();view()}}
+});
 function fmt(k,p){
   const ta=document.querySelector(`textarea[data-p="${p}"]`);if(!ta)return;
   const s=ta.selectionStart,e=ta.selectionEnd,v=ta.value;
@@ -434,7 +607,20 @@ function validate(){
       if(ids.has(x.id))x.id=String(Math.max(0,...D[k].map(y=>+y.id||0))+1);ids.add(x.id);
     }
   }
+  for(const [pk,pn] of FAQ_PAGES){
+    const its=(((D.faq||{}).pages||{})[pk]||{}).items||[];
+    for(const [i,x] of its.entries()){
+      const q=String(x.q||'').trim(),a=String(x.a||'').trim();
+      if(!q&&!a)continue;                                  // fully blank rows are dropped when saving
+      if(!q||!a)return badFaq(pk,i,q?'a':'q',`FAQ, ${pn} page, item ${i+1}: ${q?'the answer':'the question'} is empty.`);
+    }
+  }
   return '';
+}
+function badFaq(pk,i,f,msg){
+  tab='faq';faqPage=pk;faqOpen=i;tabs();view();
+  const el=document.querySelector(`[data-p="faq.pages.${pk}.items.${i}.${f}"]`);if(el){el.classList.add('bad');el.focus();el.scrollIntoView({block:'center'})}
+  return msg;
 }
 function bad(k,i,f,msg){
   tab=k;q='';openItem=`${k}.${i}`;tabs();view();
@@ -503,7 +689,7 @@ function viewUi(){
 async function save(){
   if(lang==='ar')return saveAr();
   const err=validate();if(err)return toast(err,false);
-  cleanTheme();
+  cleanTheme();cleanFaq();
   $('save').disabled=true;$('state').textContent='Saving...';
   try{
     const j=await api(S.p,{method:'PUT',body:{message:'Update content via admin page',content:b64(new TextEncoder().encode(JSON.stringify(D,null,2)+'\n')),sha,branch:S.b}});
@@ -525,7 +711,7 @@ async function shrink(file){
   }catch{return file}
 }
 // Carousel, news and team photos are resized and center-cropped to fit their frame, so they always cover it
-const FIT=[[/^carousel\./,1.875,1800],[/^news\./,2,1600]];
+const FIT=[[/^carousel\./,1.6,2000],[/^news\./,2,1600]];
 async function fit(file,ratio,W){
   if(!/^image\/(jpeg|png|webp)$/.test(file.type)||!window.createImageBitmap)return file;
   try{
@@ -592,6 +778,7 @@ document.addEventListener('click',e=>{
   else if(a==='cc-add'){theme().custom.push({id:'c'+Date.now().toString(36),name:'',hex:'#8aa6d6'});mark();view()}
   else if(a==='cc-del'){const c=theme().custom[i];if(c&&confirm(`Delete "${c.name||c.hex}"? Sections that use it go back to their normal background.`)){theme().custom.splice(i,1);mark();view()}}
   else if(a==='import')impOpen();
+  else if(a==='simport')slOpen();
   else if(a==='lang')switchLang(t.dataset.l);
   else if(a==='fmt')fmt(t.dataset.k,t.dataset.t);
   else if(a==='save')save();
