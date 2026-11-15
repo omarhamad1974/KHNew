@@ -28,6 +28,9 @@ Files: `lang.js` (language engine), `pages-i18n.js` (fixed texts of the pages, E
 - **FAQ:** add, remove and reorder questions in English; in Arabic mode write the Arabic question and answer for each.
 - A page with a service text left empty in Arabic shows the English text of that service.
 
+## Services on the home page
+Two main cards, centred: **IP Services** (every service except Translation, e.g. Patents and Trademarks, shown as buttons that open the pop-up) and **Translation** (the service whose page is `translation.html`). The same grouping builds the header **Services** drop-down. The home slider's arrows, dots and pause button are off unless ticked in admin, Carousel tab, "Slider controls".
+
 ## Services: three editable parts
 In admin, Services tab, each service has three text parts (Patents, Trademarks and Translation are filled in already):
 1. **Brief**: the short text on the home page card (also the top of the pop-up).

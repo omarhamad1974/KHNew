@@ -10,9 +10,9 @@ window.KLang=(function(){
   const LS='khip-lang',CS='khip-langs',AR_FILE='./app-data.ar.json';
   const DICT={
     en:{
-      nav_about:'About',nav_jur:'Jurisdictions',nav_services:'IP Services',nav_news:'News',
-      bar_home:'Home',bar_services:'IP Services',bar_news:'News',bar_jur:'Jurisdiction',bar_about:'About',
-      more:'More',jur_title:'Jurisdictions',svc_title:'IP Services',news_title:'Latest news',testi_title:'Client endorsements',
+      nav_about:'About',nav_jur:'Jurisdictions',nav_services:'Services',nav_news:'News',
+      bar_home:'Home',bar_services:'Services',bar_news:'News',bar_jur:'Jurisdiction',bar_about:'About',
+      more:'More',jur_title:'Jurisdictions',svc_title:'Services',svc_ip:'IP Services',svc_ip_text:'Protecting inventions and brands in Egypt and across the Arab region.',news_title:'Latest news',testi_title:'Client endorsements',
       load_err:"We couldn't load the latest content.",try_again:'Try again',close:'Close',
       no_country:'No matching country. Message us and we will check for you.',ip_guidelines:'IP guidelines available upon inquiry.',
       cov_title:'Our Regional Coverage',cov_intro:'We file and manage IP rights in eleven countries across the Middle East and North Africa, with offices in Cairo, Dubai and Riyadh.',map_aria:'Map of the Middle East and North Africa showing KHIP jurisdictions',prev_c:'Previous country',next_c:'Next country',
@@ -26,9 +26,9 @@ window.KLang=(function(){
       prompts:["Hello KHIP, I'd like to register a trademark in Egypt","How long does a patent filing take in the UAE?","How can I check if my trademark is available in Saudi Arabia?","What documents do I need for a PCT national phase entry?"]
     },
     ar:{
-      nav_about:'من نحن',nav_jur:'الاختصاصات القضائية',nav_services:'خدمات الملكية الفكرية',nav_news:'الأخبار',
+      nav_about:'من نحن',nav_jur:'الاختصاصات القضائية',nav_services:'الخدمات',nav_news:'الأخبار',
       bar_home:'الرئيسية',bar_services:'الخدمات',bar_news:'الأخبار',bar_jur:'الدول',bar_about:'من نحن',
-      more:'المزيد',jur_title:'الاختصاصات القضائية',svc_title:'خدمات الملكية الفكرية',news_title:'آخر الأخبار',testi_title:'آراء العملاء',
+      more:'المزيد',jur_title:'الاختصاصات القضائية',svc_title:'الخدمات',svc_ip:'خدمات الملكية الفكرية',svc_ip_text:'حماية الاختراعات والعلامات التجارية في مصر والعالم العربي.',news_title:'آخر الأخبار',testi_title:'آراء العملاء',
       load_err:'تعذر تحميل أحدث المحتوى.',try_again:'حاول مرة أخرى',close:'إغلاق',
       no_country:'لا توجد دولة مطابقة. راسلنا وسنتحقق لك.',ip_guidelines:'إرشادات الملكية الفكرية متاحة عند الاستفسار.',
       cov_title:'نطاق تغطيتنا الإقليمية',cov_intro:'نقوم بتسجيل وإدارة حقوق الملكية الفكرية في أحد عشر دولة في الشرق الأوسط وشمال أفريقيا، ولدينا مكاتب في القاهرة ودبي والرياض.',map_aria:'خريطة الشرق الأوسط وشمال أفريقيا توضح الاختصاصات القضائية لـ KHIP',prev_c:'الدولة السابقة',next_c:'الدولة التالية',
@@ -113,6 +113,11 @@ window.KLang=(function(){
   };
   const JSON_GET=async u=>{const r=await fetch(u,{cache:'no-cache'});if(!r.ok)throw new Error(r.status);return r.json()};
   const txt=v=>typeof v==='string'&&v.trim()!=='';
+  // The two main services: Translation (a service whose page is translation.html) and IP Services (all the others, e.g. Patents, Trademarks).
+  K.svcSplit=list=>{
+    const vis=(list||[]).filter(x=>x&&!x.hidden),isTr=x=>/translation\.html$/i.test(x.page||'')||/transl/i.test(x.enTitle||x.title||'');
+    return {ip:vis.filter(x=>!isTr(x)),tr:vis.filter(isTr)};
+  };
   const NEUTRAL=new Set(['id','image','icon','page','code','flag','date','category']);
   // Arabic over English, field by field; empty Arabic fields keep the English text.
   K.merge=(en,ar)=>{
@@ -123,7 +128,7 @@ window.KLang=(function(){
     (o.services||[]).forEach(x=>{x.enTitle=x.title});
     o.chatPrompts=ar&&Array.isArray(ar.chatPrompts)&&ar.chatPrompts.some(txt)?ar.chatPrompts.filter(txt):DICT.ar.prompts;
     if(!ar)return o;
-    for(const k of ['aboutMainText','about'])if(txt(ar[k]))o[k]=ar[k];
+    for(const k of ['aboutMainText','about','ipServicesText'])if(txt(ar[k]))o[k]=ar[k];
     const enC=en.newsCategories||[],arC=ar.newsCategories||[],cm={};
     enC.forEach((c,i)=>{if(txt(arC[i]))cm[c]=arC[i]});
     o.newsCategories=enC.map(c=>cm[c]||c);

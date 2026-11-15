@@ -37,4 +37,26 @@
     if(!del&&ci>=m.length){del=true;d=2200}else if(del&&ci<=0){del=false;pi++;d=500}
     setTimeout(tick,d);
   })();
+
+  // ---- Header menu: "Services" drop-down (Services > IP Services > Patents, Trademarks; Translation) ----
+  (function(){
+    const nav=document.querySelector('header nav');if(!nav||!window.KLang)return;
+    const home=/(^|\/)(index\.html)?$/.test(location.pathname),sec=(home?'':'index.html')+'#services';
+    const cur=location.pathname.split('/').pop()||'index.html',svcPages=['patents.html','trademarks.html','translation.html'];
+    const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const old=[...nav.querySelectorAll('a')].filter(a=>a.dataset.i18n==='nav_services'||['about.p3','about.p4','about.p5'].includes(a.dataset.tx));
+    const dd=document.createElement('div');dd.className='nav-dd'+(svcPages.includes(cur)?' cur':'');
+    dd.innerHTML=`<a href="${sec}" class="nav-dd-top">${esc(KLang.t('nav_services'))}<i class="ph-light ph-caret-down"></i></a><div class="nav-menu"></div>`;
+    if(old.length){old[0].replaceWith(dd);old.slice(1).forEach(a=>a.remove())}
+    else{const first=nav.querySelector('a');first?first.after(dd):nav.appendChild(dd)}
+    const link=x=>/^[\w-]+\.html$/.test(x.page||'')?x.page:sec;
+    KLang.data().then(D=>{
+      dd.querySelector('.nav-dd-top').firstChild.textContent=KLang.t('nav_services');
+      const g=KLang.svcSplit(D.services),a=(href,txt,cls)=>`<a role="menuitem" href="${esc(href)}" class="${cls}${href===cur?' on':''}">${esc(txt)}</a>`;
+      let h='';
+      if(g.ip.length){h+=a(sec,KLang.t('svc_ip'),'nav-grp');g.ip.forEach(x=>{h+=a(link(x),x.title,'nav-sub')})}
+      g.tr.forEach(x=>{h+=a(link(x),x.title,'nav-grp')});
+      dd.querySelector('.nav-menu').innerHTML=h?`<div class="nav-menu-in">${h}</div>`:'';
+    }).catch(()=>{});
+  })();
 })();

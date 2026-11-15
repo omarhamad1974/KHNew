@@ -23,7 +23,7 @@
   <div class="wrap py-3 flex items-center justify-between">
     <div class="flex items-center"><a href="index.html" class="site-logo-link" aria-label="Khaled Hamada Intellectual Property, home"><img src="assets/khaled-hamada-ip-logo.png?v=2" width="757" height="127" alt="Khaled Hamada Intellectual Property" class="site-logo" decoding="async"></a></div>
     <nav class="hidden lg:flex gap-8 text-sm text-stone-600" aria-label="Main">
-      <a href="#about" class="hover:text-brand-600 transition" data-i18n="nav_about">About</a><a href="#jurisdictions" class="hover:text-brand-600 transition" data-i18n="nav_jur">Jurisdictions</a><a href="#services" class="hover:text-brand-600 transition" data-i18n="nav_services">IP Services</a><a href="#news" class="hover:text-brand-600 transition" data-i18n="nav_news">News</a></nav>
+      <a href="#about" class="hover:text-brand-600 transition" data-i18n="nav_about">About</a><a href="#jurisdictions" class="hover:text-brand-600 transition" data-i18n="nav_jur">Jurisdictions</a><a href="#services" class="hover:text-brand-600 transition" data-i18n="nav_services">Services</a><a href="#news" class="hover:text-brand-600 transition" data-i18n="nav_news">News</a></nav>
     <div class="flex items-center gap-2"><div id="lang-switch"></div><div class="flex gap-2" id="socials"></div></div>
   </div>
 </header>
@@ -51,8 +51,8 @@
   </div></section>
 
   <section id="services" data-sec="home-services" class="band hidden"><div class="wrap">
-    <div class="fu"><h2 class="h2" data-i18n="svc_title">IP Services</h2><span class="rule"></span></div>
-    <div id="services-list" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3"></div>
+    <div class="fu"><h2 class="h2" data-i18n="svc_title">Services</h2><span class="rule"></span></div>
+    <div id="services-list" class="svc-main"></div>
   </div></section>
 
   <!-- Products / search reports: hidden for now. Set SHOW_PRODUCTS=true in the script and add the section back to enable. -->
@@ -99,7 +99,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const img=u=>!u?FALLBACK_IMG:esc(KVER.img(/^(https?:\/\/|\.\/|\/|data:image)/.test(u)?u:'./assets/'+u));
 const flag=j=>{const c=String(j.code||CODES[(j.enCountry||j.country||'').toLowerCase()]||'').toLowerCase();return /^[a-z]{2}$/.test(c)?`<span class="fi fi-${c} rounded-sm shadow-sm" role="img" aria-label="${esc(KLang.t('flag_aria',{x:j.country}))}"></span>`:'<i class="ph-light ph-globe-hemisphere-west text-brand-600"></i>'};
 const ICONS=[[/patent/i,'ph-lightbulb'],[/trade\s?mark/i,'ph-seal-check'],[/transl/i,'ph-translate'],[/design/i,'ph-pencil-ruler'],[/copyright/i,'ph-copyright'],[/search/i,'ph-magnifying-glass']];
-const icon=x=>/^ph-/.test(x.icon||'')?esc(x.icon.replace(/^ph-light\s*/,'')):(ICONS.find(([r])=>r.test(x.title||''))||[0,'ph-seal-check'])[1];
+const icon=x=>/^ph-/.test(x.icon||'')?esc(x.icon.replace(/^ph-light\s*/,'')):(ICONS.find(([r])=>r.test(x.enTitle||x.title||''))||[0,'ph-seal-check'])[1];
 const show=(id,on)=>$(id).classList.toggle('hidden',!on);
 const imgErr='onerror="this.onerror=null;this.src=FALLBACK_IMG"';
 const REDUCED=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -124,8 +124,13 @@ function render(){
   $('socials').innerHTML=[['linkedin','ph-linkedin-logo'],['youtube','ph-youtube-logo']].filter(([k])=>s[k]).map(([k,i])=>`<a href="${esc(s[k])}" target="_blank" rel="noopener noreferrer" aria-label="${k}" class="w-10 h-10 rounded-full border border-stone-200 text-stone-600 hover:text-brand-600 hover:border-brand-600 flex items-center justify-center transition"><i class="ph-light ${i} text-xl"></i></a>`).join('');
   carousel(D.carousel||[]);
   jur=D.jurisdictions||[];mapChips();
-  SV=(D.services||[]).filter(x=>!x.hidden);
-  list('services',SV,(x,i)=>`<div class="fu" style="--d:${(i%3)*.12}s"><div class="card h-full p-5 md:p-7 flex md:flex-col gap-4 md:gap-5 items-start"><div class="w-12 h-12 md:w-14 md:h-14 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center flex-shrink-0"><i class="ph-light ${icon(x)} text-2xl md:text-3xl"></i></div><div class="flex flex-col flex-1"><h3 class="font-display text-2xl font-semibold text-title">${esc(x.title)}</h3><p class="text-sm leading-relaxed mt-1.5 line-clamp-5 md:line-clamp-3">${KRich.plain(x.description)}</p><button data-act="service" data-i="${i}" class="mt-4 self-start text-sm border border-ink/30 hover:bg-ink hover:text-white px-6 py-1.5 rounded-full transition">${KLang.t('more')}</button></div></div></div>`);
+  const sg=KLang.svcSplit(D.services);SV=[...sg.ip,...sg.tr];             // two main services: IP Services (Patents, Trademarks, ...) and Translation
+  const svcIcon=(x,d)=>/^ph-/.test(x.icon||'')?icon(x):d;
+  const moreBtn=i=>`<button data-act="service" data-i="${i}" class="mt-5 self-start text-sm border border-ink/30 hover:bg-ink hover:text-white px-7 py-2 rounded-full transition">${KLang.t('more')}</button>`;
+  const cards=[];
+  if(sg.ip.length)cards.push(`<div class="card svc-card h-full p-6 md:p-9 flex flex-col"><div class="svc-ic"><i class="ph-light ph-shield-check text-3xl md:text-4xl"></i></div><h3 class="font-display text-3xl font-semibold text-title mt-4">${esc(KLang.t('svc_ip'))}</h3><p class="text-sm md:text-base leading-relaxed mt-2">${esc(D.ipServicesText||KLang.t('svc_ip_text'))}</p><div class="svc-subs">${sg.ip.map(x=>`<button type="button" data-act="service" data-i="${SV.indexOf(x)}" class="svc-sub"><i class="ph-light ${icon(x)} text-2xl"></i><span>${esc(x.title)}</span><i class="ph-light ph-caret-right ms-auto rtl:-scale-x-100"></i></button>`).join('')}</div></div>`);
+  sg.tr.forEach(x=>cards.push(`<div class="card svc-card h-full p-6 md:p-9 flex flex-col"><div class="svc-ic"><i class="ph-light ${svcIcon(x,'ph-translate')} text-3xl md:text-4xl"></i></div><h3 class="font-display text-3xl font-semibold text-title mt-4">${esc(x.title)}</h3><p class="text-sm md:text-base leading-relaxed mt-2 flex-1">${KRich.plain(x.description)}</p>${moreBtn(SV.indexOf(x))}</div>`));
+  list('services',cards,(c,i)=>`<div class="fu" style="--d:${i*.12}s">${c}</div>`);
   list('news',D.news,x=>`<button data-act="news" data-id="${esc(x.id)}" class="ncard card w-[17rem] sm:w-80 text-start overflow-hidden"><img loading="lazy" src="${img(x.image)}" ${imgErr} alt="" class="w-full h-40 object-cover"><div class="p-5"><span class="cat-tag">${esc(cat(x))}</span>${x.date?`<span class="text-xs text-stone-500 ms-2">${esc(x.date)}</span>`:''}<h3 class="font-display text-xl font-semibold text-title leading-snug line-clamp-2 mt-1.5">${esc(x.title)}</h3><p class="text-sm mt-2 line-clamp-3">${KRich.plain(x.excerpt)}</p></div></button>`);
   news();
   list('testimonials',D.testimonials,(x,i)=>`<div class="tcard${i?'':' on'} text-center flex flex-col items-center justify-center"><p class="font-display text-lg md:text-xl lg:text-2xl leading-snug text-ink">${esc(x.text)}</p><h4 class="mt-5 font-medium text-title">${esc(x.name)}</h4><span class="text-sm text-stone-500">${esc(x.role)}</span></div>`);
@@ -218,7 +223,7 @@ function carousel(slides){
   clearInterval(timer);slide=0;heroPaused=false;heroN=slides.length;const c=$('carousel');
   c.parentElement.classList.toggle('hidden',!slides.length);
   const ar=(dir,act,ic)=>`<button type="button" class="hero-arrow ${dir}" data-act="${act}" aria-label="${esc(KLang.t(dir==='prev'?'prev':'next'))}"><i class="ph-light ${ic} text-2xl rtl:-scale-x-100"></i></button>`;
-  const ctl=heroN>1?ar('prev','hprev','ph-caret-left')+ar('next','hnext','ph-caret-right')
+  const ctl=heroN>1&&(D.theme||{}).heroControls===true?ar('prev','hprev','ph-caret-left')+ar('next','hnext','ph-caret-right')
     +(REDUCED?'':`<button type="button" class="hero-pause" data-act="hpause" aria-pressed="false" aria-label="${esc(KLang.t('pause'))}"><i class="ph-light ph-pause"></i></button>`)
     +`<div class="hero-bar"><div id="hero-dots" class="sl-dots" role="group">${dotsHtml(heroN,'hslide',x=>KLang.t('slide_n',{x}))}</div></div>`:'';
   c.innerHTML=slides.map((s,i)=>`<div class="slide absolute inset-0 ${i?'':'on'}"${i?' aria-hidden="true"':''}><img src="${img(s.image)}" ${imgErr} alt="" class="w-full h-full object-cover opacity-80"><div class="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/30 to-transparent flex flex-col justify-end text-white"><div class="w-full max-w-6xl mx-auto px-12 pt-3 pb-8 sm:px-14 sm:pb-9 md:px-20 md:pt-6 md:pb-11"><h2 class="font-display text-xl sm:text-2xl md:text-3xl lg:text-4xl font-medium leading-tight max-w-2xl line-clamp-2">${esc(s.title)}</h2><p class="text-xs sm:text-sm md:text-base text-stone-200 mt-1 md:mt-2 max-w-xl line-clamp-1">${esc(s.subtitle)}</p></div></div></div>`).join('')+ctl;

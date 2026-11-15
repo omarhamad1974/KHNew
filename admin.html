@@ -96,14 +96,14 @@ const SC={
  carousel:{label:'Carousel',icon:'fa-images',one:'slide',title:'title',req:['title'],f:[['title','Title'],['subtitle','Subtitle'],['tag','Tag'],['image','Image','img']]},
  jurisdictions:{label:'Jurisdictions',icon:'fa-globe-africa',one:'country',title:'country',req:['country'],f:[['country','Country'],['code','Country code, 2 letters (eg, ae, sa)'],['tag','Tag'],['brief','Overview (the country card shows the first 5 lines)','area'],['details','Filing details','area']]},
  news:{label:'News',icon:'fa-newspaper',one:'article',title:'title',req:['title','excerpt'],f:[['title','Title'],['subtitle','Subtitle'],['date','Date','date'],['category','Category (label)','select'],['image','Image','img'],['excerpt','Short summary','area'],['text','Full article','area']]},
- services:{label:'Services',icon:'fa-balance-scale',one:'service',title:'title',req:['title','description'],f:[['title','Title'],['icon','Icon (optional, e.g. ph-lightbulb)'],['description','1. Brief (on the home page card, and the top of the pop-up)','area'],['details','2. Pop-up content (more information, shown when the card is opened)','area'],['page','Dedicated page file (e.g. patents.html). Adds the "More information" button'],['hidden','Hide this service on the website (home page, About page and its links)','check'],['pageContent','3. Dedicated page content. Text before the first ## is the introduction; each ## Heading becomes a card on the page','area']],where:'Home page cards, About page cards and the pop-ups. Patents, Trademarks and Translation also have their own page.',page:'index.html#services'},
+ services:{label:'Services',icon:'fa-balance-scale',one:'service',title:'title',req:['title','description'],f:[['title','Title'],['icon','Icon (optional, e.g. ph-lightbulb)'],['description','1. Brief (on the home page card, and the top of the pop-up)','area'],['details','2. Pop-up content (more information, shown when the card is opened)','area'],['page','Dedicated page file (e.g. patents.html). Adds the "More information" button'],['hidden','Hide this service on the website (home page, About page and its links)','check'],['pageContent','3. Dedicated page content. Text before the first ## is the introduction; each ## Heading becomes a card on the page','area']],where:'Home page, Services section: two main cards. The "IP Services" card lists every service except Translation (Patents, Trademarks...); a service whose page is translation.html becomes the Translation card. Also the header Services menu, the About page cards and the pop-ups. Untick "Hide this service" on Translation to show it.',page:'index.html#services'},
  testimonials:{label:'Testimonials',icon:'fa-quote-right',one:'testimonial',title:'name',req:['name','text'],f:[['name','Name'],['role','Role or company'],['text','Quote','area']],where:'Home page, Client endorsements (one quote at a time).',page:'index.html#testimonials'},
  employees:{label:'Team',icon:'fa-users',one:'team member',title:'name',req:['name','position'],f:[['name','Name'],['position','Position'],['image','Photo (cropped square)','img']],where:'About page, Our team slider.',page:'about.html#team'},
 };
 SC.carousel.where='Home page, the slider at the top.';SC.carousel.page='index.html';
 SC.jurisdictions.where='About page, the Jurisdictions slider with country cards, and the map on the Home page.';SC.jurisdictions.page='about.html#jurisdictions';
 SC.news.where='Home page, Latest news, and the article pop-up.';SC.news.page='index.html#news';
-const GEN=[['aboutMainText','About text (home page)','area'],['about','Short tagline'],['social.linkedin','LinkedIn URL'],['social.youtube','YouTube URL'],['chatPrompts','Suggestions typed into the WhatsApp box (one per line)','lines'],['newsCategories','News categories / labels (one per line)','lines']];
+const GEN=[['aboutMainText','About text (home page)','area'],['about','Short tagline'],['ipServicesText','Services section: short text of the "IP Services" card (home page). Empty = the built-in sentence','area'],['social.linkedin','LinkedIn URL'],['social.youtube','YouTube URL'],['chatPrompts','Suggestions typed into the WhatsApp box (one per line)','lines'],['newsCategories','News categories / labels (one per line)','lines']];
 const DEFCATS=['General','KHIP News','Intellectual Property','Patents','Trademarks','Translation'];
 let S={},D=null,sha='',tab='general',dirty=false,openItem=null,q='',ASSETS=[],lang='en',DEN=null,DAR=null,shaAR='';
 
@@ -469,7 +469,10 @@ function heroCard(){
   const row=([k,n,sub])=>`<div><div class="flex items-baseline justify-between"><span class="text-xs font-bold">${n}</span><span class="text-[11px] text-gray-500">${sub}</span></div>
     <div class="flex items-center gap-3 mt-1"><input type="range" data-hero="${k}" min="${lim[0]}" max="${lim[1]}" step="${step}" value="${h[k]}" aria-label="${n} height" class="flex-1">
     <span class="flex items-center gap-1 flex-shrink-0"><input type="number" data-hero="${k}" min="${lim[0]}" max="${lim[1]}" step="${step}" value="${h[k]}" aria-label="${n} height value" class="w-20 px-2 py-1.5 text-sm rounded-lg border border-gray-300 bg-white"><span class="text-xs text-gray-600 w-6">${u}</span></span></div></div>`;
-  return `<div class="bg-white p-4 rounded-2xl border border-gray-200 space-y-3" id="hero-card">
+  const ctlOn=!!(D.theme&&D.theme.heroControls===true);
+  return `<div class="bg-white p-4 rounded-2xl border border-gray-200 space-y-3 mb-3" id="hero-ctl"><h2 class="font-extrabold text-lg">Slider controls</h2>
+    <label class="flex items-start gap-2 text-xs font-bold text-gray-700 bg-gray-50 border border-gray-200 rounded-lg p-3 cursor-pointer"><input type="checkbox" data-p="theme.heroControls" data-bool="1" ${ctlOn?'checked':''} class="mt-0.5"><span>Show the previous / next arrows, the dots and the pause button on the home page slider<span class="block font-normal text-gray-500 mt-0.5">Unticked (the default) the slider is clean. It still changes slides by itself every 10 seconds and visitors can swipe it on a phone.</span></span></label></div>
+  <div class="bg-white p-4 rounded-2xl border border-gray-200 space-y-3" id="hero-card">
     <div class="flex items-start justify-between gap-3"><div><h2 class="font-extrabold text-lg">Hero height</h2>
       <p class="text-xs text-gray-600">How tall the slider at the top of the home page is. The width is always the full page. ${set_?'':'<b>Now using the built-in heights.</b> Change anything below to set your own.'}</p></div>
       <button data-act="hero-reset" ${set_?'':'disabled'} class="text-xs bg-gray-100 hover:bg-gray-200 disabled:opacity-40 font-bold px-3 py-2 rounded-xl flex-shrink-0" title="Go back to the built-in heights"><i class="fas fa-rotate-left"></i> Reset</button></div>
@@ -599,7 +602,7 @@ const arPath=()=>S.p.replace(/\.json$/,'')+'.ar.json';
 const enRef=p=>{const v=get(DEN,p);return Array.isArray(v)?v.join(' / '):String(v||'')};
 function mirror(en,ar){ // the Arabic form always has the same items, in the same order, as the English content
   ar=ar||{};
-  const o={aboutMainText:ar.aboutMainText||'',about:ar.about||'',chatPrompts:ar.chatPrompts||[],newsCategories:(en.newsCategories||[]).map((c,i)=>(ar.newsCategories||[])[i]||''),ui:{...(ar.ui||{})}};
+  const o={aboutMainText:ar.aboutMainText||'',about:ar.about||'',ipServicesText:ar.ipServicesText||'',chatPrompts:ar.chatPrompts||[],newsCategories:(en.newsCategories||[]).map((c,i)=>(ar.newsCategories||[])[i]||''),ui:{...(ar.ui||{})}};
   for(const [sec,fs] of Object.entries(TRF)){
     const a=ar[sec]||[];
     o[sec]=(en[sec]||[]).map((x,i)=>{const b=a.find(y=>y&&y.id!=null&&String(y.id)===String(x.id))||(x.id==null?a[i]:null)||{};const r={id:x.id};fs.forEach(f=>r[f]=b[f]||'');return r});
@@ -614,7 +617,7 @@ function mirror(en,ar){ // the Arabic form always has the same items, in the sam
 }
 function compact(ar){ // only what has been written is saved
   const o={},has=v=>String(v||'').trim()!=='';
-  for(const k of ['aboutMainText','about'])if(has(ar[k]))o[k]=ar[k];
+  for(const k of ['aboutMainText','about','ipServicesText'])if(has(ar[k]))o[k]=ar[k];
   if((ar.chatPrompts||[]).length)o.chatPrompts=ar.chatPrompts;
   if((ar.newsCategories||[]).some(has))o.newsCategories=ar.newsCategories;
   const ui=Object.fromEntries(Object.entries(ar.ui||{}).filter(([,v])=>has(v)));if(Object.keys(ui).length)o.ui=ui;
@@ -659,7 +662,7 @@ async function saveAr(){
 }
 const langCard=()=>`<div class="rounded-xl bg-brand-50 border border-brand-100 p-3"><label class="block text-xs font-bold">Site languages<select data-p="languages" class="${inp} mt-1">${[['en','English only'],['ar','Arabic only (right-to-left)'],['both','English and Arabic (visitors choose with a button in the header)']].map(([v,t])=>`<option value="${v}" ${(D.languages||'en')===v?'selected':''}>${t}</option>`).join('')}</select></label><p class="text-[11px] text-gray-600 mt-1.5">Use the <b>EN | عربي</b> switch at the top of this page to write the Arabic content. It has the same items as the English content; anything left empty shows the English text on the Arabic site. Save the English settings here to apply the language choice.</p></div>`;
 function viewGenAr(){
-  const f=GEN.filter(x=>['aboutMainText','about','chatPrompts'].includes(x[0])),cats=DEN.newsCategories||[];
+  const f=GEN.filter(x=>['aboutMainText','about','ipServicesText','chatPrompts'].includes(x[0])),cats=DEN.newsCategories||[];
   $('view').innerHTML=`<div class="bg-white p-4 rounded-2xl border border-gray-200 space-y-3">${f.map(x=>fld('',x)).join('')}${cats.length?`<div><span class="text-xs font-bold text-gray-700">News categories (same order as the English list)</span>${cats.map((c,i)=>`<label class="block mt-1.5"><span class="block text-[11px] text-gray-500" dir="ltr">${esc(c)}</span><input data-p="newsCategories.${i}" dir="rtl" value="${esc((D.newsCategories||[])[i]||'')}" class="${inp}"></label>`).join('')}</div>`:''}</div>`;
 }
 function viewPages(){          // fixed texts of the About, Patents, Trademarks and Translation pages (Arabic only)

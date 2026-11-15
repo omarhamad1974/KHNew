@@ -64,3 +64,13 @@
 - **Debug stamp** (new file `site-version.js`, loaded first on every public page): a small box in the bottom-left corner shows the build name and, for `app-data.json` (and `app-data.ar.json` when Arabic shows), the time of the last fetch from GitHub, the file's *saved* time (HTTP Last-Modified) and a short ETag. While the page is loading it says "fetching from GitHub..." and shows the previous fetch; if the fetch fails it says so and shows the last good one. Tap the box to shrink it; add `?debug=0` to a page address to hide it (remembered), `?debug=1` to show it again; set `STAMP=false` in `site-version.js` to remove it.
 - **Pictures always fresh**: every picture of the site is requested with `?v=2` (logos, carousel, news, team, pictures inside articles, section backgrounds, admin previews). Pictures given as full web addresses are not changed. To force a re-download for everyone, raise `IMG_V` in `site-version.js` and the `?v=2` in the logo tags of the HTML pages.
 - Final sweep for old-project wording: none left in code, data or documents.
+
+
+## Front end, phase 5: Services menu and two main services
+- **Menu**: the item is now called **Services** (header and bottom bar, English and Arabic). On desktop it is a drop-down: **IP Services** (with Patents and Trademarks under it) and **Translation**. It appears on the home page, About page and the Patents, Trademarks and Translation pages (those three pages had separate Patents / Trademarks / Translation links before). The entries come from the Services tab, so a hidden service disappears from the menu.
+- **Home page, Services section**: two wide cards, centred on tablet and desktop (stacked on phones): **IP Services** (lists Patents and Trademarks, each opens its pop-up as before) and **Translation** (brief + More). One card alone is centred too. The section title is now "Services".
+  - Grouping rule: a service whose page is `translation.html` is the Translation card; every other service goes under IP Services.
+  - The sentence on the IP Services card: admin, General tab, "Services section: short text of the IP Services card" (Arabic in Arabic mode). Empty = built-in sentence.
+  - **Translation is shown again** (it was hidden in `app-data.json`). Tick "Hide this service on the website" in the Services tab to hide it.
+- **Slider controls** (admin, Carousel tab, "Slider controls"): the previous/next arrows, dots and pause button are now **off by default**; tick the box to show them. The slider still changes slides by itself every 10 seconds and can be swiped. Stored as `theme.heroControls`.
+- `scripts/validate.js` checks `theme.heroControls` and `ipServicesText`. New helper `KLang.svcSplit` in `lang.js`; menu code in `footer.js`; styles in `styles.css`.
