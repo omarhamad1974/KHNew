@@ -1,5 +1,5 @@
 {
-  "languages": "both",
+  "languages": "en",
   "about": "",
   "aboutMainText": "**KHIP** provides comprehensive intellectual property protection services tailored to a diverse client portfolio, ranging from individual entrepreneurs and independent inventors to multinational corporations. Grounded in a deep, strategic understanding of global IP frameworks, our firm acts as a trusted partner throughout the innovation lifecycle, safeguarding original concepts, nurturing early-stage discoveries, and facilitating successful market entry to secure maximum commercial value and strategic advantage.",
   "carousel": [
@@ -8,7 +8,7 @@
       "title": "Using Legal Skills with Technical Knowledge",
       "subtitle": "Discover legal and IP services.",
       "tag": "Featured",
-      "image": "./assets/slider1.jpg"
+      "image": "mwie8y9k-zizi-zi-Brlj6pi-g1I-unsplash.jpg"
     },
     {
       "id": "2",
@@ -16,13 +16,6 @@
       "subtitle": "Discover legal and IP services.",
       "tag": "Featured",
       "image": "./assets/slider2.jpg"
-    },
-    {
-      "id": "3",
-      "title": "Making a difference ",
-      "subtitle": "To people lives and people business ",
-      "tag": "",
-      "image": "mvm9bed7-65080.jpg"
     }
   ],
   "jurisdictions": [
@@ -140,7 +133,7 @@
   "services": [
     {
       "id": "1",
-      "title": "Patents",
+      "title": "IP Services",
       "description": "A patent is an exclusive right granted for an invention, which is a product or a process that has new features. A patent for an invention is the grant of a property right to the inventor, issued by the Patent Office.",
       "icon": "fas fa-star",
       "page": "patents.html",
@@ -370,15 +363,6 @@
     "custom": [],
     "sectionWidth": 67,
     "sections": {
-      "home-jurisdictions": {
-        "hidden": true
-      },
-      "home-testimonials": {
-        "hidden": true
-      },
-      "about-team": {
-        "hidden": true
-      },
       "trademarks-intro": {
         "mode": "color",
         "color": "role:accent"
