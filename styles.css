@@ -217,3 +217,24 @@ html[dir=rtl] #khip-bar input{padding:10px 40px 10px 56px}
 html[dir=rtl] #khip-bar .ks{right:auto;left:6px}
 html[dir=rtl] #khip-bar .ks i{transform:scaleX(-1)}
 html[dir=rtl] .auth-x{right:auto;left:.75rem}
+
+/* ---------- Map card (home): no lift on hover, so the map and its button stay still ---------- */
+.map-card:hover{transform:none}
+
+/* ---------- Jurisdictions slider arrows (about) ---------- */
+.jur-arrow{position:absolute;top:50%;z-index:5;width:2.5rem;height:2.5rem;margin-top:-1.25rem;border-radius:999px;border:1px solid rgb(var(--c-ink-rgb) / .25);background:#fff;color:rgb(var(--c-ink-rgb));display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 16px -8px rgba(0,0,0,.35);transition:background .2s,color .2s,border-color .2s,transform .2s}
+.jur-arrow[hidden]{display:none}
+.jur-arrow:hover{background:rgb(var(--c-ink-rgb));color:#fff;border-color:rgb(var(--c-ink-rgb))}
+.jur-arrow:active{transform:scale(.94)}
+.jur-arrow i{font-size:1.25rem}
+.jur-arrow.prev{inset-inline-start:.6rem}.jur-arrow.next{inset-inline-end:.6rem}
+@media(min-width:768px){.jur-arrow{width:2.75rem;height:2.75rem;margin-top:-1.375rem}.jur-arrow.prev{inset-inline-start:1.1rem}.jur-arrow.next{inset-inline-end:1.1rem}}
+
+/* ---------- Country pop-up: previous / next bar ---------- */
+.mn-row{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:.75rem 1rem;border-top:1px solid #e7e5e4;background:#fff}
+.mn-row.hidden{display:none}
+.mn-btn{display:inline-flex;align-items:center;gap:.5rem;min-height:2.75rem;max-width:42%;padding:0 1rem;border-radius:999px;border:1px solid rgb(var(--c-ink-rgb) / .25);background:#fff;color:rgb(var(--c-ink-rgb));font:inherit;font-size:.875rem;cursor:pointer;transition:background .2s,color .2s,border-color .2s,transform .2s;touch-action:manipulation}
+.mn-btn span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mn-btn i{font-size:1.125rem;flex:0 0 auto}
+.mn-btn:hover{background:rgb(var(--c-ink-rgb));color:#fff;border-color:rgb(var(--c-ink-rgb))}
+.mn-btn:active{transform:scale(.97)}

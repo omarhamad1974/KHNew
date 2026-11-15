@@ -22,12 +22,12 @@
   // Sections that can get their own background. [key, label]
   const SECTIONS=[
     ['home-about','Home page: logo and About text'],
-    ['home-jurisdictions','Home page: Jurisdictions'],
+    ['home-jurisdictions','Home page: Regional coverage map'],
     ['home-services','Home page: IP Services'],
     ['home-news','Home page: Latest news'],
     ['home-testimonials','Home page: Client endorsements'],
     ['about-intro','About page: About KHIP'],
-    ['about-map','About page: Our Regional Coverage'],
+    ['about-map','About page: Jurisdictions'],
     ['about-value','About page: KHIP Value'],
     ['about-quote','About page: Quote'],
     ['about-advantages','About page: KHIP advantages'],

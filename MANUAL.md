@@ -133,6 +133,7 @@ Open `admin.html`, area **Website content**, enter owner, repository, branch (`m
 - **Colors**: change the site palette (ten colors, starting at the current ones), choose a ready-made palette, add your own named colors, and set the section width on tablet and desktop. The small arrow next to a color puts it back to its default.
 - **Backgrounds**: for each section choose Default, a Color from the palette, or a Photo that covers the section (upload or pick from `assets/`, optionally darkened). Save to GitHub to publish.
 - **Carousel, Jurisdictions, News, Services, Products, Testimonials, Team**: add, duplicate, reorder with arrows, delete. Required fields are marked with a red star.
+- **News, Import**: adds many articles at once from Word or Markdown files, with their pictures (see README.md, "Importing articles").
 - Formatting inside text boxes: `**bold**`, a line starting with `## ` is a subtitle, a line starting with `- ` is a bullet. The B, H and list buttons insert them. Card previews on the site show plain text; the full pop-up shows the formatting.
 - Photos: use the upload button, or type a file name already in `assets/`. Large photos are reduced automatically; the limit after reduction is 3 MB.
 - **Save to GitHub** (or Ctrl+S) publishes. The site updates in one to two minutes. The undo arrow discards unsaved changes; the download icon saves a backup copy of the data file.
@@ -223,6 +224,7 @@ To remove an admin: `delete from public.admins where lower(email) = lower('colle
 | `index.html`, `about.html`, `patents.html`, `trademarks.html`, `translation.html` | Public pages |
 | `my-stuff.html` | Client file portal |
 | `admin.html` | Admin (content and client files) |
+| `news-import.js` | Reads Word / Markdown files for the admin News > Import |
 | `app-data.json` | All editable content (`app-data.sample.json` is a fuller example) |
 | `supabase-config.js` | Your Supabase URL and anon key |
 | `supabase-setup.sql` | Database, sectors and storage rules, run once (safe to repeat) |

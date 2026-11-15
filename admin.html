@@ -116,6 +116,7 @@ details[open]>summary .chev{transform:rotate(90deg)}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="supabase-config.js"></script>
 <script src="theme.js"></script>
+<script src="news-import.js"></script>
 <script src="lang.js" data-passive></script>
 <script>
 /* ============================ shared ============================ */
@@ -138,7 +139,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-pane]');if
 const SC={
  carousel:{label:'Carousel',icon:'fa-images',one:'slide',title:'title',req:['title'],f:[['title','Title'],['subtitle','Subtitle'],['tag','Tag'],['image','Image','img']]},
  jurisdictions:{label:'Jurisdictions',icon:'fa-globe-africa',one:'country',title:'country',req:['country'],f:[['country','Country'],['code','Country code, 2 letters (eg, ae, sa)'],['tag','Tag'],['brief','Overview (the country card shows the first 5 lines)','area'],['details','Filing details','area']]},
- news:{label:'News',icon:'fa-newspaper',one:'article',title:'title',req:['title','excerpt'],f:[['title','Title'],['date','Date','date'],['category','Category (label)','select'],['image','Image','img'],['excerpt','Short summary','area'],['text','Full article','area']]},
+ news:{label:'News',icon:'fa-newspaper',one:'article',title:'title',req:['title','excerpt'],f:[['title','Title'],['subtitle','Subtitle'],['date','Date','date'],['category','Category (label)','select'],['image','Image','img'],['excerpt','Short summary','area'],['text','Full article','area']]},
  services:{label:'Services',icon:'fa-balance-scale',one:'service',title:'title',req:['title','description'],f:[['title','Title'],['icon','Icon (optional, e.g. ph-lightbulb)'],['description','1. Brief (on the home page card, and the top of the pop-up)','area'],['details','2. Pop-up content (more information, shown when the card is opened)','area'],['page','Dedicated page file (e.g. patents.html). Adds the "More information" button'],['hidden','Hide this service on the website (home page, About page and its links)','check'],['pageContent','3. Dedicated page content. Text before the first ## is the introduction; each ## Heading becomes a card on the page','area']]},
 };
 const GEN=[['aboutMainText','About text (home page)','area'],['about','Short tagline'],['social.linkedin','LinkedIn URL'],['social.youtube','YouTube URL'],['chatPrompts','Suggestions typed into the WhatsApp box (one per line)','lines'],['newsCategories','News categories / labels (one per line)','lines']];
@@ -199,7 +200,7 @@ function view(){
   if(tab==='colors')return viewColors();
   if(tab==='backgrounds')return viewBg();
   const s=SC[tab],arr=D[tab]=D[tab]||[];
-  m.innerHTML=`<div class="flex items-center justify-between"><h2 class="font-extrabold text-lg">${s.label}</h2>${lang==='ar'?'':`<button data-act="add" class="text-xs bg-[#d9c8a4] hover:bg-[#cdb98f] text-[#1b2433] font-bold px-3.5 py-2 rounded-xl"><i class="fas fa-plus"></i> Add ${s.one}</button>`}</div>`
+  m.innerHTML=`<div class="flex items-center justify-between"><h2 class="font-extrabold text-lg">${s.label}</h2>${lang==='ar'?'':`<div class="flex items-center gap-2">${tab==='news'?`<button data-act="import" class="text-xs bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold px-3.5 py-2 rounded-xl" title="Add many articles from Word or Markdown files"><i class="fas fa-file-import"></i> Import</button>`:''}<button data-act="add" class="text-xs bg-[#d9c8a4] hover:bg-[#cdb98f] text-[#1b2433] font-bold px-3.5 py-2 rounded-xl"><i class="fas fa-plus"></i> Add ${s.one}</button></div>`}</div>`
   +(arr.length>5?`<input id="filter" type="search" placeholder="Search ${s.label.toLowerCase()}" aria-label="Search ${s.label.toLowerCase()}" value="${esc(q)}" class="${inp}">`:'')
   +'<div id="items" class="space-y-3"></div>';
   items();
@@ -216,6 +217,124 @@ function items(){
     <button data-act="del" data-i="${i}" aria-label="Delete" class="w-8 h-8 rounded-lg bg-red-50 text-red-600"><i class="fas fa-trash text-xs"></i></button>`}</summary>
     <div class="p-4 pt-1 space-y-3 border-t">${(lang==='ar'?s.f.filter(f=>TRF[tab].includes(f[0])):s.f).map(f=>fld(`${tab}.${i}.`,f,s.req)).join('')}</div></details>`).join('');
 }
+
+/* ---------- Import articles from Word (.docx) or Markdown (.md) files (parser: news-import.js) ---------- */
+const IM={arts:[],warn:[],on:new Set(),busy:false,seq:0};
+const lcs=s=>String(s||'').trim().toLowerCase();
+const impThumb=a=>{const c=a.cover;if(!c)return '';if(c.kind==='url')return c.url;if(c.kind==='asset')return imgSrc(c.name);if(c.kind==='bytes'){c.prev=c.prev||URL.createObjectURL(new Blob([c.data],{type:c.mime}));return c.prev}return ''};
+function impCat(a){                                   // match the wanted category to the site's list (case-insensitive)
+  const list=(D.newsCategories||[]).filter(Boolean),want=String(a.category||'').trim();
+  const def=list[0]||DEFCATS[0];
+  if(!want)return {name:def,note:`No category: "${def}" will be used`};
+  const hit=(list.length?list:DEFCATS).find(c=>lcs(c)===lcs(want));
+  return hit?{name:hit}:{name:want,isNew:true};
+}
+function impModal(html){
+  let m=document.getElementById('imp-modal');
+  if(!m){m=document.createElement('div');m.id='imp-modal';m.className='fixed inset-0 z-50 bg-black/40 flex items-end sm:items-center justify-center p-3';
+    m.innerHTML='<div id="imp-box" role="dialog" aria-modal="true" aria-labelledby="imp-h" class="bg-white rounded-2xl w-full max-w-2xl max-h-[92vh] overflow-y-auto p-5 shadow-2xl"></div>';
+    document.body.appendChild(m);m.addEventListener('click',e=>{if(e.target===m&&!IM.busy)impClose()});
+    m.addEventListener('dragover',e=>e.preventDefault());m.addEventListener('drop',e=>{e.preventDefault();if(!IM.busy&&e.dataTransfer.files.length)impLoad(e.dataTransfer.files)})}
+  $('imp-box').innerHTML=html;
+}
+function impClose(){document.getElementById('imp-modal')?.remove();IM.arts.forEach(a=>[a.cover,...a.imgs].forEach(i=>i&&i.prev&&URL.revokeObjectURL(i.prev)));IM.arts=[];IM.on=new Set()}
+const impHead=(t,s)=>`<div class="flex items-start justify-between gap-3"><div><h2 id="imp-h" class="font-extrabold text-lg">${t}</h2><p class="text-xs text-gray-600">${s}</p></div><button type="button" data-imp="close" ${IM.busy?'disabled':''} class="w-8 h-8 rounded-lg bg-gray-100 flex-shrink-0 disabled:opacity-40" aria-label="Close"><i class="fas fa-xmark"></i></button></div>`;
+function impOpen(){
+  if(lang==='ar')return;
+  IM.warn=[];impPick();
+}
+function impPick(err){
+  impModal(`${impHead('Import articles','Add many articles at once from Word or Markdown files, with their pictures.')}
+  <label id="imp-drop" class="mt-4 flex flex-col items-center justify-center gap-1 text-center border-2 border-dashed border-gray-300 hover:border-brand-600 rounded-2xl p-8 cursor-pointer bg-gray-50">
+    <i class="fas fa-file-import text-2xl text-brand-600"></i><span class="text-sm font-bold">Choose files, or drop them here</span>
+    <span class="text-xs text-gray-500">Word (.docx), Markdown (.md) or text, several at once. A .zip with the pictures inside also works.</span>
+    <input id="imp-file" type="file" multiple accept=".docx,.md,.markdown,.txt,.zip,image/*" class="hidden"></label>
+  ${err?`<div class="mt-3 text-xs rounded-lg p-3 border text-red-700 bg-red-50 border-red-200 space-y-1" role="alert">${err}</div>`:''}
+  <details class="mt-4 text-xs text-gray-700 bg-gray-50 border border-gray-200 rounded-xl p-3"><summary class="font-bold cursor-pointer">How to prepare the file</summary>
+    <div class="mt-2 space-y-2 leading-relaxed">
+      <p><b>Word:</b> give every article a title in the <b>Heading 1</b> style. Right under it, type the details, one per line: <code>Subtitle:</code> <code>Date:</code> <code>Category:</code> <code>Excerpt:</code>. Then write the article. The first picture of an article becomes its cover; other pictures stay in the text. <b>Heading 2</b>, bold text and bullet lists are kept.</p>
+      <p><b>Markdown:</b> start each article with <code># Title</code>, then the same detail lines. Pictures: write <code>Image: cover.jpg</code> or <code>![](photo.jpg)</code> and pick the picture files together with the .md file (or put everything in one .zip). Web addresses (https://...) also work.</p>
+      <p>Dates can be 2026-03-14, 14/03/2026 or 14 March 2026. A category that is not in your list is added. With no excerpt, the first paragraph is used. You see everything before it is added.</p>
+      <button type="button" data-imp="template" class="font-bold text-brand-700 underline">Download a Markdown template</button>
+    </div></details>`);
+}
+async function impLoad(files){
+  impModal(`${impHead('Import articles','Reading the files...')}<p class="mt-6 text-sm text-gray-600 text-center"><i class="fas fa-spinner fa-spin"></i> Reading ${files.length} file${files.length>1?'s':''}</p>`);
+  let r;try{r=await KImport.parseFiles([...files],{assets:new Set(ASSETS)})}catch(e){return impPick(esc(e.message||String(e)))}
+  IM.arts=r.articles;IM.warn=r.warnings;
+  if(!IM.arts.length)return impPick(`<p class="font-bold">No articles were found.</p>${IM.warn.map(w=>`<p>${esc(w)}</p>`).join('')||'<p>Start each article with a Heading 1 title (Word) or a # Title line (Markdown).</p>'}`);
+  const have=new Set((D.news||[]).map(x=>lcs(x.title)));
+  IM.arts.forEach(a=>a.dup=have.has(lcs(a.title)));
+  IM.on=new Set(IM.arts.map((a,i)=>a.dup?-1:i).filter(i=>i>=0));
+  impReview();
+}
+function impReview(){
+  const n=IM.on.size,chip=(t,c='bg-gray-100 text-gray-700')=>`<span class="px-2 py-0.5 rounded-full ${c}">${t}</span>`;
+  impModal(`${impHead('Review the articles',`${IM.arts.length} article${IM.arts.length>1?'s':''} found. Untick any you do not want.`)}
+  ${IM.warn.length?`<div class="mt-3 text-xs rounded-lg p-3 border text-amber-900 bg-amber-50 border-amber-200 space-y-1">${IM.warn.map(w=>`<p>${esc(w)}</p>`).join('')}</div>`:''}
+  <div class="mt-3 flex items-center gap-3 text-xs"><button type="button" data-imp="all" class="font-bold text-brand-700 underline">Select all</button><button type="button" data-imp="none" class="font-bold text-brand-700 underline">Select none</button>
+    <label class="ml-auto flex items-center gap-2 font-bold">Add them <select id="imp-pos" class="border border-gray-300 rounded-lg px-2 py-1 font-normal"><option value="top">at the top</option><option value="end">at the end</option></select></label></div>
+  <div class="mt-3 space-y-2">${IM.arts.map((a,i)=>{
+    const c=impCat(a),th=impThumb(a),np=a.imgs.length+(a.cover?1:0);
+    return `<label class="flex gap-3 p-3 rounded-xl border ${IM.on.has(i)?'border-brand-600 bg-brand-50/40':'border-gray-200'} cursor-pointer"><input type="checkbox" data-imp-on="${i}" ${IM.on.has(i)?'checked':''} class="mt-1 flex-shrink-0">
+      ${th?`<img src="${esc(th)}" alt="" class="w-20 h-12 rounded-md object-cover bg-gray-200 flex-shrink-0">`:`<div class="w-20 h-12 rounded-md bg-gray-100 text-gray-400 flex items-center justify-center flex-shrink-0 text-[10px] text-center leading-tight">no cover</div>`}
+      <div class="min-w-0 flex-1"><div class="font-bold text-sm">${esc(a.title)}</div>${a.subtitle?`<div class="text-xs text-gray-600">${esc(a.subtitle)}</div>`:''}
+      <div class="flex flex-wrap gap-1 mt-1 text-[11px]">${chip(a.date?esc(a.date):'No date',a.date?'bg-gray-100 text-gray-700':'bg-amber-100 text-amber-900')}${chip(esc(c.name),c.isNew?'bg-amber-100 text-amber-900':'bg-brand-50 text-brand-700')}${c.isNew?chip('new category','bg-amber-100 text-amber-900'):''}${np?chip(`${np} picture${np>1?'s':''}`):''}${a.dup?chip('already on the site','bg-red-100 text-red-700'):''}${chip(esc(a.source))}</div>
+      ${a.excerpt?`<p class="text-xs text-gray-500 line-clamp-2 mt-1">${esc(a.excerpt)}</p>`:''}
+      ${a.notes.filter(x=>x!=='No date').length?`<p class="text-[11px] text-amber-800 mt-1">${a.notes.filter(x=>x!=='No date').map(esc).join(' · ')}</p>`:''}</div></label>`}).join('')}</div>
+  <div class="mt-4 flex items-center justify-between gap-2 sticky bottom-0 bg-white pt-2"><button type="button" data-imp="back" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-4 py-2.5 rounded-xl">Back</button>
+    <button type="button" data-imp="run" ${n?'':'disabled'} class="text-xs bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white font-bold px-5 py-2.5 rounded-xl"><i class="fas fa-file-import"></i> Import ${n} article${n===1?'':'s'}</button></div>`);
+}
+async function impUpload(img,cover){
+  if(img.done)return img.done;
+  let file=new File([img.data],img.name,{type:img.mime});
+  file=cover?await fit(file,2,1600):await shrink(file);
+  if(file.size>3e6)throw new Error(`${img.name} is over 3 MB`);
+  const name=Date.now().toString(36)+(++IM.seq)+'-'+file.name.replace(/[^\w.\-]/g,'-');
+  await api('assets/'+name,{method:'PUT',body:{message:'Import article image via admin page',content:b64(new Uint8Array(await file.arrayBuffer())),branch:S.b}});
+  ASSETS.push(name);$('assets').innerHTML+=`<option value="${esc(name)}">`;
+  return img.done=name;
+}
+async function impRun(){
+  const pos=$('imp-pos')?.value||'top',chosen=IM.arts.filter((a,i)=>IM.on.has(i));if(!chosen.length)return;
+  IM.busy=true;
+  const total=chosen.reduce((s,a)=>s+(a.cover&&a.cover.kind==='bytes'?1:0)+a.imgs.filter(i=>i&&i.kind==='bytes').length,0);let done=0;
+  const fails=[],show=t=>impModal(`${impHead('Importing...','Please keep this window open.')}<div class="mt-6 text-center space-y-3"><p class="text-sm"><i class="fas fa-spinner fa-spin"></i> ${t}</p>${total?`<div class="h-2 bg-gray-100 rounded-full overflow-hidden"><div class="h-full bg-brand-600" style="width:${Math.round(done/total*100)}%"></div></div>`:''}</div>`);
+  let id=Math.max(0,...(D.news||[]).map(x=>+x.id||0));const out=[];
+  if(!(D.newsCategories||[]).filter(Boolean).length)D.newsCategories=DEFCATS.slice();
+  for(const a of chosen){
+    show(`Article ${out.length+1} of ${chosen.length}: ${esc(a.title)}`);
+    const up=async(im,cover)=>{if(!im)return '';if(im.kind==='url')return im.url;if(im.kind==='asset')return im.name;
+      try{const n=await impUpload(im,cover);done++;return n}catch(e){done++;fails.push(`${a.title}: ${e.message||e}`);return ''}};
+    const cover=await up(a.cover,true);
+    for(const im of a.imgs)await up(im,false);
+    const text=a.text.replace(/!\[([^\]]*)\]\(img:(\d+)\)/g,(m,alt,k)=>{const im=a.imgs[+k],ref=im&&(im.kind==='url'?im.url:im.kind==='asset'?im.name:im.done);return ref?`![${alt}](${ref})`:''}).replace(/\n{3,}/g,'\n\n').trim();
+    const c=impCat(a);
+    if(c.isNew&&!D.newsCategories.some(x=>lcs(x)===lcs(c.name)))D.newsCategories.push(c.name);
+    out.push({id:String(++id),title:a.title,subtitle:a.subtitle||'',date:a.date||'',category:c.name,image:cover,excerpt:a.excerpt||autoEx(text),text});
+  }
+  if(pos==='top')D.news.unshift(...out);else D.news.push(...out);
+  IM.busy=false;mark();tab='news';openItem=null;q='';tabs();view();
+  impModal(`${impHead('Import finished',`${out.length} article${out.length>1?'s were':' was'} added.`)}
+   <div class="mt-4 text-sm bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-xl p-3"><i class="fas fa-circle-check"></i> Press <b>Save</b> at the top to publish them on the website.</div>
+   ${fails.length?`<div class="mt-3 text-xs rounded-lg p-3 border text-red-700 bg-red-50 border-red-200 space-y-1"><p class="font-bold">Some pictures could not be added:</p>${fails.map(f=>`<p>${esc(f)}</p>`).join('')}</div>`:''}
+   <div class="mt-4 text-right"><button type="button" data-imp="close" class="text-xs bg-brand-600 hover:bg-brand-700 text-white font-bold px-5 py-2.5 rounded-xl">Done</button></div>`);
+}
+const autoEx=t=>{const s=String(t).replace(/!\[[^\]]*\]\([^)]*\)/g,'').replace(/^\s*(##\s+|-\s+)/gm,'').replace(/\*\*/g,'').replace(/\s+/g,' ').trim();return s.length>220?s.slice(0,220).replace(/\s+\S*$/,'')+'…':s};
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-imp]');if(!t)return;const a=t.dataset.imp;
+  if(a==='close'){if(!IM.busy)impClose()}
+  else if(a==='back')impPick();
+  else if(a==='all'){IM.on=new Set(IM.arts.map((x,i)=>i));impReview()}
+  else if(a==='none'){IM.on=new Set();impReview()}
+  else if(a==='run')impRun();
+  else if(a==='template'){const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([KImport.TEMPLATE],{type:'text/markdown'}));l.download='articles-template.md';l.click()}
+});
+document.addEventListener('change',e=>{
+  if(e.target.id==='imp-file'&&e.target.files.length){impLoad(e.target.files);return}
+  if(e.target.dataset.impOn!==undefined){const i=+e.target.dataset.impOn;e.target.checked?IM.on.add(i):IM.on.delete(i);const pos=$('imp-pos')?.value;impReview();if(pos&&$('imp-pos'))$('imp-pos').value=pos}
+});
+addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('imp-modal')&&!IM.busy)impClose()});
 
 /* ---------- Colors and Backgrounds (saved as "theme" in app-data.json; applied by theme.js) ---------- */
 const TH=window.KTHEME;
@@ -323,7 +442,7 @@ function bad(k,i,f,msg){
   return msg;
 }
 /* ---------- Arabic content: app-data.ar.json mirrors the English file; empty fields fall back to English on the site ---------- */
-const TRF={carousel:['title','subtitle','tag'],jurisdictions:['country','tag','brief','details'],news:['title','excerpt','text'],services:['title','description','details','pageContent'],testimonials:['name','role','text'],employees:['name','position']};
+const TRF={carousel:['title','subtitle','tag'],jurisdictions:['country','tag','brief','details'],news:['title','subtitle','excerpt','text'],services:['title','description','details','pageContent'],testimonials:['name','role','text'],employees:['name','position']};
 const UIK=Object.keys(KLang.DICT.en).filter(k=>typeof KLang.DICT.en[k]==='string'&&k!=='switch_to');
 const arPath=()=>S.p.replace(/\.json$/,'')+'.ar.json';
 const enRef=p=>{const v=get(DEN,p);return Array.isArray(v)?v.join(' / '):String(v||'')};
@@ -472,6 +591,7 @@ document.addEventListener('click',e=>{
   else if(a==='preset'){const pr=PRESETS.find(x=>x[0]===t.dataset.k);if(pr&&confirm(`Use the "${pr[1]}" palette? It replaces the site colors above (your own colors are kept).`)){Object.assign(theme().colors,pr[2]);mark();view()}}
   else if(a==='cc-add'){theme().custom.push({id:'c'+Date.now().toString(36),name:'',hex:'#8aa6d6'});mark();view()}
   else if(a==='cc-del'){const c=theme().custom[i];if(c&&confirm(`Delete "${c.name||c.hex}"? Sections that use it go back to their normal background.`)){theme().custom.splice(i,1);mark();view()}}
+  else if(a==='import')impOpen();
   else if(a==='lang')switchLang(t.dataset.l);
   else if(a==='fmt')fmt(t.dataset.k,t.dataset.t);
   else if(a==='save')save();

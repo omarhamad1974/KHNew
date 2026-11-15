@@ -102,3 +102,11 @@ Client sign-in is no longer in the bar: clients open `my-stuff.html` directly, w
 - The site loads Tailwind from its CDN, which is fine for this size but is not meant for heavy production use. If pages feel slow, compile Tailwind once and replace the CDN script.
 - Contact phone numbers, email and office text are written directly in the HTML pages (about, patents, trademarks, translation); change them there.
 - `theme.js` must stay in the same folder as the pages. Without a `theme` block in `app-data.json` the site simply uses the default colors.
+
+## Importing articles (admin, News tab, Import)
+Add many articles in one go from Word or Markdown files.
+1. Admin > News > **Import**, then choose one or more files (you can also drop them). Accepted: `.docx`, `.md`, `.txt`, a `.zip` with the files and pictures, and picture files chosen together with a `.md` file.
+2. **Word**: each article starts with a title in the **Heading 1** style. Right under it, one detail per line: `Subtitle:`, `Date:`, `Category:`, `Excerpt:` (Arabic labels work too). Then the article text. The first picture of an article is its cover; other pictures stay inside the text. Heading 2, bold text and bullet lists are kept.
+3. **Markdown**: each article starts with `# Title` (or a `---` front-matter block containing `title:`), followed by the same detail lines. Pictures: `Image: cover.jpg` or `![](photo.jpg)`, picked together with the `.md` file or placed in a `.zip`. `https://` picture addresses are used as they are. The Import window has a "Download a Markdown template" link.
+4. Review the list (untick what you do not want, choose top or end of the news list), press **Import**, then **Save to GitHub**. Pictures are uploaded when you press Import; a cover is cropped to 2:1 like the normal upload.
+- Dates: 2026-03-14, 14/03/2026 (day first) or 14 March 2026. Categories are matched to your list ignoring case; a new one is added to the list. No excerpt: the first paragraph is used. An article whose title already exists is unticked by default.
