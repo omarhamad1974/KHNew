@@ -263,3 +263,6 @@ html.hero-custom #carousel{height:var(--hero-h-m)}
 .nav-menu a.nav-sub{padding-inline-start:1.7rem;position:relative}
 .nav-menu a.nav-sub::before{content:"";position:absolute;inset-inline-start:.9rem;top:50%;width:.4rem;height:1px;background:currentColor;opacity:.5}
 .nav-menu a.on{color:rgb(var(--c-accent-rgb))}
+
+/* header social icons: on a phone only the first two fit next to the logo (all of them show on the About page) */
+@media(max-width:639px){#socials a:nth-child(n+3){display:none}}

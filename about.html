@@ -10,13 +10,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/light/style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/7.2.3/css/flag-icons.min.css">
-<script src="site-version.js"></script>
-<script src="lang.js"></script>
-<script src="pages-i18n.js"></script>
+<script src="site-version.js?v=6b"></script>
+<script src="lang.js?v=6b"></script>
+<script src="pages-i18n.js?v=6b"></script>
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="tailwind-config.js"></script>
-<script src="theme.js"></script>
-<link rel="stylesheet" href="styles.css">
+<script src="tailwind-config.js?v=6b"></script>
+<script src="theme.js?v=6b"></script>
+<link rel="stylesheet" href="styles.css?v=6b">
 </head>
 <body class="font-sans font-light antialiased">
 <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-xl border-b border-stone-200">
@@ -24,7 +24,7 @@
     <a href="index.html" class="site-logo-link" aria-label="Khaled Hamada Intellectual Property, home"><img src="assets/khaled-hamada-ip-logo.png?v=2" width="757" height="127" alt="Khaled Hamada Intellectual Property" class="site-logo" decoding="async"></a>
     <nav class="hidden lg:flex gap-8 text-sm text-stone-600" aria-label="Main">
       <a href="index.html" class="hover:text-brand-600 transition" data-tx="about.a1">Home</a><a href="#jurisdictions" class="hover:text-brand-600 transition" data-tx="about.a2">Jurisdictions</a><a href="#value" class="hover:text-brand-600 transition" data-tx="about.a3">Value</a><a href="#advantages" class="hover:text-brand-600 transition" data-tx="about.a4">Advantages</a><a href="#team" class="hover:text-brand-600 transition" data-tx="about.a5">Team</a><a href="#contact" class="hover:text-brand-600 transition" data-tx="about.a6">Contact</a></nav>
-    <div class="flex items-center gap-2"><div id="lang-switch"></div><a href="https://www.linkedin.com/company/khip/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="w-10 h-10 rounded-full border border-stone-200 text-stone-600 hover:text-brand-600 hover:border-brand-600 flex items-center justify-center transition"><i class="ph-light ph-linkedin-logo text-xl"></i></a></div>
+    <div class="flex items-center gap-2"><div id="lang-switch"></div><div class="flex gap-2" id="socials"></div></div>
   </div>
 </header>
 
@@ -95,14 +95,14 @@
           <h2 class="font-display text-3xl md:text-4xl font-medium text-title leading-tight" data-tx="about.a6">Contact</h2>
           <p class="mt-3 text-base leading-relaxed" data-tx="about.p13">Offices in Egypt, the UAE and Saudi Arabia. Call, write or follow us; we reply quickly.</p>
           <div class="mt-6 flex justify-center lg:justify-start">
-            <a href="https://www.linkedin.com/company/khip/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-ink hover:bg-brand-600 text-white text-sm px-7 py-2.5 rounded-full transition" data-tx="about.a7"><i class="ph-light ph-linkedin-logo text-xl"></i> Follow us on LinkedIn</a>
+            <div id="ct-follow" class="flex flex-wrap justify-center lg:justify-start gap-2"></div>
           </div>
         </div>
         <div class="p-6 md:p-10 bg-stone-50 border-t lg:border-t-0 lg:border-s border-stone-200 grid gap-3 content-center">
           <a href="tel:+201000374700" class="ct-tile"><span class="ct-ico"><i class="ph-light ph-phone"></i></span><span><span class="block text-xs uppercase tracking-widest text-stone-500" data-tx="about.span1">Phone</span><span class="block text-base text-ink">+2010 003 74 700</span></span></a>
           <a href="tel:+201069033777" class="ct-tile"><span class="ct-ico"><i class="ph-light ph-phone"></i></span><span><span class="block text-xs uppercase tracking-widest text-stone-500" data-tx="about.span1">Phone</span><span class="block text-base text-ink">+2010 690 33 777</span></span></a>
           <a href="mailto:info@khipme.com" class="ct-tile"><span class="ct-ico"><i class="ph-light ph-envelope-simple"></i></span><span><span class="block text-xs uppercase tracking-widest text-stone-500" data-tx="about.span2">Email</span><span class="block text-base text-ink">info@khipme.com</span></span></a>
-          <div class="rounded-2xl overflow-hidden border border-stone-200 bg-white">
+          <div id="ct-map" class="rounded-2xl overflow-hidden border border-stone-200 bg-white">
             <iframe title="KHIP office location on Google Maps" src="https://www.google.com/maps?q=30.027992248535156,31.48760223388672&z=17&hl=en&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen class="block w-full h-44 border-0"></iframe>
             <a href="https://www.google.com/maps?q=30.027992248535156,31.48760223388672&z=17&hl=en" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 text-sm py-2.5 text-ink hover:text-brand-600 transition" data-tx="about.a8"><i class="ph-light ph-map-pin text-lg"></i> Open in Google Maps</a>
           </div>
@@ -125,9 +125,10 @@
   </div>
 </div>
 
-<script src="rich.js"></script>
-<script src="faq.js"></script>
-<script src="footer.js"></script>
+<script src="rich.js?v=6b"></script>
+<script src="faq.js?v=6b"></script>
+<script src="footer.js?v=6b"></script>
+<script src="contact.js?v=6b"></script>
 <script>
 let J=[],SV=[],lastFocus=null;
 const FALLBACK_IMG="https://placehold.co/200x200/e7e5e4/78716c?text=KHIP";

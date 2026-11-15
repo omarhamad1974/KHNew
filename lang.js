@@ -129,6 +129,7 @@ window.KLang=(function(){
     o.chatPrompts=ar&&Array.isArray(ar.chatPrompts)&&ar.chatPrompts.some(txt)?ar.chatPrompts.filter(txt):DICT.ar.prompts;
     if(!ar)return o;
     for(const k of ['aboutMainText','about','ipServicesText'])if(txt(ar[k]))o[k]=ar[k];
+    if(ar.contact&&Array.isArray(ar.contact.address)&&ar.contact.address.some(txt))o.contact=Object.assign({},o.contact,{address:ar.contact.address.filter(txt)});
     const enC=en.newsCategories||[],arC=ar.newsCategories||[],cm={};
     enC.forEach((c,i)=>{if(txt(arC[i]))cm[c]=arC[i]});
     o.newsCategories=enC.map(c=>cm[c]||c);

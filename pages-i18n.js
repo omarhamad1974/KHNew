@@ -122,6 +122,14 @@ window.KTX={
   "en": "Email",
   "ar": "البريد الإلكتروني"
  },
+ "about.span3": {
+  "en": "Address",
+  "ar": "العنوان"
+ },
+ "about.a9": {
+  "en": "Follow us",
+  "ar": "تابعنا"
+ },
  "about.a8": {
   "en": "Open in Google Maps",
   "ar": "افتح في خرائط جوجل"

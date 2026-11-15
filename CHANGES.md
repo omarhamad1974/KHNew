@@ -74,3 +74,15 @@
   - **Translation is shown again** (it was hidden in `app-data.json`). Tick "Hide this service on the website" in the Services tab to hide it.
 - **Slider controls** (admin, Carousel tab, "Slider controls"): the previous/next arrows, dots and pause button are now **off by default**; tick the box to show them. The slider still changes slides by itself every 10 seconds and can be swiped. Stored as `theme.heroControls`.
 - `scripts/validate.js` checks `theme.heroControls` and `ipServicesText`. New helper `KLang.svcSplit` in `lang.js`; menu code in `footer.js`; styles in `styles.css`.
+
+
+## Front end, phase 6: contact details and social links in the admin
+- **Admin, General tab, new card "Contact details & social links"**: WhatsApp number, phone numbers (one per line), email addresses (one per line), address (one line per row), map location (coordinates or an address), and the social addresses: LinkedIn, YouTube, Facebook, Instagram, X, TikTok. Stored as `contact` and `social` in `app-data.json`. The LinkedIn / YouTube boxes moved from the top of the tab into this card.
+- **Arabic mode, General tab**: an Arabic address box (empty = the English address shows). Stored as `contact.address` in `app-data.ar.json`.
+- **Where it shows** (new file `contact.js`, loaded after `footer.js` on every public page): the round social icons in the header (all pages; on a phone the first two); the WhatsApp number used by the chat box at the bottom; on the About page the "follow" buttons, a tile per phone / email / address and the map; on the Patents, Trademarks and Translation pages the email and phone buttons (the first of each). An empty box hides that item. The numbers, emails, LinkedIn address and map that used to be written in the HTML are now filled in `app-data.json` and come from the admin.
+- `scripts/validate.js` checks `contact` (lists of text, WhatsApp digits, email format) and the https:// rule for every social address.
+
+
+## Phase 6b: files always match the pages
+- Every script and the style sheet are now requested as `file.js?v=6b` / `styles.css?v=6b` on the five public pages (like the pictures' `?v=2`), so a browser or the GitHub cache cannot mix new HTML with old scripts. Each release raises this number; the corner stamp shows the build.
+- Bottom-bar fallback label is "Services" (was "IP Services").

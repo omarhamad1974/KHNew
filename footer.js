@@ -1,14 +1,14 @@
 /* Shared sticky bottom bar (WhatsApp chat box + navigation). Self-contained: add
    <script src="footer.js"></script> before </body> on every page, including about.html. */
 (function(){
-  const PHONE="201006552255";
+  let PHONE="201006552255";   // replaced by contact.whatsapp from app-data.json (admin, General tab)
   const T=(k,d)=>window.KLang?KLang.t(k):d;
   let prompts=window.KLang?KLang.t('prompts'):["Hello KHIP, I'd like to register a trademark in Egypt","How long does a patent filing take in the UAE?","How can I check if my trademark is available in Saudi Arabia?","What documents do I need for a PCT national phase entry?"];
   const wa=t=>window.open(`https://wa.me/${PHONE}?text=${encodeURIComponent(t)}`,'_blank','noopener');
-  window.KHIP={wa,setPrompts:a=>{if(a&&a.length)prompts=a}};
+  window.KHIP={wa,setPrompts:a=>{if(a&&a.length)prompts=a},setPhone:n=>{n=String(n||"").replace(/\D/g,"");if(n)PHONE=n}};
   if(!document.querySelector('link[href*="phosphor"]')){const l=document.createElement('link');l.rel='stylesheet';l.href='https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/light/style.css';document.head.appendChild(l)}
   if(!document.querySelector('link[href*="styles.css"]')){const l=document.createElement('link');l.rel='stylesheet';l.href='styles.css';document.head.appendChild(l)}
-  const nav=[['top','ph-house',T('bar_home','Home')],['services','ph-seal-check',T('bar_services','IP Services')],['news','ph-newspaper',T('bar_news','News')],['jurisdictions','ph-globe-hemisphere-west',T('bar_jur','Jurisdiction')],['about','ph-info',T('bar_about','About')]];
+  const nav=[['top','ph-house',T('bar_home','Home')],['services','ph-seal-check',T('bar_services','Services')],['news','ph-newspaper',T('bar_news','News')],['jurisdictions','ph-globe-hemisphere-west',T('bar_jur','Jurisdiction')],['about','ph-info',T('bar_about','About')]];
   const bar=document.createElement('div');bar.id='khip-bar';
   bar.innerHTML=`<div class="kin"><form><div class="kf"><i class="ph-light ph-whatsapp-logo"></i><input aria-label="${T('msg_wa','Message KHIP on WhatsApp')}" autocomplete="off"><button type="submit" class="ks" aria-label="${T('send','Send')}" title="${T('send','Send')}"><i class="ph-light ph-paper-plane-right"></i></button></div></form><nav>${nav.map(([k,i,l])=>`<button type="button" data-go="${k}"><i class="ph-light ${i}"></i>${l}</button>`).join('')}</nav></div>`;
   // App-shell layout: the page scrolls inside #khip-page and the bar sits below it as a normal

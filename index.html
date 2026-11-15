@@ -6,16 +6,16 @@
 <title>KHIP - Intellectual Property & Legal Solutions</title>
 <meta name="description" content="KHIP (Khaled Hamada Intellectual Property): patents and trademarks across the Middle East.">
 <meta name="theme-color" content="#1d4ed8">
-<script src="site-version.js"></script>
-<script src="lang.js"></script>
+<script src="site-version.js?v=6b"></script>
+<script src="lang.js?v=6b"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/light/style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/7.2.3/css/flag-icons.min.css">
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="tailwind-config.js"></script>
-<script src="theme.js"></script>
-<link rel="stylesheet" href="styles.css">
+<script src="tailwind-config.js?v=6b"></script>
+<script src="theme.js?v=6b"></script>
+<link rel="stylesheet" href="styles.css?v=6b">
 </head>
 <body class="font-sans font-light antialiased">
 <div id="app-top"></div>
@@ -85,9 +85,10 @@
   </div>
 </div>
 
-<script src="rich.js"></script>
-<script src="faq.js"></script>
-<script src="footer.js"></script>
+<script src="rich.js?v=6b"></script>
+<script src="faq.js?v=6b"></script>
+<script src="footer.js?v=6b"></script>
+<script src="contact.js?v=6b"></script>
 <script>
 const SHOW_PRODUCTS=false; // products / search reports hidden for now
 const DATA_URL="./app-data.json", CACHE="khip-data-v3";
@@ -121,7 +122,6 @@ function render(){
   $('about-text').innerHTML=KRich.card(D.aboutMainText||D.about||'');
   KHIP.setPrompts(D.chatPrompts);
   const s=D.social||{};
-  $('socials').innerHTML=[['linkedin','ph-linkedin-logo'],['youtube','ph-youtube-logo']].filter(([k])=>s[k]).map(([k,i])=>`<a href="${esc(s[k])}" target="_blank" rel="noopener noreferrer" aria-label="${k}" class="w-10 h-10 rounded-full border border-stone-200 text-stone-600 hover:text-brand-600 hover:border-brand-600 flex items-center justify-center transition"><i class="ph-light ${i} text-xl"></i></a>`).join('');
   carousel(D.carousel||[]);
   jur=D.jurisdictions||[];mapChips();
   const sg=KLang.svcSplit(D.services);SV=[...sg.ip,...sg.tr];             // two main services: IP Services (Patents, Trademarks, ...) and Translation

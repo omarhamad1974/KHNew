@@ -52,7 +52,7 @@ Home, IP Services (IP Services section), News (Latest news section), Jurisdictio
 
 ## Notes
 - The site loads Tailwind from its CDN, which is fine for this size but is not meant for heavy production use. If pages feel slow, compile Tailwind once and replace the CDN script.
-- Contact phone numbers, email and office text are written directly in the HTML pages (about, patents, trademarks, translation); change them there.
+- Contact phones, emails, address, map, WhatsApp number and social links: admin, General tab, "Contact details & social links" (stored as `contact` and `social`; `contact.js` puts them on the pages). The sentence "Offices in Egypt, the UAE and Saudi Arabia" is still page text (Page texts tab in Arabic mode; HTML for English).
 - `theme.js` must stay in the same folder as the pages. Without a `theme` block in `app-data.json` the site simply uses the default colors.
 
 ## Importing articles (admin, News tab, Import)
