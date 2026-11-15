@@ -377,5 +377,25 @@
     "Patents",
     "Trademarks",
     "Translation"
-  ]
+  ],
+  "faq": {
+    "title": "Frequently asked",
+    "intro": "Frequently asked in home",
+    "pages": {
+      "home": {
+        "items": [
+          {
+            "id": "1",
+            "q": "Q1",
+            "a": "Answer 1"
+          },
+          {
+            "id": "2",
+            "q": "Q2",
+            "a": "Amswer 2"
+          }
+        ]
+      }
+    }
+  }
 }
