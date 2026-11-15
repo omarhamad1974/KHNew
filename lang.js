@@ -10,8 +10,8 @@ window.KLang=(function(){
   const LS='khip-lang',CS='khip-langs',AR_FILE='./app-data.ar.json';
   const DICT={
     en:{
-      nav_about:'About',nav_jur:'Jurisdictions',nav_services:'IP Services',nav_news:'News',nav_files:'My files',
-      bar_home:'Home',bar_services:'IP Services',bar_news:'News',bar_jur:'Jurisdiction',bar_about:'About',bar_files:'My files',
+      nav_about:'About',nav_jur:'Jurisdictions',nav_services:'IP Services',nav_news:'News',
+      bar_home:'Home',bar_services:'IP Services',bar_news:'News',bar_jur:'Jurisdiction',bar_about:'About',
       more:'More',jur_title:'Jurisdictions',svc_title:'IP Services',news_title:'Latest news',testi_title:'Client endorsements',
       load_err:"We couldn't load the latest content.",try_again:'Try again',close:'Close',
       no_country:'No matching country. Message us and we will check for you.',ip_guidelines:'IP guidelines available upon inquiry.',
@@ -21,11 +21,13 @@ window.KLang=(function(){
       wa_jur:'IP filings and legal procedures in {x}',general:'General',msg_wa:'Message KHIP on WhatsApp',send:'Send',
       switch_to:'العربية',flag_aria:'{x} flag',testimonial_n:'Testimonial {x}',news_n:'News {x}',
       prev:'Previous',next:'Next',pause:'Pause slideshow',play:'Play slideshow',slide_n:'Slide {x}',
+      faq_title:'Frequently asked questions',team_title:'Our team',team_prev:'Previous team members',team_next:'Next team members',team_page:'Team page {x}',
+      filing:'Filing guidelines',filing_none:'Filing guidelines for {x} are available on request. Message us and we will guide you through the process.',browse_c:'Browse countries',
       prompts:["Hello KHIP, I'd like to register a trademark in Egypt","How long does a patent filing take in the UAE?","How can I check if my trademark is available in Saudi Arabia?","What documents do I need for a PCT national phase entry?"]
     },
     ar:{
-      nav_about:'من نحن',nav_jur:'الاختصاصات القضائية',nav_services:'خدمات الملكية الفكرية',nav_news:'الأخبار',nav_files:'ملفاتي',
-      bar_home:'الرئيسية',bar_services:'الخدمات',bar_news:'الأخبار',bar_jur:'الدول',bar_about:'من نحن',bar_files:'ملفاتي',
+      nav_about:'من نحن',nav_jur:'الاختصاصات القضائية',nav_services:'خدمات الملكية الفكرية',nav_news:'الأخبار',
+      bar_home:'الرئيسية',bar_services:'الخدمات',bar_news:'الأخبار',bar_jur:'الدول',bar_about:'من نحن',
       more:'المزيد',jur_title:'الاختصاصات القضائية',svc_title:'خدمات الملكية الفكرية',news_title:'آخر الأخبار',testi_title:'آراء العملاء',
       load_err:'تعذر تحميل أحدث المحتوى.',try_again:'حاول مرة أخرى',close:'إغلاق',
       no_country:'لا توجد دولة مطابقة. راسلنا وسنتحقق لك.',ip_guidelines:'إرشادات الملكية الفكرية متاحة عند الاستفسار.',
@@ -35,6 +37,8 @@ window.KLang=(function(){
       wa_jur:'إجراءات تسجيل الملكية الفكرية والإجراءات القانونية في {x}',general:'عام',msg_wa:'راسل KHIP عبر واتساب',send:'إرسال',
       switch_to:'English',flag_aria:'علم {x}',testimonial_n:'الرأي {x}',news_n:'الخبر {x}',
       prev:'السابق',next:'التالي',pause:'إيقاف العرض مؤقتاً',play:'تشغيل العرض',slide_n:'الشريحة {x}',
+      faq_title:'الأسئلة الشائعة',team_title:'فريقنا',team_prev:'أعضاء الفريق السابقون',team_next:'أعضاء الفريق التاليون',team_page:'صفحة الفريق {x}',
+      filing:'إرشادات التسجيل',filing_none:'إرشادات التسجيل في {x} متاحة عند الطلب. راسلنا وسنرشدك خلال الإجراءات.',browse_c:'تصفح الدول',
       prompts:['مرحباً KHIP، أود تسجيل علامة تجارية في مصر','كم يستغرق تقديم طلب براءة اختراع في الإمارات؟','كيف أتحقق من توفر علامتي التجارية في السعودية؟','ما المستندات المطلوبة لدخول المرحلة الوطنية لمعاهدة PCT؟']
     }
   };
@@ -67,7 +71,27 @@ window.KLang=(function(){
     if(typeof v==='string'&&vars)for(const n in vars)v=v.split('{'+n+'}').join(vars[n]);
     return v;
   };
+  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  // Fixed page texts: elements with data-tx="key" get the Arabic from pages-i18n.js (window.KTX),
+  // or the admin's own wording (Arabic > Page texts, stored in ui as "tx_key", dots written as underscores). English pages are left as written.
+  function setTx(e,v){
+    if(v.indexOf('{khip}')>=0||e.querySelector('.khip')){e.innerHTML=esc(v).replace(/\{khip\}/g,'<span class="khip">KHIP</span>');return}
+    if(!e.children.length){e.textContent=v;return}
+    let done=false;                                   // an element with an icon: only the text part changes
+    [...e.childNodes].forEach(n=>{if(n.nodeType===3&&n.nodeValue.trim()){if(!done){n.nodeValue=' '+v;done=true}else n.nodeValue=''}});
+    if(!done)e.appendChild(document.createTextNode(' '+v));
+  }
+  K.tx=(root=document)=>{
+    if(!K.rtl||!window.KTX)return;
+    root.querySelectorAll('[data-tx]').forEach(e=>{
+      const k=e.dataset.tx,d=window.KTX[k];if(!d)return;
+      const o=ui['tx_'+k.replace(/\./g,'_')],v=txt(o)?o:d.ar;if(!txt(v))return;
+      if(e.tagName==='TITLE'){document.title=v.replace(/\{khip\}/g,'KHIP');return}
+      setTx(e,v);
+    });
+  };
   K.dom=(root=document)=>{
+    K.tx(root);
     root.querySelectorAll('[data-i18n]').forEach(e=>{e.textContent=K.t(e.dataset.i18n)});
     root.querySelectorAll('[data-i18n-attr]').forEach(e=>e.dataset.i18nAttr.split(';').forEach(p=>{const [a,k]=p.split(':');if(a&&k)e.setAttribute(a.trim(),K.t(k.trim()))}));
   };
@@ -96,6 +120,7 @@ window.KLang=(function(){
     if(!K.rtl)return en;
     const o=JSON.parse(JSON.stringify(en));
     (o.jurisdictions||[]).forEach(j=>{j.enCountry=j.country});
+    (o.services||[]).forEach(x=>{x.enTitle=x.title});
     o.chatPrompts=ar&&Array.isArray(ar.chatPrompts)&&ar.chatPrompts.some(txt)?ar.chatPrompts.filter(txt):DICT.ar.prompts;
     if(!ar)return o;
     for(const k of ['aboutMainText','about'])if(txt(ar[k]))o[k]=ar[k];
@@ -109,16 +134,38 @@ window.KLang=(function(){
         for(const [k,v] of Object.entries(x))if(!NEUTRAL.has(k)&&txt(v))it[k]=v});
     }
     (o.news||[]).forEach(n=>{if(cm[n.category])n.category=cm[n.category]});
+    const af=ar.faq;                                   // FAQ: Arabic question and answer per item id; heading and intro per page
+    if(af&&o.faq){
+      if(txt(af.title))o.faq.title=af.title;if(txt(af.intro))o.faq.intro=af.intro;
+      for(const [pk,ap] of Object.entries(af.pages||{})){
+        const op=(o.faq.pages||{})[pk];if(!op||!ap)continue;
+        if(txt(ap.title))op.title=ap.title;if(txt(ap.intro))op.intro=ap.intro;
+        const by=new Map((ap.items||[]).filter(x=>x&&x.id!=null).map(x=>[String(x.id),x]));
+        (op.items||[]).forEach(it=>{const x=by.get(String(it.id));if(!x)return;if(txt(x.q))it.q=x.q;if(txt(x.a))it.a=x.a});
+      }
+    }
     return o;
   };
   // Loads app-data.json (always: it holds the settings), then the Arabic file when Arabic is showing.
-  K.data=async(url='./app-data.json')=>{
+  const loadOnce={};
+  const realData=async(url)=>{
     const en=await JSON_GET(url);
     K.settings(en.languages);
     let ar=null;
     if(K.rtl){try{ar=await JSON_GET(AR_FILE)}catch{}}
     return K.merge(en,ar);
   };
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',K.mount);else K.mount();
+  K.data=(url='./app-data.json')=>loadOnce[url]||(loadOnce[url]=realData(url).catch(e=>{delete loadOnce[url];throw e}));
+  // For the inner pages: apply(data) runs with the saved copy first, then again with the fresh data if it differs.
+  K.load=apply=>{
+    const ck=()=>'khip-data-v3'+(K.rtl?'-ar':'');
+    const first=ck();let cached=null;try{cached=JSON.parse(localStorage.getItem(first))}catch{}
+    if(cached)apply(cached);
+    K.data().then(d=>{
+      if(JSON.stringify(d)!==JSON.stringify(cached)||ck()!==first){try{localStorage.setItem(ck(),JSON.stringify(d))}catch{}apply(d)}
+    }).catch(()=>{});
+  };
+  const boot=()=>{K.mount();K.tx()};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
   return K;
 })();

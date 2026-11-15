@@ -1,16 +1,15 @@
 # KHIP website
 
-**Start with [MANUAL.md](MANUAL.md)**: the full blueprint, including every step to do in GitHub and Supabase before launch. This file is the short version.
+**Start with [MANUAL.md](MANUAL.md)**: setup, hosting and daily use. This file is the feature reference.
 
-Static site (HTML + Tailwind CDN). Content lives in `app-data.json`; client documents live in a private Supabase bucket.
+Static site (HTML + Tailwind CDN). All content lives in `app-data.json` (English) and `app-data.ar.json` (Arabic) in the GitHub repository. There is no database, no sign-in and no client portal: the only thing that needs a login is the admin page, and it uses a GitHub token.
 
 ## Day to day: `admin.html`
 
-Open `https://YOUR-SITE/admin.html`. It has two areas, switched from the dark bar at the top.
+Open `https://YOUR-SITE/admin.html`, sign in with a GitHub fine-grained token (Contents: read and write, for this repository only), and edit.
 
-**Website content** (saves to `app-data.json` on GitHub)
-- Sign in with a GitHub fine-grained token (Contents: read and write, for this repository only). The repository name field starts as `Hot-Info`; enter your GitHub username or organization once and the browser remembers it.
-- Tabs: General, **Colors**, **Backgrounds**, Carousel, Jurisdictions, News, Services, Products, Testimonials, Team, **FAQ**.
+- Tabs, in the order of the site: General, Carousel, Services, News, Jurisdictions, **Team**, **Testimonials**, FAQ, then Colors and Backgrounds. Each content tab says where its items appear on the site and links to that page.
+- **Team** (About page slider: name, position, square photo) and **Testimonials** (Home page quotes: name, role, quote) can be edited here, in English and in Arabic.
 - **Colors**: the site palette. Ten colors (titles, dark, gold, accent blue, sand, page and section backgrounds, body text) start at the colors the site always used; change any of them, pick a ready-made palette, or add your own named colors. Also sets the **section width** on tablet and desktop (67% is about two thirds).
 - **Carousel**: the slides, plus a **Hero height** card at the top (phone / tablet / desktop, in pixels or % of screen height, with ready-made sizes and a reset).
 - **Import slides** (Carousel tab): add the home page slides from a Word, Markdown or spreadsheet file. Word: a **Heading 1** per slide, then `Subtitle:` and `Tag:` lines and the picture. Markdown: `# Title` plus the same lines (`Image: photo.jpg`). Spreadsheet: columns `Title, Subtitle, Tag, Image`. You review, then add at the end / top or replace the current slides.
@@ -20,26 +19,14 @@ Open `https://YOUR-SITE/admin.html`. It has two areas, switched from the dark ba
 - Photos: upload from your device (large photos are shrunk automatically) or pick one already in `assets/`.
 - Add, duplicate, reorder, delete, search (long lists), Ctrl+S to save, undo arrow to discard changes, download icon for a backup.
 
-**Client files** (Supabase)
-- Sign in with your admin email and password.
-- Invite a client by email: they get a link, set a password, and see only their own folder on the My files page.
-- Open a client to upload (button or drag and drop), create folders, download and delete.
-- Arabic or other non-Latin file names are replaced with a safe name (Supabase storage rejects them); the original extension is kept.
-- Re-send an invite, or send a password reset, with the envelope button. Remove an account with the person icon (their files stay until you delete them).
 
-## Arabic (right-to-left) site, phase 1 of 3
-Files: `lang.js` (language engine), `app-data.ar.json` (the Arabic content, same structure as `app-data.json`), plus changes to `index.html`, `footer.js`, `styles.css`, `rich.js` and `admin.html`.
-- **Choose the languages:** admin, Website content, General tab, **Site languages**: English only, Arabic only, or both. With both, a button in the header (العربية / English) lets visitors switch; their choice is remembered. Save to GitHub to apply.
-- **Write the Arabic content:** in the admin use the **EN | عربي** switch at the top. The Arabic form has exactly the same items as the English content (carousel, jurisdictions, news, services), with the English text shown above each box for reference. Leave a field empty and the Arabic site shows the English text for it, so nothing is ever blank. Images, dates, icons and ids are shared. News categories are translated in the same order as the English list. Saving in Arabic mode writes only `app-data.ar.json`.
-- **Interface text:** in Arabic mode the **Interface text** tab holds the short words of the site (menu, buttons, headings). Suggested Arabic is built in; type your own to replace it.
-- **Phase 1 covers** the home page and the bottom bar. About, the service pages, My files and the sign-in pop-up are still English only until phases 2 and 3. The team and testimonials have no admin form yet, so they stay English until phase 2.
-
-## Leads, HOT Info Issues, sector-only access (step 2)
-Run `supabase-step2-leads-and-issues.sql` once in the Supabase SQL Editor (safe to run again), then reload `admin.html`. The top bar now has **Website content | Leads | Users & sectors | HOT Info Issues**.
-- **Leads**: start of the funnel. Add a lead (Name and Mobile Number are required; Email and Company optional) or **Import from Excel** (.xlsx, .xls or .csv with the headers Name, Email, Mobile Number, Company; the **Template** button downloads an example). Imported leads get status *Lead*; rows without a name or mobile, and mobiles already in Leads, are skipped and reported before you confirm. Change a lead to *Potential* with the status drop-down and write its situation in the description box (both save automatically). **Subscribe** creates the user (email required), subscribes the sectors you pick and marks the lead *Converted*; from then on it is a normal user.
-- **HOT Info Issues**: a spreadsheet-style table of tenders (Sector, Source, Tender brief, Tender source, TB price, Tender date, Publishing date, Insurance value, Image). Cells save when you leave them; Enter moves down one row. Search and filter by text, sector, source, tender date and publishing date; click a header to sort. **Docs** opens the issue's document folder, which lives inside its sector library (`sectors/<sector>/issues/issue-00012`), so users subscribed to that sector see the documents in My files. Changing an issue's sector moves its documents too.
-- **Users now get files only through sector subscriptions.** The private per-user folders are retired: no folder is created for new users, the Files button is gone, and My files shows only the sector cards. Files already stored in `<email>/` folders are not deleted; they are no longer shown to users (remove them in Supabase, Storage).
-- **My files** was redesigned: greeting, one card per active sector with its end date, folders and documents with file type, size, "Added 3 days ago", a New badge and Open / Download.
+## Arabic (right-to-left) site
+Files: `lang.js` (language engine), `pages-i18n.js` (fixed texts of the pages, English and built-in Arabic), `app-data.ar.json` (the Arabic content, same structure as `app-data.json`), plus `index.html`, the four inner pages, `faq.js`, `service-page.js`, `footer.js`, `styles.css`, `rich.js` and `admin.html`.
+- **Choose the languages:** admin, Website content, General tab, **Site languages**: English only, Arabic only, or both. With both, a button in the header (العربية / English) lets visitors switch on every page; their choice is remembered. Save to GitHub to apply.
+- **Write the Arabic content:** in the admin use the **EN | عربي** switch at the top. The Arabic form has the same items as the English content (carousel, jurisdictions, news, services including the full page text, team, testimonials, FAQ), with the English text shown above each box for reference. Leave a field empty and the Arabic site shows the English text for it, so nothing is ever blank. Images, dates, icons and ids are shared. News categories are translated in the same order as the English list. Saving in Arabic mode writes only `app-data.ar.json`.
+- **Interface text** (Arabic mode): the short words of the site (menu, buttons, headings). **Page texts** (Arabic mode): the fixed wording written in the About, Patents, Trademarks and Translation pages. Suggested Arabic is built in for both; type your own to replace it.
+- **FAQ:** add, remove and reorder questions in English; in Arabic mode write the Arabic question and answer for each.
+- A page with a service text left empty in Arabic shows the English text of that service.
 
 ## Services: three editable parts
 In admin, Services tab, each service has three text parts (Patents, Trademarks and Translation are filled in already):
@@ -49,53 +36,8 @@ In admin, Services tab, each service has three text parts (Patents, Trademarks a
 The **Dedicated page file** field (for example `patents.html`) connects a service to its page and shows the "More information" button.
 
 ## Site navigation (bottom bar)
-Home, IP Services (IP Services section), News (Latest news section), Jurisdiction (Jurisdictions section, formerly Countries), About (about.html). The round paper-plane Send button sits inside the WhatsApp text box.
-Client sign-in is no longer in the bar: clients open `my-stuff.html` directly, which offers a Login button when signed out. Sessions persist in the browser (auto-refreshed), so clients sign in once per device until they sign out.
+Home, IP Services (IP Services section), News (Latest news section), Jurisdiction (Jurisdictions section), About (about.html). The round paper-plane Send button sits inside the WhatsApp text box.
 
-## One-time Supabase setup
-
-1. **Create the project** at supabase.com. Copy *Project URL* and the *anon public* key (Project Settings, API) into `supabase-config.js`. Never use the `service_role` key anywhere in this repository.
-2. **Create your admin login**: Authentication, Users, Add user, tick *Auto Confirm User*.
-3. **Run `supabase-setup.sql`**: SQL Editor, New query. First change `YOU@YOUR-DOMAIN.COM` in step 5 of the script to your admin email. The last query should show one row with your email. It is safe to run again.
-4. **Deploy the invite function** (needed for inviting, listing, re-inviting and removing accounts):
-   ```
-   npm i -g supabase
-   supabase login
-   supabase link --project-ref YOUR-PROJECT-REF
-   supabase functions deploy admin-clients
-   ```
-   Without it, the Client files area still works for uploading to existing folders, and you can create logins in the dashboard.
-5. **Authentication settings** (Authentication, ...). Also see MANUAL.md 2.8 and 2.9 (own email sender, session length):
-   - *Sign In / Providers, Email*: turn **off** "Allow new users to sign up" and keep "Confirm email" on. This stops strangers creating accounts.
-   - *URL Configuration*: set *Site URL* to your site, and add `https://YOUR-SITE/my-stuff.html` and `https://YOUR-SITE/admin.html` to *Redirect URLs*.
-   - *Email Templates* (optional): edit the "Invite user" text so it reads like KHIP.
-6. Keep `allowSignUp:false` in `supabase-config.js`.
-
-### How access works
-- Files sit in the private `client-files` bucket. Users have no private folders any more; they read only the sector libraries they are subscribed to.
-- Shared **sectors** (starter: Construction, Engineering) live in `sectors/<id>/...`. A client reads a sector only while subscribed; any number of subscriptions per client. Manage them in admin: **Client files, Sectors** tab (libraries) and the sector buttons under each client (subscriptions).
-- Only accounts listed in `public.admins` can upload, replace or delete. To add another admin, create the user in the dashboard and run `insert into public.admins (user_id,email) select id,email from auth.users where email='them@khip.com';`
-
-## Client area: users and subscriptions (in steps)
-- **Step 1 (done)**: run `supabase-step1-subscriptions.sql` once in Supabase (SQL Editor). In the admin, Client files > Users: create, edit and delete users (email, name, mobile, company), subscribe one or more sectors for 1 week, 1 year or 2 years from a start date you choose (the end date is calculated), and renew at any time: a new period can only start after the current one ends. Sectors can be added, renamed, deleted and filled with files and folders. Users see only their running sectors under **My files**, with the date it is available until.
-- **Passwords**: in New user you can type a password (or press Generate) instead of sending an invitation; the account is created ready to use. Edit user lets you set a new password later. Users change their own password with the key icon on the My files page. This needs the updated `admin-clients` function: run `supabase functions deploy admin-clients` again.
-- **Status filter** (Users tab): currently subscribed, ends in 5 days, ended, starts later, no subscription.
-- **Step 2 (next)**: the "renewal reminder" email for users whose subscription ends in 5 days.
-
-## What changed in this version
-- About page: the Contact card now includes a small Google Maps map of the office.
-- Image uploads in the admin: carousel (about 15:8), news (2:1) and team (square) photos are resized and center-cropped to their frame before upload. The pages also show every image with "cover" fitting, so older images fill their frames too.
-- News labels: each article has a **Category** (General, KHIP News, Intellectual Property, Patents, Trademarks, Translation by default). Edit the list under General > News categories. The label shows on the news card and in the article, and an open article ends with a **Related news** slider (same category) that moves every 5 seconds.
-- Colors and backgrounds: new `theme.js` (loaded by every page) applies the palette, section backgrounds and section width saved in `app-data.json` under `theme`. New admin tabs **Colors** and **Backgrounds**. All titles use the "Titles" color (dark blue by default).
-- Layout: on tablet and desktop the page sections are 2/3 of their previous width; the home logo is half its previous size; About page: logo above the title, "Our Regional Coverage", "KHIP Value", team slider (4 across, 1 on mobile, moves every 10 seconds), redesigned Contact with LinkedIn only; Team removed from the home menu.
-- Pop-ups: the jurisdiction pop-up no longer repeats the Overview, and any long pop-up scrolls inside itself.
-- Testimonials: one framed quote (a third of the screen wide on desktop) that fades out and in every 10 seconds.
-- `admin.html`: two areas (Website content, Client files); duplicate, search, Ctrl+S, discard, automatic photo shrinking; client invites, uploads, folders, deletes.
-- `supabase-setup.sql`: repeatable; adds the admin role and admin file rules. New `supabase/functions/admin-clients`.
-- Public site: formatting (`**bold**`, `##`, `-`) renders; carousel arrows and swipe; YouTube icon; reduced-motion support; dynamic footer year; My files search and sort.
-- New bottom bar (above), sign-in as a pop-up from My files, persistent sessions; sections renamed IP Services, Latest news, Jurisdictions.
-- Sectors: shared libraries with per-client subscriptions; My files shows a card per subscribed sector.
-- Validation script and workflow moved to where GitHub can run them.
 
 ## Checks
 

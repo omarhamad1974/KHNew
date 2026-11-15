@@ -1,13 +1,13 @@
 /* FAQ section for the Home, About, Patents, Trademarks and Translation pages.
    Each page has an empty <section data-faq="home|about|patents|trademarks|translation"> that stays hidden.
-   The questions come from "faq" in app-data.json (admin, tab FAQ):
+   The questions come from "faq" in app-data.json (admin, tab FAQ), with the Arabic wording from app-data.ar.json laid over them by lang.js:
      faq: { title, intro, pages: { home: { title, intro, hidden, items: [ {id, q, a} ] }, about: {...}, ... } }
    A page with no complete question and answer keeps its FAQ hidden. Answers use the site's text format (**bold**, ## subtitle, - bullet).
    The questions are also published to search engines as FAQ structured data. */
 (function(){
   const sec=document.querySelector('[data-faq]');if(!sec)return;
-  const CACHE='khip-data-v3',key=sec.dataset.faq,E=s=>window.KRich.esc(s);
-  const LD='faq-ld',DEF_TITLE='Frequently asked questions';
+  const key=sec.dataset.faq,E=s=>window.KRich.esc(s);
+  const LD='faq-ld',T=k=>window.KLang?KLang.t(k):'Frequently asked questions';
   function ld(items){
     let s=document.getElementById(LD);
     if(!items.length){if(s)s.remove();return}
@@ -18,7 +18,7 @@
     const F=(D&&D.faq)||{},P=(F.pages||{})[key]||{};
     const items=(P.items||[]).filter(x=>x&&String(x.q||'').trim()&&String(x.a||'').trim());
     if(P.hidden===true||!items.length){sec.classList.add('hidden');ld([]);return}
-    const t=String(P.title||F.title||'').trim()||DEF_TITLE,intro=String(P.intro||F.intro||'').trim();
+    const t=String(P.title||F.title||'').trim()||T('faq_title'),intro=String(P.intro||F.intro||'').trim();
     const tt=sec.querySelector('[data-faq-title]'),ti=sec.querySelector('[data-faq-intro]'),l=sec.querySelector('[data-faq-list]');
     if(tt)tt.textContent=t;
     if(ti){ti.innerHTML=intro?window.KRich.rich(intro):'';ti.classList.toggle('hidden',!intro)}
@@ -26,9 +26,5 @@
     l.innerHTML=items.map((x,i)=>`<details class="faq-item fu in" data-i="${i}"${open.has(String(i))?' open':''}><summary><span>${E(String(x.q).trim())}</span><i class="ph-light ph-caret-down" aria-hidden="true"></i></summary><div class="faq-a">${window.KRich.rich(String(x.a).trim())}</div></details>`).join('');
     sec.classList.remove('hidden');ld(items);
   }
-  let cached=null;try{cached=JSON.parse(localStorage.getItem(CACHE))}catch{}
-  if(cached)apply(cached);
-  fetch('./app-data.json',{cache:'no-cache'}).then(r=>r.ok?r.json():Promise.reject()).then(d=>{
-    if(JSON.stringify(d.faq||null)!==JSON.stringify((cached||{}).faq||null)||!cached)apply(d);
-  }).catch(()=>{});
+  KLang.load(apply);                                      // English, or Arabic on top when Arabic is showing
 })();

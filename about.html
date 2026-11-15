@@ -3,13 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>About KHIP - Intellectual Properties</title>
+<title data-tx="about.title1">About KHIP - Intellectual Properties</title>
 <meta name="description" content="About KHIP: our advantages, offices, jurisdictions across the Middle East and North Africa, and our team.">
 <meta name="theme-color" content="#1d4ed8">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/light/style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/7.2.3/css/flag-icons.min.css">
+<script src="lang.js"></script>
+<script src="pages-i18n.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="tailwind-config.js"></script>
 <script src="theme.js"></script>
@@ -20,67 +22,66 @@
   <div class="wrap py-3 flex items-center justify-between">
     <a href="index.html" class="site-logo-link" aria-label="Khaled Hamada Intellectual Property, home"><img src="assets/khaled-hamada-ip-logo.png" width="757" height="127" alt="Khaled Hamada Intellectual Property" class="site-logo" decoding="async"></a>
     <nav class="hidden lg:flex gap-8 text-sm text-stone-600" aria-label="Main">
-      <a href="index.html" class="hover:text-brand-600 transition">Home</a><a href="#jurisdictions" class="hover:text-brand-600 transition">Jurisdictions</a><a href="#value" class="hover:text-brand-600 transition">Value</a><a href="#advantages" class="hover:text-brand-600 transition">Advantages</a><a href="#team" class="hover:text-brand-600 transition">Team</a><a href="#contact" class="hover:text-brand-600 transition">Contact</a>
-    <a href="my-stuff.html" class="hover:text-brand-600 transition">My files</a></nav>
-    <a href="https://www.linkedin.com/company/khip/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="w-10 h-10 rounded-full border border-stone-200 text-stone-600 hover:text-brand-600 hover:border-brand-600 flex items-center justify-center transition"><i class="ph-light ph-linkedin-logo text-xl"></i></a>
+      <a href="index.html" class="hover:text-brand-600 transition" data-tx="about.a1">Home</a><a href="#jurisdictions" class="hover:text-brand-600 transition" data-tx="about.a2">Jurisdictions</a><a href="#value" class="hover:text-brand-600 transition" data-tx="about.a3">Value</a><a href="#advantages" class="hover:text-brand-600 transition" data-tx="about.a4">Advantages</a><a href="#team" class="hover:text-brand-600 transition" data-tx="about.a5">Team</a><a href="#contact" class="hover:text-brand-600 transition" data-tx="about.a6">Contact</a></nav>
+    <div class="flex items-center gap-2"><div id="lang-switch"></div><a href="https://www.linkedin.com/company/khip/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="w-10 h-10 rounded-full border border-stone-200 text-stone-600 hover:text-brand-600 hover:border-brand-600 flex items-center justify-center transition"><i class="ph-light ph-linkedin-logo text-xl"></i></a></div>
   </div>
 </header>
 
 <main>
   <section id="about" data-sec="about-intro" class="band"><div class="wrap grid lg:grid-cols-[1.2fr_1fr] gap-10 lg:gap-14 items-center">
-    <div class="fu"><img src="assets/khip-logo.jpg" width="800" height="822" alt="Khaled Hamada Intellectual Property" class="about-logo w-24 md:w-28 h-auto mb-5" decoding="async"><h1 class="font-display text-5xl md:text-6xl lg:text-7xl font-medium text-title leading-[1.05]">About <span class="khip">KHIP</span></h1><span class="rule mt-5"></span>
-      <p class="text-base md:text-lg leading-relaxed max-w-xl">KHIP is an Intellectual Property law firm with fully operational offices and a network of associates and representatives throughout the Middle East. The firm is one of the finest firms practicing intellectual property and the only firm with a truly comprehensive intellectual property practice. Founded in 2004, the firm represents various clients from individual inventors to multinational companies.</p>
-      <p class="text-base md:text-lg leading-relaxed max-w-xl mt-4">We serve great innovators, helping to protect countless ideas, nurture discoveries, and bring new concepts to markets. The firm prosecuted and litigated many patents, serving corporations creating the cutting-edge technologies of the day. Khaled Hamada, the firm's founder, was for many years the acknowledged leader of the patent services of the entire country and continues to remain until a time when patents are more important than they had ever been.</p></div>
+    <div class="fu"><img src="assets/khip-logo.jpg" width="800" height="822" alt="Khaled Hamada Intellectual Property" class="about-logo w-24 md:w-28 h-auto mb-5" decoding="async"><h1 class="font-display text-5xl md:text-6xl lg:text-7xl font-medium text-title leading-[1.05]" data-tx="about.h11">About <span class="khip">KHIP</span></h1><span class="rule mt-5"></span>
+      <p class="text-base md:text-lg leading-relaxed max-w-xl" data-tx="about.p1">KHIP is an Intellectual Property law firm with fully operational offices and a network of associates and representatives throughout the Middle East. The firm is one of the finest firms practicing intellectual property and the only firm with a truly comprehensive intellectual property practice. Founded in 2004, the firm represents various clients from individual inventors to multinational companies.</p>
+      <p class="text-base md:text-lg leading-relaxed max-w-xl mt-4" data-tx="about.p2">We serve great innovators, helping to protect countless ideas, nurture discoveries, and bring new concepts to markets. The firm prosecuted and litigated many patents, serving corporations creating the cutting-edge technologies of the day. Khaled Hamada, the firm's founder, was for many years the acknowledged leader of the patent services of the entire country and continues to remain until a time when patents are more important than they had ever been.</p></div>
     <div class="fu grid grid-cols-3 gap-3 text-center" style="--d:.15s">
-      <button type="button" data-svc="Patents" class="card p-4 cursor-pointer" aria-haspopup="dialog"><i class="ph-light ph-lightbulb text-3xl text-brand-600"></i><p class="font-display text-lg font-semibold text-title mt-1">Patents</p></button>
-      <button type="button" data-svc="Trademarks" class="card p-4 cursor-pointer" aria-haspopup="dialog"><i class="ph-light ph-seal-check text-3xl text-brand-600"></i><p class="font-display text-lg font-semibold text-title mt-1">Trademarks</p></button>
-      <button type="button" data-svc="Translation" class="card p-4 cursor-pointer" aria-haspopup="dialog"><i class="ph-light ph-translate text-3xl text-brand-600"></i><p class="font-display text-lg font-semibold text-title mt-1">Translation</p></button>
+      <button type="button" data-svc="Patents" class="card p-4 cursor-pointer" aria-haspopup="dialog"><i class="ph-light ph-lightbulb text-3xl text-brand-600"></i><p class="font-display text-lg font-semibold text-title mt-1" data-tx="about.p3">Patents</p></button>
+      <button type="button" data-svc="Trademarks" class="card p-4 cursor-pointer" aria-haspopup="dialog"><i class="ph-light ph-seal-check text-3xl text-brand-600"></i><p class="font-display text-lg font-semibold text-title mt-1" data-tx="about.p4">Trademarks</p></button>
+      <button type="button" data-svc="Translation" class="card p-4 cursor-pointer" aria-haspopup="dialog"><i class="ph-light ph-translate text-3xl text-brand-600"></i><p class="font-display text-lg font-semibold text-title mt-1" data-tx="about.p5">Translation</p></button>
     </div>
   </div></section>
 
   <section id="jurisdictions" data-sec="about-map" class="band hidden"><div class="wrap">
-    <div class="fu"><h2 class="h2">Jurisdictions</h2><span class="rule"></span></div>
+    <div class="fu"><h2 class="h2" data-tx="about.a2">Jurisdictions</h2><span class="rule"></span></div>
     <div id="jur-chips" class="relative flex gap-2.5 overflow-x-auto no-scrollbar pb-3"></div>
     <div id="jur-box" class="relative mt-2">
-      <button type="button" class="jur-arrow prev" data-jur="-1" aria-label="Previous country"><i class="ph-light ph-caret-left"></i></button>
+      <button type="button" class="jur-arrow prev" data-jur="-1" aria-label="Previous country" data-i18n-attr="aria-label:prev_c"><i class="ph-light ph-caret-left rtl:-scale-x-100"></i></button>
       <div id="jur-card" class="rounded-3xl bg-stone-50 border border-stone-200 px-14 py-6 md:px-20 md:py-9" aria-live="polite"></div>
-      <button type="button" class="jur-arrow next" data-jur="1" aria-label="Next country"><i class="ph-light ph-caret-right"></i></button>
+      <button type="button" class="jur-arrow next" data-jur="1" aria-label="Next country" data-i18n-attr="aria-label:next_c"><i class="ph-light ph-caret-right rtl:-scale-x-100"></i></button>
     </div>
   </div></section>
 
   <section id="value" data-sec="about-value" class="band bg-surface"><div class="wrap grid lg:grid-cols-[1fr_1.6fr] gap-6 lg:gap-14 items-start">
-    <div class="fu"><h2 class="h2"><span class="khip">KHIP</span> Value</h2><span class="rule"></span></div>
+    <div class="fu"><h2 class="h2" data-tx="about.h21"><span class="khip">KHIP</span> Value</h2><span class="rule"></span></div>
     <div class="fu text-base md:text-lg leading-relaxed" style="--d:.15s">
-      <p>We help our clients capture the value of their intellectual property through patent, trademark, copyright, and trade secret protection. KHIP is among the top firms in the region in quality of patents obtained each year. We file numerous patent applications each year; our attorneys are admitted to the patent bar. Our staff includes technically oriented, legally skilled M.S. and Ph.D. holders handling your cases.</p>
-      <p class="mt-4">Our attorneys are among the world's most diverse and respected. We are guided by a culture of integrity, personal responsibility, friendship and tenacious client service. We deliver the broad scope of quality legal services required to respond to any business need. KHIP stands out in the IP sector regionally as one of the most prestigious, specialized companies. We offer unique expertise in a variety of industry and market segments.</p>
+      <p data-tx="about.p6">We help our clients capture the value of their intellectual property through patent, trademark, copyright, and trade secret protection. KHIP is among the top firms in the region in quality of patents obtained each year. We file numerous patent applications each year; our attorneys are admitted to the patent bar. Our staff includes technically oriented, legally skilled M.S. and Ph.D. holders handling your cases.</p>
+      <p class="mt-4" data-tx="about.p7">Our attorneys are among the world's most diverse and respected. We are guided by a culture of integrity, personal responsibility, friendship and tenacious client service. We deliver the broad scope of quality legal services required to respond to any business need. KHIP stands out in the IP sector regionally as one of the most prestigious, specialized companies. We offer unique expertise in a variety of industry and market segments.</p>
     </div>
   </div></section>
 
   <section data-sec="about-quote" class="band"><div class="wrap fu"><div class="rounded-3xl bg-ink text-white p-8 md:p-14">
     <i class="ph-light ph-quotes text-4xl text-gold"></i>
-    <p class="font-display text-2xl md:text-4xl leading-snug mt-3 max-w-4xl">KHIP includes experienced, globally knowledgeable lawyers in jurisdictions where your products and innovations are likely to be produced, marketed or stolen. KHIP is able to provide clients with a unique combination of national resources with personalized service.</p>
-    <p class="text-stone-300 text-base md:text-lg leading-relaxed mt-5 max-w-3xl">Our goal is to act as a business partner with our clients, combining legal experience, business acumen, and the practiced art of listening, in order to identify challenges, seize opportunities, and deliver solutions.</p>
+    <p class="font-display text-2xl md:text-4xl leading-snug mt-3 max-w-4xl" data-tx="about.p8">KHIP includes experienced, globally knowledgeable lawyers in jurisdictions where your products and innovations are likely to be produced, marketed or stolen. KHIP is able to provide clients with a unique combination of national resources with personalized service.</p>
+    <p class="text-stone-300 text-base md:text-lg leading-relaxed mt-5 max-w-3xl" data-tx="about.p9">Our goal is to act as a business partner with our clients, combining legal experience, business acumen, and the practiced art of listening, in order to identify challenges, seize opportunities, and deliver solutions.</p>
   </div></div></section>
 
   <section id="advantages" data-sec="about-advantages" class="band bg-surface"><div class="wrap">
-    <div class="fu"><h2 class="h2"><span class="khip">KHIP</span> advantages</h2><span class="rule"></span></div>
+    <div class="fu"><h2 class="h2" data-tx="about.h22"><span class="khip">KHIP</span> advantages</h2><span class="rule"></span></div>
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-      <div class="fu" style="--d:0s"><div class="card h-full p-7"><div class="w-14 h-14 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center"><i class="ph-light ph-seal-check text-3xl"></i></div><h3 class="font-display text-2xl font-semibold text-title mt-5">Quality</h3><p class="text-sm leading-relaxed mt-2">Our QA process is certified to the latest ISO 9001, 13485 and 17100 standards, and our proprietary quality algorithm ensures the accuracy and reliability you need.</p><div class="flex flex-wrap gap-2 mt-4"><span class="text-xs border border-stone-300 rounded-full px-3 py-1">ISO 9001</span><span class="text-xs border border-stone-300 rounded-full px-3 py-1">ISO 13485</span><span class="text-xs border border-stone-300 rounded-full px-3 py-1">ISO 17100</span></div></div></div>
-      <div class="fu" style="--d:.12s"><div class="card h-full p-7"><div class="w-14 h-14 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center"><i class="ph-light ph-cpu text-3xl"></i></div><h3 class="font-display text-2xl font-semibold text-title mt-5">Technology</h3><p class="text-sm leading-relaxed mt-2">Our user-friendly client platforms, ISO-certified ISMS, and industry-leading IP and translation tools make working with us convenient, secure, and efficient.</p></div></div>
-      <div class="fu" style="--d:.24s"><div class="card h-full p-7"><div class="w-14 h-14 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center"><i class="ph-light ph-handshake text-3xl"></i></div><h3 class="font-display text-2xl font-semibold text-title mt-5">Client experience</h3><p class="text-sm leading-relaxed mt-2">Our white-glove onboarding, customized workflows, and 24/7 support have helped us achieve high client satisfaction.</p></div></div>
+      <div class="fu" style="--d:0s"><div class="card h-full p-7"><div class="w-14 h-14 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center"><i class="ph-light ph-seal-check text-3xl"></i></div><h3 class="font-display text-2xl font-semibold text-title mt-5" data-tx="about.h31">Quality</h3><p class="text-sm leading-relaxed mt-2" data-tx="about.p10">Our QA process is certified to the latest ISO 9001, 13485 and 17100 standards, and our proprietary quality algorithm ensures the accuracy and reliability you need.</p><div class="flex flex-wrap gap-2 mt-4"><span class="text-xs border border-stone-300 rounded-full px-3 py-1">ISO 9001</span><span class="text-xs border border-stone-300 rounded-full px-3 py-1">ISO 13485</span><span class="text-xs border border-stone-300 rounded-full px-3 py-1">ISO 17100</span></div></div></div>
+      <div class="fu" style="--d:.12s"><div class="card h-full p-7"><div class="w-14 h-14 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center"><i class="ph-light ph-cpu text-3xl"></i></div><h3 class="font-display text-2xl font-semibold text-title mt-5" data-tx="about.h32">Technology</h3><p class="text-sm leading-relaxed mt-2" data-tx="about.p11">Our user-friendly client platforms, ISO-certified ISMS, and industry-leading IP and translation tools make working with us convenient, secure, and efficient.</p></div></div>
+      <div class="fu" style="--d:.24s"><div class="card h-full p-7"><div class="w-14 h-14 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center"><i class="ph-light ph-handshake text-3xl"></i></div><h3 class="font-display text-2xl font-semibold text-title mt-5" data-tx="about.h33">Client experience</h3><p class="text-sm leading-relaxed mt-2" data-tx="about.p12">Our white-glove onboarding, customized workflows, and 24/7 support have helped us achieve high client satisfaction.</p></div></div>
     </div>
   </div></section>
 
   <section id="team" data-sec="about-team" class="band bg-surface hidden"><div class="wrap">
-    <div class="fu"><h2 class="h2">Our team</h2><span class="rule"></span></div>
-    <div id="team-box" class="fu" aria-roledescription="carousel" aria-label="Our team">
+    <div class="fu"><h2 class="h2" data-tx="about.h23">Our team</h2><span class="rule"></span></div>
+    <div id="team-box" class="fu" aria-roledescription="carousel" aria-label="Our team" data-i18n-attr="aria-label:team_title">
       <div class="tm-view"><div id="team-track" class="tm-track" aria-live="off"></div></div>
       <div class="flex items-center justify-center gap-4 mt-6">
-        <button type="button" data-team="-1" class="tm-btn" aria-label="Previous team members"><i class="ph-light ph-arrow-left text-lg"></i></button>
+        <button type="button" data-team="-1" class="tm-btn" aria-label="Previous team members" data-i18n-attr="aria-label:team_prev"><i class="ph-light ph-arrow-left text-lg rtl:-scale-x-100"></i></button>
         <span id="team-count" class="text-sm text-stone-500 min-w-[5.5rem] text-center" aria-live="polite"></span>
-        <button type="button" data-team="1" class="tm-btn" aria-label="Next team members"><i class="ph-light ph-arrow-right text-lg"></i></button>
+        <button type="button" data-team="1" class="tm-btn" aria-label="Next team members" data-i18n-attr="aria-label:team_next"><i class="ph-light ph-arrow-right text-lg rtl:-scale-x-100"></i></button>
       </div>
-      <div id="team-dots" class="sl-dots mt-1" role="group" aria-label="Team pages"></div>
+      <div id="team-dots" class="sl-dots mt-1" role="group" aria-label="Team pages" data-i18n-attr="aria-label:team_title"></div>
     </div>
   </div></section>
 
@@ -88,21 +89,21 @@
 <section id="contact" data-sec="about-contact" class="band">
     <div class="wrap fu">
       <div class="keep-dark rounded-3xl bg-white border border-stone-200 shadow-sm overflow-hidden grid lg:grid-cols-[1fr_1.15fr]">
-        <div class="p-8 md:p-10 flex flex-col justify-center text-center lg:text-left">
+        <div class="p-8 md:p-10 flex flex-col justify-center text-center lg:text-start">
           <span class="rule mx-auto lg:mx-0 !mt-0 !mb-4"></span>
-          <h2 class="font-display text-3xl md:text-4xl font-medium text-title leading-tight">Contact</h2>
-          <p class="mt-3 text-base leading-relaxed">Offices in Egypt, the UAE and Saudi Arabia. Call, write or follow us; we reply quickly.</p>
+          <h2 class="font-display text-3xl md:text-4xl font-medium text-title leading-tight" data-tx="about.a6">Contact</h2>
+          <p class="mt-3 text-base leading-relaxed" data-tx="about.p13">Offices in Egypt, the UAE and Saudi Arabia. Call, write or follow us; we reply quickly.</p>
           <div class="mt-6 flex justify-center lg:justify-start">
-            <a href="https://www.linkedin.com/company/khip/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-ink hover:bg-brand-600 text-white text-sm px-7 py-2.5 rounded-full transition"><i class="ph-light ph-linkedin-logo text-xl"></i> Follow us on LinkedIn</a>
+            <a href="https://www.linkedin.com/company/khip/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-ink hover:bg-brand-600 text-white text-sm px-7 py-2.5 rounded-full transition" data-tx="about.a7"><i class="ph-light ph-linkedin-logo text-xl"></i> Follow us on LinkedIn</a>
           </div>
         </div>
-        <div class="p-6 md:p-10 bg-stone-50 border-t lg:border-t-0 lg:border-l border-stone-200 grid gap-3 content-center">
-          <a href="tel:+201000374700" class="ct-tile"><span class="ct-ico"><i class="ph-light ph-phone"></i></span><span><span class="block text-xs uppercase tracking-widest text-stone-500">Phone</span><span class="block text-base text-ink">+2010 003 74 700</span></span></a>
-          <a href="tel:+201069033777" class="ct-tile"><span class="ct-ico"><i class="ph-light ph-phone"></i></span><span><span class="block text-xs uppercase tracking-widest text-stone-500">Phone</span><span class="block text-base text-ink">+2010 690 33 777</span></span></a>
-          <a href="mailto:info@khipme.com" class="ct-tile"><span class="ct-ico"><i class="ph-light ph-envelope-simple"></i></span><span><span class="block text-xs uppercase tracking-widest text-stone-500">Email</span><span class="block text-base text-ink">info@khipme.com</span></span></a>
+        <div class="p-6 md:p-10 bg-stone-50 border-t lg:border-t-0 lg:border-s border-stone-200 grid gap-3 content-center">
+          <a href="tel:+201000374700" class="ct-tile"><span class="ct-ico"><i class="ph-light ph-phone"></i></span><span><span class="block text-xs uppercase tracking-widest text-stone-500" data-tx="about.span1">Phone</span><span class="block text-base text-ink">+2010 003 74 700</span></span></a>
+          <a href="tel:+201069033777" class="ct-tile"><span class="ct-ico"><i class="ph-light ph-phone"></i></span><span><span class="block text-xs uppercase tracking-widest text-stone-500" data-tx="about.span1">Phone</span><span class="block text-base text-ink">+2010 690 33 777</span></span></a>
+          <a href="mailto:info@khipme.com" class="ct-tile"><span class="ct-ico"><i class="ph-light ph-envelope-simple"></i></span><span><span class="block text-xs uppercase tracking-widest text-stone-500" data-tx="about.span2">Email</span><span class="block text-base text-ink">info@khipme.com</span></span></a>
           <div class="rounded-2xl overflow-hidden border border-stone-200 bg-white">
             <iframe title="KHIP office location on Google Maps" src="https://www.google.com/maps?q=30.027992248535156,31.48760223388672&z=17&hl=en&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen class="block w-full h-44 border-0"></iframe>
-            <a href="https://www.google.com/maps?q=30.027992248535156,31.48760223388672&z=17&hl=en" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 text-sm py-2.5 text-ink hover:text-brand-600 transition"><i class="ph-light ph-map-pin text-lg"></i> Open in Google Maps</a>
+            <a href="https://www.google.com/maps?q=30.027992248535156,31.48760223388672&z=17&hl=en" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 text-sm py-2.5 text-ink hover:text-brand-600 transition" data-tx="about.a8"><i class="ph-light ph-map-pin text-lg"></i> Open in Google Maps</a>
           </div>
         </div>
       </div>
@@ -113,12 +114,12 @@
 
 <div id="modal" class="fixed inset-0 bg-ink/70 backdrop-blur-sm z-50 flex items-end md:items-center justify-center opacity-0 pointer-events-none transition-opacity duration-500" style="padding-bottom:var(--khip-h,0px)" role="dialog" aria-modal="true" aria-labelledby="m-title">
   <div id="sheet" class="sheet closed relative bg-white w-full max-w-md md:max-w-2xl rounded-t-3xl md:rounded-3xl overflow-hidden">
-    <button type="button" data-close aria-label="Close" class="absolute top-3 right-3 z-10 w-11 h-11 rounded-full bg-stone-100 hover:bg-stone-200 active:scale-95 flex items-center justify-center transition touch-manipulation"><i class="ph-light ph-x text-xl"></i></button>
+    <button type="button" data-close aria-label="Close" data-i18n-attr="aria-label:close" class="absolute top-3 end-3 z-10 w-11 h-11 rounded-full bg-stone-100 hover:bg-stone-200 active:scale-95 flex items-center justify-center transition touch-manipulation"><i class="ph-light ph-x text-xl"></i></button>
     <div id="m-scroll" class="max-h-[calc(100dvh_-_var(--khip-h,0px)_-_1.5rem)] overflow-y-auto overscroll-contain p-6 md:p-9 pb-10"><div id="m-body" class="space-y-4"></div></div>
-    <div id="m-nav" class="mn-row hidden" role="group" aria-label="Browse countries">
-      <button type="button" data-mstep="-1" class="mn-btn" aria-label="Previous country"><i class="ph-light ph-caret-left"></i><span id="m-prev"></span></button>
+    <div id="m-nav" class="mn-row hidden" role="group" aria-label="Browse countries" data-i18n-attr="aria-label:browse_c">
+      <button type="button" data-mstep="-1" class="mn-btn" aria-label="Previous country" data-i18n-attr="aria-label:prev_c"><i class="ph-light ph-caret-left rtl:-scale-x-100"></i><span id="m-prev"></span></button>
       <span id="m-count" class="text-xs text-stone-500 tabular-nums" aria-live="polite"></span>
-      <button type="button" data-mstep="1" class="mn-btn" aria-label="Next country"><span id="m-next"></span><i class="ph-light ph-caret-right"></i></button>
+      <button type="button" data-mstep="1" class="mn-btn" aria-label="Next country" data-i18n-attr="aria-label:next_c"><span id="m-next"></span><i class="ph-light ph-caret-right rtl:-scale-x-100"></i></button>
     </div>
   </div>
 </div>
@@ -126,10 +127,9 @@
 <script src="rich.js"></script>
 <script src="faq.js"></script>
 <script src="footer.js"></script>
-<script src="auth.js"></script>
 <script>
 let J=[],SV=[],lastFocus=null;
-const CACHE="khip-data-v3",FALLBACK_IMG="https://placehold.co/200x200/e7e5e4/78716c?text=KHIP";
+const FALLBACK_IMG="https://placehold.co/200x200/e7e5e4/78716c?text=KHIP";
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const img=u=>!u?FALLBACK_IMG:esc(/^(https?:\/\/|\.\/|\/|data:image)/.test(u)?u:'./assets/'+u);
@@ -137,8 +137,9 @@ const io=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.targ
 const observe=()=>document.querySelectorAll('.fu:not(.in)').forEach(e=>io.observe(e));
 
 function render(D){
+  KLang.dom();
   J=D.jurisdictions||[];SV=(D.services||[]).filter(x=>!x.hidden);
-  document.querySelectorAll('[data-svc]').forEach(b=>{b.hidden=!SV.some(x=>String(x.title).toLowerCase()===b.dataset.svc.toLowerCase())});
+  document.querySelectorAll('[data-svc]').forEach(b=>{const x=SV.find(x=>String(x.enTitle||x.title).toLowerCase()===b.dataset.svc.toLowerCase());b.hidden=!x;const p=b.querySelector('p');if(x&&p&&KLang.rtl&&x.title)p.textContent=x.title});
   team(D.employees||[]);
   jurUI();
   observe();
@@ -161,7 +162,7 @@ function teamGo(i){
   $('team-count').textContent=tN?(pv>1?`${tI+1}\u2013${last} / ${tN}`:`${tI+1} / ${tN}`):'';
   document.querySelectorAll('[data-team]').forEach(b=>b.classList.toggle('hidden',tN<=pv));
   const pages=tN>pv?Math.ceil(tN/pv):0,at=tI>=max?pages-1:Math.floor(tI/pv),dc=$('team-dots');
-  if(dc.children.length!==pages)dc.innerHTML=Array.from({length:pages},(_,k)=>`<button type="button" class="sl-dot" data-tpage="${k}" aria-label="Team page ${k+1}"></button>`).join('');
+  if(dc.children.length!==pages)dc.innerHTML=Array.from({length:pages},(_,k)=>`<button type="button" class="sl-dot" data-tpage="${k}" aria-label="${esc(KLang.t('team_page',{x:k+1}))}"></button>`).join('');
   [...dc.children].forEach((d,k)=>{d.classList.toggle('on',k===at);if(k===at)d.setAttribute('aria-current','true');else d.removeAttribute('aria-current')});
   tr.querySelectorAll('.tm-item').forEach((el,k)=>el.setAttribute('aria-hidden',k<tI||k>=tI+pv?'true':'false'));
 }
@@ -176,23 +177,18 @@ function teamStep(dir){
   box.addEventListener('click',e=>{const b=e.target.closest('[data-team]');if(b)teamStep(+b.dataset.team);const d=e.target.closest('[data-tpage]');if(d)teamGo(+d.dataset.tpage*perView())});
   let x0=null;
   box.addEventListener('touchstart',e=>{x0=e.touches[0].clientX},{passive:true});
-  box.addEventListener('touchend',e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>40)teamStep(dx<0?1:-1)},{passive:true});
+  box.addEventListener('touchend',e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>40)teamStep((dx<0?1:-1)*(KLang.rtl?-1:1))},{passive:true});
   setInterval(()=>{if(!REDUCED&&!tHold&&Date.now()>=tWait&&tN>perView())teamStep(1)},10000);
   addEventListener('resize',()=>teamGo(tI));
 })();
-async function load(){
-  let c=null;try{c=JSON.parse(localStorage.getItem(CACHE))}catch{}
-  if(c)render(c);
-  try{const r=await fetch('./app-data.json',{cache:'no-cache'});if(!r.ok)throw 0;const d=await r.json();
-    if(JSON.stringify(d)!==JSON.stringify(c)){try{localStorage.setItem(CACHE,JSON.stringify(d))}catch{}render(d)}}catch(e){console.warn('Data load failed')}
-}
+function load(){KLang.load(render)}   // English, or Arabic on top when Arabic is showing
 
 // ---- Jurisdictions slider (moved here from the home page): chips, arrows, swipe, moves by itself every 15 seconds ----
 let jc=0,jHold=false,jWait=0;
 const bump=()=>{jWait=Date.now()+8000};
 function jurUI(){
   $('jurisdictions').classList.toggle('hidden',!J.length);
-  $('jur-chips').innerHTML=J.map((j,i)=>`<button type="button" id="chip-${i}" data-jur-i="${i}" class="flex items-center gap-2 px-4 py-2 rounded-full text-sm flex-shrink-0 bg-white border border-stone-300 transition"><span class="text-base">${flag(j.country)}</span>${esc(j.country)}</button>`).join('');
+  $('jur-chips').innerHTML=J.map((j,i)=>`<button type="button" id="chip-${i}" data-jur-i="${i}" class="flex items-center gap-2 px-4 py-2 rounded-full text-sm flex-shrink-0 bg-white border border-stone-300 transition"><span class="text-base">${flag(j)}</span>${esc(j.country)}</button>`).join('');
   document.querySelectorAll('#jur-box .jur-arrow').forEach(b=>{b.hidden=J.length<2});
   jc=jc<J.length?jc:0;pick(jc);
 }
@@ -202,10 +198,10 @@ function pick(i){
   document.querySelectorAll('[id^=chip-]').forEach(b=>{const on=b.id==='chip-'+i;b.classList.toggle('bg-ink',on);b.classList.toggle('text-white',on);b.classList.toggle('border-ink',on);b.classList.toggle('bg-white',!on)});
   const ch=$('chip-'+i),box=$('jur-chips');
   if(ch)box.scrollTo({left:ch.offsetLeft-(box.clientWidth-ch.offsetWidth)/2,behavior:'smooth'});
-  const c=$('jur-card');c.style.transition='opacity .3s ease,transform .3s ease';c.style.opacity=0;c.style.transform='translateX(-24px)';
+  const c=$('jur-card');c.style.transition='opacity .3s ease,transform .3s ease';c.style.opacity=0;c.style.transform='translateX('+(KLang.rtl?24:-24)+'px)';
   setTimeout(()=>{
-    c.innerHTML=`<div class="flex items-center gap-3"><span class="text-[1.6875rem] leading-none">${flag(j.country)}</span><h3 class="font-display text-[1.4rem] leading-tight font-semibold text-title">${esc(j.country)}</h3></div><p class="mt-4 text-sm md:text-base leading-relaxed line-clamp-5 md:line-clamp-4 max-w-3xl">${KRich.card(j.brief||'IP guidelines available upon inquiry.')}</p><div class="mt-6 text-center"><button type="button" data-jur-open="${i}" class="text-sm bg-ink hover:bg-stone-800 text-white px-10 py-2.5 rounded-full transition">View Filing Requirements</button></div>`;
-    c.style.transition='none';c.style.transform='translateX(24px)';void c.offsetWidth;
+    c.innerHTML=`<div class="flex items-center gap-3"><span class="text-[1.6875rem] leading-none">${flag(j)}</span><h3 class="font-display text-[1.4rem] leading-tight font-semibold text-title">${esc(j.country)}</h3></div><p class="mt-4 text-sm md:text-base leading-relaxed line-clamp-5 md:line-clamp-4 max-w-3xl">${KRich.card(j.brief||KLang.t('ip_guidelines'))}</p><div class="mt-6 text-center"><button type="button" data-jur-open="${i}" class="text-sm bg-ink hover:bg-stone-800 text-white px-10 py-2.5 rounded-full transition">${esc(KLang.t('view_req'))}</button></div>`;
+    c.style.transition='none';c.style.transform='translateX('+(KLang.rtl?-24:24)+'px)';void c.offsetWidth;
     c.style.minHeight=Math.max(parseFloat(c.style.minHeight)||0,c.scrollHeight)+'px';c.style.transition='opacity .6s ease,transform .7s cubic-bezier(.16,1,.3,1)';c.style.opacity=1;c.style.transform='none';
   },300);
 }
@@ -221,13 +217,13 @@ const jStep=d=>{if(J.length<2)return;bump();pick((jc+d+J.length)%J.length)};
   });
   let x0=null,y0=0;const card=$('jur-card');
   card.addEventListener('touchstart',e=>{x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
-  card.addEventListener('touchend',e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy))jStep(dx<0?1:-1)},{passive:true});
+  card.addEventListener('touchend',e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy))jStep((dx<0?1:-1)*(KLang.rtl?-1:1))},{passive:true});
   setInterval(()=>{if(REDUCED||jHold||Date.now()<jWait||J.length<2||isOpen())return;pick((jc+1)%J.length)},15000);
 })();
 // "View Filing Requirements" button opens the filing information in a modal on this same page
 const CODES={egypt:'eg',uae:'ae','saudi arabia':'sa',jordan:'jo',kuwait:'kw',qatar:'qa',bahrain:'bh',bahrian:'bh',oman:'om',morocco:'ma',tunisia:'tn',algeria:'dz'};
 const norm=s=>{s=String(s||'').trim().toLowerCase();return s==='united arab emirates'?'uae':s};
-const flag=n=>{const c=CODES[norm(n)];return c?`<span class="fi fi-${c} rounded-sm shadow-sm" role="img" aria-label="${esc(n)} flag"></span>`:'<i class="ph-light ph-globe-hemisphere-west text-brand-600"></i>'};
+const flag=j=>{const n=typeof j==='string'?j:(j.enCountry||j.country),c=String(j&&j.code||'').toLowerCase().match(/^[a-z]{2}$/)?String(j.code).toLowerCase():CODES[norm(n)];return c?`<span class="fi fi-${c} rounded-sm shadow-sm" role="img" aria-label="${esc(KLang.t('flag_aria',{x:typeof j==='string'?j:j.country}))}"></span>`:'<i class="ph-light ph-globe-hemisphere-west text-brand-600"></i>'};
 function showModal(html){
   lastFocus=document.activeElement;$('m-body').innerHTML=html;setNav(-1);
   $('modal').classList.remove('opacity-0','pointer-events-none');$('sheet').classList.remove('closed');$('m-scroll').scrollTop=0;
@@ -235,10 +231,10 @@ function showModal(html){
 }
 const SICONS=[[/patent/i,'ph-lightbulb'],[/trade\s?mark/i,'ph-seal-check'],[/transl/i,'ph-translate']];
 function openService(title){
-  const x=SV.find(s=>String(s.title).toLowerCase()===title.toLowerCase());if(!x)return;
-  const ic=/^ph-/.test(x.icon||'')?esc(x.icon.replace(/^ph-light\s*/,'')):(SICONS.find(([r])=>r.test(x.title))||[0,'ph-seal-check'])[1];
+  const x=SV.find(s=>String(s.enTitle||s.title).toLowerCase()===title.toLowerCase());if(!x)return;
+  const ic=/^ph-/.test(x.icon||'')?esc(x.icon.replace(/^ph-light\s*/,'')):(SICONS.find(([r])=>r.test(x.enTitle||x.title))||[0,'ph-seal-check'])[1];
   const more=/^[\w\-]+\.html$/.test(x.page||'');
-  showModal(`<div class="flex items-center gap-4 pr-10"><div class="w-14 h-14 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center flex-shrink-0"><i class="ph-light ${ic} text-3xl"></i></div><h3 id="m-title" class="font-display text-3xl font-semibold text-title leading-tight">${esc(x.title)}</h3></div><div class="leading-relaxed">${KRich.rich(x.description)}</div>${x.details&&x.details.trim()?`<div class="bg-stone-50 p-5 rounded-2xl border border-stone-200 text-sm leading-relaxed">${KRich.rich(x.details)}</div>`:''}${more?`<a href="${esc(x.page)}" class="block text-center w-full bg-ink hover:bg-stone-800 text-white py-3 rounded-full text-sm transition">More information</a>`:''}<button type="button" data-inq-svc="${esc(x.title)}" class="w-full bg-sand hover:brightness-95 text-ink py-3 rounded-full text-sm transition"><i class="ph-light ph-whatsapp-logo"></i> Inquire about ${esc(x.title)}</button>`);
+  showModal(`<div class="flex items-center gap-4 pe-10"><div class="w-14 h-14 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center flex-shrink-0"><i class="ph-light ${ic} text-3xl"></i></div><h3 id="m-title" class="font-display text-3xl font-semibold text-title leading-tight">${esc(x.title)}</h3></div><div class="leading-relaxed">${KRich.rich(x.description)}</div>${x.details&&x.details.trim()?`<div class="bg-stone-50 p-5 rounded-2xl border border-stone-200 text-sm leading-relaxed">${KRich.rich(x.details)}</div>`:''}${more?`<a href="${esc(x.page)}" class="block text-center w-full bg-ink hover:bg-stone-800 text-white py-3 rounded-full text-sm transition">${esc(KLang.t('more_info'))}</a>`:''}<button type="button" data-inq-svc="${esc(x.title)}" class="w-full bg-sand hover:brightness-95 text-ink py-3 rounded-full text-sm transition"><i class="ph-light ph-whatsapp-logo"></i> ${esc(KLang.t('inquire_about',{x:x.title}))}</button>`);
 }
 let mI=-1;
 function setNav(i){
@@ -249,9 +245,9 @@ function setNav(i){
 function openJur(i){
   const j=J[i];if(!j)return;const n=j.country,was=isOpen();
   if(!was)lastFocus=document.activeElement;
-  $('m-body').innerHTML=`<div class="flex items-center gap-4 pr-10"><span class="text-4xl">${flag(n)}</span><h3 id="m-title" class="font-display text-3xl font-semibold text-title">${esc(n)}</h3></div>`
-    +`<div><h4 class="font-display text-lg font-semibold text-title mb-1">Filing guidelines</h4><div class="text-sm leading-relaxed">${KRich.rich(j.details||j.brief||'Filing guidelines for '+n+' are available on request. Message us and we will guide you through the process.')}</div></div>`
-    +`<button type="button" data-inq="${esc(n)}" class="w-full bg-sand hover:brightness-95 text-ink py-3 rounded-full text-sm transition"><i class="ph-light ph-whatsapp-logo"></i> Inquire about ${esc(n)}</button>`;
+  $('m-body').innerHTML=`<div class="flex items-center gap-4 pe-10"><span class="text-4xl">${flag(j)}</span><h3 id="m-title" class="font-display text-3xl font-semibold text-title">${esc(n)}</h3></div>`
+    +`<div><h4 class="font-display text-lg font-semibold text-title mb-1">${esc(KLang.t('filing'))}</h4><div class="text-sm leading-relaxed">${KRich.rich(j.details||j.brief||KLang.t('filing_none',{x:n}))}</div></div>`
+    +`<button type="button" data-inq="${esc(n)}" class="w-full bg-sand hover:brightness-95 text-ink py-3 rounded-full text-sm transition"><i class="ph-light ph-whatsapp-logo"></i> ${esc(KLang.t('inquire_about',{x:n}))}</button>`;
   setNav(i);
   $('modal').classList.remove('opacity-0','pointer-events-none');$('sheet').classList.remove('closed');$('m-scroll').scrollTop=0;
   document.body.classList.add('lock');if(!was)$('sheet').querySelector('button').focus({preventScroll:true});
@@ -261,7 +257,7 @@ const mStep=d=>{if(mI<0||J.length<2)return;openJur((mI+d+J.length)%J.length);pic
   let x0=null,y0=0;const sc=$('m-scroll');
   sc.addEventListener('touchstart',e=>{x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
   sc.addEventListener('touchend',e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;
-    if(mI>=0&&Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)mStep(dx<0?1:-1)},{passive:true});
+    if(mI>=0&&Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)mStep((dx<0?1:-1)*(KLang.rtl?-1:1))},{passive:true});
 })();
 function closeModal(){
   mI=-1;
@@ -273,13 +269,13 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-svc]');if(
 $('modal').addEventListener('click',e=>{
   if(e.target===$('modal')||e.target.closest('[data-close]'))closeModal();
   const st=e.target.closest('[data-mstep]');if(st)mStep(+st.dataset.mstep);
-  const sv=e.target.closest('[data-inq-svc]');if(sv)KHIP.wa(`Hello KHIP! I would like to inquire about ${sv.dataset.inqSvc}.`);
-  const q=e.target.closest('[data-inq]');if(q)KHIP.wa(`Hello KHIP! I would like to inquire about IP filings and legal procedures in ${q.dataset.inq}.`);
+  const sv=e.target.closest('[data-inq-svc]');if(sv)KHIP.wa(KLang.t('wa_service',{x:sv.dataset.inqSvc}));
+  const q=e.target.closest('[data-inq]');if(q)KHIP.wa(KLang.t('wa_jur',{x:q.dataset.inq}));
 });
 document.addEventListener('keydown',e=>{
   if(!isOpen())return;
   if(e.key==='Escape')closeModal();
-  if((e.key==='ArrowRight'||e.key==='ArrowLeft')&&mI>=0){e.preventDefault();mStep(e.key==='ArrowRight'?1:-1)}
+  if((e.key==='ArrowRight'||e.key==='ArrowLeft')&&mI>=0){e.preventDefault();mStep((e.key==='ArrowRight'?1:-1)*(KLang.rtl?-1:1))}
   if(e.key==='Tab'){const f=[...$('sheet').querySelectorAll('button,a[href]')].filter(x=>x.offsetParent!==null),a=document.activeElement;
     if(e.shiftKey&&a===f[0]){e.preventDefault();f.at(-1).focus()}else if(!e.shiftKey&&a===f.at(-1)){e.preventDefault();f[0].focus()}}
 });

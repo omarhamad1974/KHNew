@@ -1,12 +1,14 @@
 /* Fills a service page (patents.html, trademarks.html, translation.html) from app-data.json.
    The service whose "page" field equals this file name supplies "pageContent":
    text before the first "## " line is the introduction; every "## Heading" becomes a card.
-   If the field is empty, or the data can't load, the text already written in the HTML stays. */
+   If the field is empty, or the data can't load, the text already written in the HTML stays.
+   In Arabic the same field comes from app-data.ar.json (empty there: the English text is shown). */
 (function(){
-  const file=location.pathname.split('/').pop()||'',CACHE='khip-data-v3';
+  const file=location.pathname.split('/').pop()||'';
   const FALL=['ph-shield-check','ph-users-three','ph-flask','ph-compass','ph-lock-key','ph-magnifying-glass'];
   const E=s=>window.KRich.esc(s);
   function apply(D){
+    KLang.dom();                                       // fixed texts of the page in the chosen language
     // links to a service are shown only while that service is not switched off in admin
     document.querySelectorAll('[data-svc-page]').forEach(a=>{const x=(D.services||[]).find(s=>s.page===a.dataset.svcPage);a.hidden=!x||!!x.hidden});
     const sv=(D.services||[]).find(s=>s.page===file);
@@ -27,9 +29,5 @@
       document.querySelectorAll('[data-pc-static]').forEach(e=>e.remove());
     }
   }
-  let cached=null;try{cached=JSON.parse(localStorage.getItem(CACHE))}catch{}
-  if(cached)apply(cached);
-  fetch('./app-data.json',{cache:'no-cache'}).then(r=>r.ok?r.json():Promise.reject()).then(d=>{
-    if(JSON.stringify(d)!==JSON.stringify(cached)){try{localStorage.setItem(CACHE,JSON.stringify(d))}catch{}apply(d)}
-  }).catch(()=>{});
+  KLang.load(apply);                                      // English, or Arabic on top when Arabic is showing
 })();
