@@ -1,9 +1,11 @@
 /* Tiny text formatter for content written in the admin page.
-   **bold**   ## Subtitle   - bullet (also * or a dot at the start of a line)   */
+   **bold**   ## Subtitle   - bullet (also * or a dot at the start of a line)   ![description](photo.jpg)  a picture on its own line  */
 window.KRich=(function(){
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const inl=s=>esc(s).replace(/\*\*(.+?)\*\*/g,'<strong class="font-medium text-ink">$1</strong>');
-  const BUL=/^\s*(?:[-*\u2022]\s+)(.*)$/,HEAD=/^\s*##\s+(.*)$/;
+  const BUL=/^\s*(?:[-*\u2022]\s+)(.*)$/,HEAD=/^\s*##\s+(.*)$/,IMG=/^\s*!\[([^\]]*)\]\(\s*([^)\s]+)\s*\)\s*$/;
+  // a bare file name lives in ./assets/; only web addresses and site paths are allowed as picture sources
+  const src=u=>/^https?:\/\//i.test(u)||/^\.?\//.test(u)?u:/^[\w+.-]+:/.test(u)?'':'./assets/'+u;
   // full formatting, for popups
   function rich(t){
     let out='',open=false;
@@ -11,6 +13,8 @@ window.KRich=(function(){
       const b=l.match(BUL);
       if(b){if(!open){out+='<ul class="list-disc ps-5 space-y-1 my-2">';open=true}out+='<li>'+inl(b[1])+'</li>';continue}
       if(open){out+='</ul>';open=false}
+      const im=l.match(IMG);
+      if(im){const u=src(im[2]);if(u)out+='<img loading="lazy" src="'+esc(u)+'" alt="'+esc(im[1])+'" class="w-full rounded-2xl my-3 object-cover">';continue}
       const h=l.match(HEAD);
       if(h)out+='<h4 class="font-display text-xl font-semibold text-title mt-4 mb-1">'+inl(h[1])+'</h4>';
       else if(!l.trim())out+='<div class="h-3"></div>';
@@ -19,8 +23,8 @@ window.KRich=(function(){
     return out+(open?'</ul>':'');
   }
   // for clamped cards: keeps bold and line breaks, shows bullets as dots
-  const card=t=>String(t??'').split('\n').map(l=>inl(l.replace(HEAD,'$1').replace(BUL,'\u2022 $1'))).join('<br>');
+  const card=t=>String(t??'').split('\n').filter(l=>!IMG.test(l)).map(l=>inl(l.replace(HEAD,'$1').replace(BUL,'\u2022 $1'))).join('<br>');
   // one flowing line of plain text (no markers), for short summaries
-  const plain=t=>esc(String(t??'').replace(/\*\*(.+?)\*\*/g,'$1').replace(/^\s*##\s+/gm,'').replace(/^\s*[-*\u2022]\s+/gm,'\u2022 ').replace(/\n+/g,' '));
+  const plain=t=>esc(String(t??'').replace(/^\s*!\[[^\]]*\]\([^)]*\)\s*$/gm,'').replace(/\*\*(.+?)\*\*/g,'$1').replace(/^\s*##\s+/gm,'').replace(/^\s*[-*\u2022]\s+/gm,'\u2022 ').replace(/\n+/g,' '));
   return {esc,rich,card,plain};
 })();
