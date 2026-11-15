@@ -5,7 +5,7 @@ window.KRich=(function(){
   const inl=s=>esc(s).replace(/\*\*(.+?)\*\*/g,'<strong class="font-medium text-ink">$1</strong>');
   const BUL=/^\s*(?:[-*\u2022]\s+)(.*)$/,HEAD=/^\s*##\s+(.*)$/,IMG=/^\s*!\[([^\]]*)\]\(\s*([^)\s]+)\s*\)\s*$/;
   // a bare file name lives in ./assets/; only web addresses and site paths are allowed as picture sources
-  const src=u=>/^https?:\/\//i.test(u)||/^\.?\//.test(u)?u:/^[\w+.-]+:/.test(u)?'':'./assets/'+u;
+  const src=u=>/^https?:\/\//i.test(u)?u:/^\.?\//.test(u)?KVER.img(u):/^[\w+.-]+:/.test(u)?'':KVER.img('./assets/'+u);
   // full formatting, for popups
   function rich(t){
     let out='',open=false;

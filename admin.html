@@ -76,6 +76,7 @@ details[open]>summary .chev{transform:rotate(90deg)}
 
 <div id="toast" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 hidden max-w-sm px-4 py-2.5 rounded-xl text-sm font-bold shadow-xl text-white" role="status"></div>
 
+<script src="site-version.js"></script>
 <script src="theme.js"></script>
 <script src="news-import.js"></script>
 <script src="slider-import.js"></script>
@@ -109,7 +110,7 @@ let S={},D=null,sha='',tab='general',dirty=false,openItem=null,q='',ASSETS=[],la
 const get=(o,p)=>p.split('.').reduce((a,k)=>a?.[k],o)??'';
 const set=(o,p,v)=>{const k=p.split('.'),l=k.pop();k.forEach(x=>o=o[x]??={});o[l]=v};
 const full=v=>!v?'':/^(https?:|\.\/|\/)/.test(v)?v:'./assets/'+v;
-const imgSrc=v=>!v?'':/^https?:/.test(v)?v:`https://raw.githubusercontent.com/${S.o}/${S.r}/${S.b}/${full(v).replace(/^\.?\//,'')}`;
+const imgSrc=v=>!v?'':/^https?:/.test(v)?v:`https://raw.githubusercontent.com/${S.o}/${S.r}/${S.b}/${full(v).replace(/^\.?\//,'')}?v=${KVER.imgV}`;
 const b64=u8=>{let s='';for(let i=0;i<u8.length;i+=0x8000)s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000));return btoa(s)};
 const unb64=s=>new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\n/g,'')),c=>c.charCodeAt(0)));
 function mark(on=true){dirty=on;$('save').disabled=!on;$('discard').disabled=!on;$('state').textContent=on?'Unsaved changes':'All changes saved'}

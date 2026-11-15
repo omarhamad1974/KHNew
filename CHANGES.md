@@ -37,8 +37,8 @@
 - `scripts/validate.js` also checks `faq`.
 
 
-## Cleanup, phase 1 of 5: Hot Info removed
-- Removed everything that came from the Hot Info site: the **Leads**, **Users & sectors** and **HOT Info Issues** areas of the admin, client sign-in (`auth.js`), the **My files** page (`my-stuff.html`), the "My files" link in every page header and in the bottom bar, the sign-in styles, the Supabase configuration, SQL scripts and the `admin-clients` function, and the leftover `brand`, `contact` and `theme.brand` entries in `app-data.json`.
+## Cleanup, phase 1 of 5: leftovers of an older project removed
+- Removed everything that did not belong to this website: the **Leads**, **Users & sectors** and **Issues** areas of the admin, client sign-in (`auth.js`), the **My files** page (`my-stuff.html`), the "My files" link in every page header and in the bottom bar, the sign-in styles, the Supabase configuration, SQL scripts and the `admin-clients` function, and the leftover `brand`, `contact` and `theme.brand` entries in `app-data.json`.
 - The admin is now only the website-content editor (GitHub token). The repository name field starts as `KHNew` instead of `Hot-Info`.
 - The bottom bar has five buttons (Home, IP Services, News, Jurisdiction, About).
 - README and MANUAL rewritten for the site as it is now (no Supabase, no client portal).
@@ -58,3 +58,9 @@
 - Shared loader `KLang.load()` in `lang.js` (English or Arabic data with one saved copy per language); `faq.js`, `service-page.js` and `about.html` use it.
 - **`scripts/validate.js` now really checks what this log claimed earlier**: `theme.hero` and `faq` checks lived only in the copy at the project root, not in the one GitHub runs. Both are now in `scripts/validate.js`, which also checks `app-data.ar.json` (valid JSON, every Arabic item matches an English item by id, FAQ page names).
 
+
+
+## Cleanup, phase 4 of 5: version stamp, fresh pictures, final sweep
+- **Debug stamp** (new file `site-version.js`, loaded first on every public page): a small box in the bottom-left corner shows the build name and, for `app-data.json` (and `app-data.ar.json` when Arabic shows), the time of the last fetch from GitHub, the file's *saved* time (HTTP Last-Modified) and a short ETag. While the page is loading it says "fetching from GitHub..." and shows the previous fetch; if the fetch fails it says so and shows the last good one. Tap the box to shrink it; add `?debug=0` to a page address to hide it (remembered), `?debug=1` to show it again; set `STAMP=false` in `site-version.js` to remove it.
+- **Pictures always fresh**: every picture of the site is requested with `?v=2` (logos, carousel, news, team, pictures inside articles, section backgrounds, admin previews). Pictures given as full web addresses are not changed. To force a re-download for everyone, raise `IMG_V` in `site-version.js` and the `?v=2` in the logo tags of the HTML pages.
+- Final sweep for old-project wording: none left in code, data or documents.

@@ -39,6 +39,10 @@ The **Dedicated page file** field (for example `patents.html`) connects a servic
 Home, IP Services (IP Services section), News (Latest news section), Jurisdiction (Jurisdictions section), About (about.html). The round paper-plane Send button sits inside the WhatsApp text box.
 
 
+## Version stamp and fresh pictures (`site-version.js`)
+- A small dark box in the bottom-left corner of every public page shows the build name and when `app-data.json` was last fetched from GitHub (plus the file's saved time). Tap it to shrink; `?debug=0` hides it, `?debug=1` shows it again. Set `STAMP=false` in `site-version.js` to remove it for good.
+- All site pictures are requested as `picture.jpg?v=2`. To force a re-download for everyone, raise `IMG_V` in `site-version.js` and change `?v=2` in the logo tags of the HTML pages.
+
 ## Checks
 
 `node scripts/validate.js` checks `app-data.json` (required fields, duplicate ids, missing images, bad links). GitHub runs it on every push (`.github/workflows/validate.yml`).

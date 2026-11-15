@@ -6,6 +6,7 @@
 <title>KHIP - Intellectual Property & Legal Solutions</title>
 <meta name="description" content="KHIP (Khaled Hamada Intellectual Property): patents and trademarks across the Middle East.">
 <meta name="theme-color" content="#1d4ed8">
+<script src="site-version.js"></script>
 <script src="lang.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
@@ -20,7 +21,7 @@
 <div id="app-top"></div>
 <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-xl border-b border-stone-200">
   <div class="wrap py-3 flex items-center justify-between">
-    <div class="flex items-center"><a href="index.html" class="site-logo-link" aria-label="Khaled Hamada Intellectual Property, home"><img src="assets/khaled-hamada-ip-logo.png" width="757" height="127" alt="Khaled Hamada Intellectual Property" class="site-logo" decoding="async"></a></div>
+    <div class="flex items-center"><a href="index.html" class="site-logo-link" aria-label="Khaled Hamada Intellectual Property, home"><img src="assets/khaled-hamada-ip-logo.png?v=2" width="757" height="127" alt="Khaled Hamada Intellectual Property" class="site-logo" decoding="async"></a></div>
     <nav class="hidden lg:flex gap-8 text-sm text-stone-600" aria-label="Main">
       <a href="#about" class="hover:text-brand-600 transition" data-i18n="nav_about">About</a><a href="#jurisdictions" class="hover:text-brand-600 transition" data-i18n="nav_jur">Jurisdictions</a><a href="#services" class="hover:text-brand-600 transition" data-i18n="nav_services">IP Services</a><a href="#news" class="hover:text-brand-600 transition" data-i18n="nav_news">News</a></nav>
     <div class="flex items-center gap-2"><div id="lang-switch"></div><div class="flex gap-2" id="socials"></div></div>
@@ -33,7 +34,7 @@
   <section class="w-full"><div id="carousel" class="relative w-full h-32 sm:h-40 md:h-52 lg:h-64 overflow-hidden bg-ink" aria-roledescription="carousel"></div></section>
 
   <section id="about" data-sec="home-about" class="band"><div class="wrap grid md:grid-cols-[minmax(0,9.5rem)_1fr] lg:grid-cols-[minmax(0,11rem)_1fr] gap-8 md:gap-10 lg:gap-14 items-center">
-    <div class="fu flex justify-center"><img src="assets/khip-logo.jpg" width="800" height="822" alt="Khaled Hamada Intellectual Property" class="about-logo w-56 sm:w-64 md:w-full max-w-[22rem] md:max-w-[9.5rem] lg:max-w-[11rem] h-auto" decoding="async"></div>
+    <div class="fu flex justify-center"><img src="assets/khip-logo.jpg?v=2" width="800" height="822" alt="Khaled Hamada Intellectual Property" class="about-logo w-56 sm:w-64 md:w-full max-w-[22rem] md:max-w-[9.5rem] lg:max-w-[11rem] h-auto" decoding="async"></div>
     <div class="fu text-center md:text-start" style="--d:.15s"><span class="rule mx-auto md:mx-0 !mt-0"></span><p id="about-text" class="text-base md:text-lg leading-relaxed"></p>
       <a href="about.html" class="mt-8 inline-flex items-center gap-2 text-sm border border-ink/30 hover:bg-ink hover:text-white px-9 py-2.5 rounded-full transition"><span data-i18n="more">More</span> <i class="ph-light ph-arrow-right rtl:-scale-x-100"></i></a></div>
   </div></section>
@@ -95,7 +96,7 @@ const FALLBACK_IMG="https://placehold.co/600x400/e7e5e4/78716c?text=KHIP";
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 // Images: a bare file name such as "logo.jpg" is looked up in ./assets/
-const img=u=>!u?FALLBACK_IMG:esc(/^(https?:\/\/|\.\/|\/|data:image)/.test(u)?u:'./assets/'+u);
+const img=u=>!u?FALLBACK_IMG:esc(KVER.img(/^(https?:\/\/|\.\/|\/|data:image)/.test(u)?u:'./assets/'+u));
 const flag=j=>{const c=String(j.code||CODES[(j.enCountry||j.country||'').toLowerCase()]||'').toLowerCase();return /^[a-z]{2}$/.test(c)?`<span class="fi fi-${c} rounded-sm shadow-sm" role="img" aria-label="${esc(KLang.t('flag_aria',{x:j.country}))}"></span>`:'<i class="ph-light ph-globe-hemisphere-west text-brand-600"></i>'};
 const ICONS=[[/patent/i,'ph-lightbulb'],[/trade\s?mark/i,'ph-seal-check'],[/transl/i,'ph-translate'],[/design/i,'ph-pencil-ruler'],[/copyright/i,'ph-copyright'],[/search/i,'ph-magnifying-glass']];
 const icon=x=>/^ph-/.test(x.icon||'')?esc(x.icon.replace(/^ph-light\s*/,'')):(ICONS.find(([r])=>r.test(x.title||''))||[0,'ph-seal-check'])[1];

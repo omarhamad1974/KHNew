@@ -10,6 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/light/style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/7.2.3/css/flag-icons.min.css">
+<script src="site-version.js"></script>
 <script src="lang.js"></script>
 <script src="pages-i18n.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
@@ -20,7 +21,7 @@
 <body class="font-sans font-light antialiased">
 <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-xl border-b border-stone-200">
   <div class="wrap py-3 flex items-center justify-between">
-    <a href="index.html" class="site-logo-link" aria-label="Khaled Hamada Intellectual Property, home"><img src="assets/khaled-hamada-ip-logo.png" width="757" height="127" alt="Khaled Hamada Intellectual Property" class="site-logo" decoding="async"></a>
+    <a href="index.html" class="site-logo-link" aria-label="Khaled Hamada Intellectual Property, home"><img src="assets/khaled-hamada-ip-logo.png?v=2" width="757" height="127" alt="Khaled Hamada Intellectual Property" class="site-logo" decoding="async"></a>
     <nav class="hidden lg:flex gap-8 text-sm text-stone-600" aria-label="Main">
       <a href="index.html" class="hover:text-brand-600 transition" data-tx="about.a1">Home</a><a href="#jurisdictions" class="hover:text-brand-600 transition" data-tx="about.a2">Jurisdictions</a><a href="#value" class="hover:text-brand-600 transition" data-tx="about.a3">Value</a><a href="#advantages" class="hover:text-brand-600 transition" data-tx="about.a4">Advantages</a><a href="#team" class="hover:text-brand-600 transition" data-tx="about.a5">Team</a><a href="#contact" class="hover:text-brand-600 transition" data-tx="about.a6">Contact</a></nav>
     <div class="flex items-center gap-2"><div id="lang-switch"></div><a href="https://www.linkedin.com/company/khip/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="w-10 h-10 rounded-full border border-stone-200 text-stone-600 hover:text-brand-600 hover:border-brand-600 flex items-center justify-center transition"><i class="ph-light ph-linkedin-logo text-xl"></i></a></div>
@@ -29,7 +30,7 @@
 
 <main>
   <section id="about" data-sec="about-intro" class="band"><div class="wrap grid lg:grid-cols-[1.2fr_1fr] gap-10 lg:gap-14 items-center">
-    <div class="fu"><img src="assets/khip-logo.jpg" width="800" height="822" alt="Khaled Hamada Intellectual Property" class="about-logo w-24 md:w-28 h-auto mb-5" decoding="async"><h1 class="font-display text-5xl md:text-6xl lg:text-7xl font-medium text-title leading-[1.05]" data-tx="about.h11">About <span class="khip">KHIP</span></h1><span class="rule mt-5"></span>
+    <div class="fu"><img src="assets/khip-logo.jpg?v=2" width="800" height="822" alt="Khaled Hamada Intellectual Property" class="about-logo w-24 md:w-28 h-auto mb-5" decoding="async"><h1 class="font-display text-5xl md:text-6xl lg:text-7xl font-medium text-title leading-[1.05]" data-tx="about.h11">About <span class="khip">KHIP</span></h1><span class="rule mt-5"></span>
       <p class="text-base md:text-lg leading-relaxed max-w-xl" data-tx="about.p1">KHIP is an Intellectual Property law firm with fully operational offices and a network of associates and representatives throughout the Middle East. The firm is one of the finest firms practicing intellectual property and the only firm with a truly comprehensive intellectual property practice. Founded in 2004, the firm represents various clients from individual inventors to multinational companies.</p>
       <p class="text-base md:text-lg leading-relaxed max-w-xl mt-4" data-tx="about.p2">We serve great innovators, helping to protect countless ideas, nurture discoveries, and bring new concepts to markets. The firm prosecuted and litigated many patents, serving corporations creating the cutting-edge technologies of the day. Khaled Hamada, the firm's founder, was for many years the acknowledged leader of the patent services of the entire country and continues to remain until a time when patents are more important than they had ever been.</p></div>
     <div class="fu grid grid-cols-3 gap-3 text-center" style="--d:.15s">
@@ -132,7 +133,7 @@ let J=[],SV=[],lastFocus=null;
 const FALLBACK_IMG="https://placehold.co/200x200/e7e5e4/78716c?text=KHIP";
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const img=u=>!u?FALLBACK_IMG:esc(/^(https?:\/\/|\.\/|\/|data:image)/.test(u)?u:'./assets/'+u);
+const img=u=>!u?FALLBACK_IMG:esc(KVER.img(/^(https?:\/\/|\.\/|\/|data:image)/.test(u)?u:'./assets/'+u));
 const io=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}}),{threshold:.08});
 const observe=()=>document.querySelectorAll('.fu:not(.in)').forEach(e=>io.observe(e));
 

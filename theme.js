@@ -63,7 +63,7 @@
     if(ref.indexOf('custom:')===0){const x=((T||{}).custom||[]).find(y=>String(y.id)===ref.slice(7));return x&&HEX.test(x.hex||'')?x.hex:null}
     return null;
   }
-  const imgUrl=u=>/^(https?:\/\/|\.\/|\/|data:image)/.test(u)?u:'./assets/'+u;
+  const imgUrl=u=>KVER.img(/^(https?:\/\/|\.\/|\/|data:image)/.test(u)?u:'./assets/'+u);
   function vars(T){
     const c=palette(T),r=document.documentElement.style;
     for(const k in c)r.setProperty(vname(k),parts(c[k]).join(' '));
