@@ -395,6 +395,26 @@
             "a": "Amswer 2"
           }
         ]
+      },
+      "about": {
+        "items": [
+          {
+            "id": "1",
+            "q": "Q1",
+            "a": "jkl;ajsdfkla;sjdf"
+          },
+          {
+            "id": "2",
+            "q": "Q2",
+            "a": "jkfl;asjdfkl;ajsdklfjasfd"
+          },
+          {
+            "id": "3",
+            "q": "Q3",
+            "a": "jkla;sdfjkal;sdfjk"
+          }
+        ],
+        "title": "FAQ in about"
       }
     }
   }
