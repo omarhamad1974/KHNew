@@ -459,6 +459,14 @@
       "home-services": {
         "bg": "role:sand"
       }
+    },
+    "wa": {
+      "bg": "role:page",
+      "btn": "role:sand"
+    },
+    "menu": {
+      "mode": "both",
+      "bg": "role:accentDark"
     }
   },
   "newsCategories": [
