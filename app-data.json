@@ -388,6 +388,10 @@
         "color": "role:accentSoft",
         "overlay": 0,
         "image": "mwj5afdd-photo-1476445704028-a36e0c798192.jpg"
+      },
+      "home-testimonials": {
+        "mode": "color",
+        "color": "role:page"
       }
     },
     "sectionWidthTablet": "86",
