@@ -381,6 +381,10 @@
       "home-jurisdictions": {
         "mode": "color",
         "color": "role:accent"
+      },
+      "home-services": {
+        "mode": "color",
+        "color": "role:accent"
       }
     },
     "sectionWidthTablet": "86",
@@ -419,6 +423,19 @@
       "mobile": 120,
       "tablet": 160,
       "desktop": 200
+    },
+    "cards": {
+      "bg": "role:accentSoft",
+      "opacity": "100"
+    },
+    "anim": {
+      "all": {
+        "cards": {
+          "effect": "up",
+          "delay": "0.1",
+          "hover": "zoom"
+        }
+      }
     }
   },
   "newsCategories": [
