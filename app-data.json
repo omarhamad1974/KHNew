@@ -437,6 +437,12 @@
           "speed": "1.4"
         }
       }
+    },
+    "imgfx": {
+      "all": {
+        "color": "role:accent",
+        "intensity": "30"
+      }
     }
   },
   "newsCategories": [
