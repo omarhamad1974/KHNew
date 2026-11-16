@@ -469,10 +469,6 @@
         "d": "160"
       }
     },
-    "header": {
-      "bg": "role:accentSoft",
-      "opacity": "30"
-    },
     "bar": {
       "bg": "role:title"
     },
