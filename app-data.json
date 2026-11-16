@@ -381,6 +381,11 @@
       "home-jurisdictions": {
         "mode": "color",
         "color": "role:accent"
+      },
+      "patents-details": {
+        "mode": "color",
+        "color": "role:accent",
+        "tone": "auto"
       }
     },
     "sectionWidthTablet": "86",
@@ -442,6 +447,12 @@
       "all": {
         "color": "role:accent",
         "intensity": "30"
+      },
+      "news": {
+        "opacity": "75"
+      },
+      "hero": {
+        "opacity": "100"
       }
     }
   },
