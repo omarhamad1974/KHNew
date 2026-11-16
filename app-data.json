@@ -416,9 +416,9 @@
     ],
     "hero": {
       "unit": "px",
-      "mobile": 240,
-      "tablet": 208,
-      "desktop": 256
+      "mobile": 120,
+      "tablet": 160,
+      "desktop": 200
     }
   },
   "newsCategories": [
