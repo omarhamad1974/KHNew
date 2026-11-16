@@ -454,6 +454,11 @@
       "hero": {
         "opacity": "100"
       }
+    },
+    "secCards": {
+      "home-services": {
+        "bg": "role:sand"
+      }
     }
   },
   "newsCategories": [
