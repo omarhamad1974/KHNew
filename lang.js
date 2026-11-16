@@ -11,7 +11,7 @@ window.KLang=(function(){
   const DICT={
     en:{
       nav_about:'About',nav_jur:'Jurisdictions',nav_services:'Services',nav_news:'News',
-      bar_home:'Home',bar_services:'Services',bar_news:'News',bar_jur:'Jurisdiction',bar_about:'About',
+      bar_home:'Home',menu_title:'Menu',menu_open:'Open menu',menu_close:'Close menu',bar_services:'Services',bar_news:'News',bar_jur:'Jurisdiction',bar_about:'About',
       more:'More',jur_title:'Jurisdictions',svc_title:'Services',svc_ip:'IP Services',svc_ip_text:'Protecting inventions and brands in Egypt and across the Arab region.',news_title:'Latest news',testi_title:'Client endorsements',
       load_err:"We couldn't load the latest content.",try_again:'Try again',close:'Close',
       no_country:'No matching country. Message us and we will check for you.',ip_guidelines:'IP guidelines available upon inquiry.',
@@ -27,7 +27,7 @@ window.KLang=(function(){
     },
     ar:{
       nav_about:'من نحن',nav_jur:'الاختصاصات القضائية',nav_services:'الخدمات',nav_news:'الأخبار',
-      bar_home:'الرئيسية',bar_services:'الخدمات',bar_news:'الأخبار',bar_jur:'الدول',bar_about:'من نحن',
+      bar_home:'الرئيسية',menu_title:'القائمة',menu_open:'فتح القائمة',menu_close:'إغلاق القائمة',bar_services:'الخدمات',bar_news:'الأخبار',bar_jur:'الدول',bar_about:'من نحن',
       more:'المزيد',jur_title:'الاختصاصات القضائية',svc_title:'الخدمات',svc_ip:'خدمات الملكية الفكرية',svc_ip_text:'حماية الاختراعات والعلامات التجارية في مصر والعالم العربي.',news_title:'آخر الأخبار',testi_title:'آراء العملاء',
       load_err:'تعذر تحميل أحدث المحتوى.',try_again:'حاول مرة أخرى',close:'إغلاق',
       no_country:'لا توجد دولة مطابقة. راسلنا وسنتحقق لك.',ip_guidelines:'إرشادات الملكية الفكرية متاحة عند الاستفسار.',
@@ -67,7 +67,7 @@ window.KLang=(function(){
   }
   apply();
   K.t=(key,vars)=>{
-    let v=(K.rtl&&ui[key]!=null&&String(ui[key]).trim()!==''?ui[key]:null)??DICT[K.lang][key]??DICT.en[key]??key;
+    let v=(ui[key]!=null&&typeof ui[key]==='string'&&ui[key].trim()!==''?ui[key]:null)??DICT[K.lang][key]??DICT.en[key]??key;
     if(typeof v==='string'&&vars)for(const n in vars)v=v.split('{'+n+'}').join(vars[n]);
     return v;
   };
@@ -82,10 +82,10 @@ window.KLang=(function(){
     if(!done)e.appendChild(document.createTextNode(' '+v));
   }
   K.tx=(root=document)=>{
-    if(!K.rtl||!window.KTX)return;
+    if(!window.KTX)return;
     root.querySelectorAll('[data-tx]').forEach(e=>{
       const k=e.dataset.tx,d=window.KTX[k];if(!d)return;
-      const o=ui['tx_'+k.replace(/\./g,'_')],v=txt(o)?o:d.ar;if(!txt(v))return;
+      const o=ui['tx_'+k.replace(/\./g,'_')],v=txt(o)?o:(K.rtl?d.ar:null);if(!txt(v))return;   // English pages keep the text as written unless the admin set their own
       if(e.tagName==='TITLE'){document.title=v.replace(/\{khip\}/g,'KHIP');return}
       setTx(e,v);
     });
@@ -120,8 +120,10 @@ window.KLang=(function(){
   };
   const NEUTRAL=new Set(['id','image','icon','page','code','flag','date','category']);
   // Arabic over English, field by field; empty Arabic fields keep the English text.
-  K.merge=(en,ar)=>{
-    ui=(ar&&ar.ui)||{};
+  K.useUi=d=>{if(d&&d._ui&&typeof d._ui==='object')ui=d._ui};          // the saved copy of the data carries its own wording
+  K.merge=(en,ar)=>{const o=merge0(en,ar);o._ui=ui;return o};
+  const merge0=(en,ar)=>{
+    ui=K.rtl?((ar&&ar.ui)||{}):((en&&en.ui)||{});
     if(!K.rtl)return en;
     const o=JSON.parse(JSON.stringify(en));
     (o.jurisdictions||[]).forEach(j=>{j.enCountry=j.country});
@@ -166,7 +168,7 @@ window.KLang=(function(){
   K.load=apply=>{
     const ck=()=>'khip-data-v3'+(K.rtl?'-ar':'');
     const first=ck();let cached=null;try{cached=JSON.parse(localStorage.getItem(first))}catch{}
-    if(cached)apply(cached);
+    if(cached){K.useUi(cached);apply(cached)}
     K.data().then(d=>{
       if(JSON.stringify(d)!==JSON.stringify(cached)||ck()!==first){try{localStorage.setItem(ck(),JSON.stringify(d))}catch{}apply(d)}
     }).catch(()=>{});

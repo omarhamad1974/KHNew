@@ -70,6 +70,7 @@
     const w=Math.min(100,Math.max(40,parseFloat((T||{}).sectionWidth)||66.667));
     r.setProperty('--sec-wn',(w/100).toFixed(4));
     hero((T||{}).hero);
+    look(T||{});
   }
   // Hero slider height: {unit:'px'|'vh', mobile, tablet, desktop}. Missing or invalid = the built-in heights.
   const HERO={px:[100,900],vh:[15,100]};
@@ -93,8 +94,14 @@
         el.style.backgroundColor=c;light=tone==='light'||(tone==='auto'&&lum(c)<.4);
       }else{
         if(!s.image)return;
-        const ov=Math.min(85,Math.max(0,parseFloat(s.overlay)||0))/100,layers=[];
-        if(ov>0){const [r,g,b]=parts(ink);layers.push(`linear-gradient(rgba(${r},${g},${b},${ov}),rgba(${r},${g},${b},${ov}))`)}
+        const ov=Math.min(85,Math.max(0,parseFloat(s.overlay)||0))/100,layers=[],fx=fxVals(T,'sections',el.dataset.sec);
+        const flat=(c,a)=>{const [r,g,b]=Array.isArray(c)?c:parts(c);return `linear-gradient(rgba(${r},${g},${b},${a}),rgba(${r},${g},${b},${a}))`};
+        if(fx.tint)layers.push(flat(fx.color,fx.k));                       // colour filter on top of the photo
+        if(ov>0)layers.push(flat(ink,ov));
+        if(fx.op!==null&&fx.op<1){                                           // photo opacity: the photo fades into what is behind it
+          const bc=(getComputedStyle(el).backgroundColor.match(/[\d.]+/g)||[]).map(Number),solid=bc.length>=3&&(bc.length<4||bc[3]>0);
+          layers.push(flat(tone==='light'||(tone==='auto'&&ov>=.4)?ink:(solid?bc.slice(0,3):palette(T).page),(1-fx.op).toFixed(2)));
+        }
         layers.push(`url("${imgUrl(String(s.image)).replace(/"/g,'%22')}")`);
         el.style.backgroundImage=layers.join(',');el.style.backgroundSize='cover';el.style.backgroundPosition='center';el.style.backgroundRepeat='no-repeat';
         light=tone==='light'||(tone==='auto'&&ov>=.4);
@@ -103,12 +110,184 @@
       el.classList.toggle('sec-light',light);
     });
   }
-  function apply(D){const T=(D&&D.theme)||{};vars(T);paint(T)}
-  window.KTHEME={DEFAULTS,ROLES,SECTIONS,HEX,HERO,resolve,lum,palette,apply};
+
+  /* ---------- Look settings, phase 1 (admin tabs "Header & bar" and "Cards") ----------
+     theme.header  {bg, opacity, text, border}           header colours (refs: "role:ink", "custom:<id>" or #rrggbb; empty = default)
+     theme.bar     {bg, text}                            bottom bar colours
+     theme.wa      {bg, opacity, text, border, btn, btnText}   WhatsApp text box
+     theme.cards   {bg, opacity, text, title, border}    all cards
+     theme.secCards{<section>: {bg, text, title, border}}  one section's cards, on top of theme.cards
+     Everything is optional: with nothing set the CSS fallbacks in styles.css give the original look. */
+  const root=document.documentElement;
+  const rgb=h=>parts(h).join(' ');
+  const num=(v,d,lo,hi)=>{const n=parseFloat(v);return isFinite(n)?Math.min(hi,Math.max(lo,n)):d};
+  const put=(st,k,v)=>{if(v===null||v===undefined||v==='')st.removeProperty(k);else st.setProperty(k,v)};
+  const col=(ref,T)=>ref?resolve(ref,T):null;
+  // The CSS custom properties for header, bottom bar and WhatsApp box: {name: value, '' = not set}.
+  // The admin previews use the same map, so what you see there is what the site does.
+  function lookMap(T){
+    const m={},pal=palette(T),H=T.header||{},hb=col(H.bg,T),hbd=col(H.border,T);
+    m['--hdr-bg-rgb']=hb?rgb(hb):'';m['--hdr-bg-a']=hb?(num(H.opacity,90,0,100)/100).toFixed(2):'';
+    const hfg=col(H.text,T)||(hb&&lum(hb)<.4?'#ffffff':null);
+    m['--hdr-fg-rgb']=hfg?rgb(hfg):'';m['--hdr-hv-rgb']=hfg?rgb(lum(hfg)>.6?pal.sand:pal.accent):'';m['--hdr-bd']=hbd||'';
+    const B=T.bar||{},W=T.wa||{},bb=col(B.bg,T),bfg=col(B.text,T)||(bb&&lum(bb)>=.4?pal.ink:null);
+    m['--bar-bg']=bb||'';m['--bar-fg']=bfg||'';m['--bar-hv']=bfg?(lum(bfg)>.6?pal.sand:pal.accent):'';
+    const wbg=col(W.bg,T),wop=num(W.opacity,100,0,100)/100,wbd=col(W.border,T);
+    const mix=(a,b,k)=>{const x=parts(a),y=parts(b);return '#'+x.map((v,i)=>Math.round(v*k+y[i]*(1-k)).toString(16).padStart(2,'0')).join('')};
+    const weff=wbg?mix(wbg,bb||pal.ink,wop):null;                 // what the box really looks like on the bar
+    const wfg=col(W.text,T)||(weff?(lum(weff)>=.4?pal.ink:'#ffffff'):(bfg||null));
+    m['--wa-bg']=wbg?`rgb(${rgb(wbg)} / ${wop})`:(bfg?`rgb(${rgb(bfg)} / .08)`:'');
+    m['--wa-bg-f']=wbg?`rgb(${rgb(wbg)} / ${Math.min(1,wop+.08).toFixed(2)})`:(bfg?`rgb(${rgb(bfg)} / .14)`:'');
+    m['--wa-fg']=wfg||'';m['--wa-ph']=wfg?`rgb(${rgb(wfg)} / .72)`:'';
+    m['--wa-bd']=wbd||(bfg?`rgb(${rgb(bfg)} / .28)`:'');
+    m['--wa-btn']=col(W.btn,T)||'';m['--wa-btn-fg']=col(W.btnText,T)||'';
+    return m;
+  }
+  // Card custom properties for the page, or for one section: C = {bg, opacity, text, title, border}
+  function cardMap(C,T){
+    const bg=col(C.bg,T),fg=col(C.text,T),ti=col(C.title,T),bd=col(C.border,T),op=num(C.opacity,100,0,100)/100;
+    return {'--card-bg':bg?`rgb(${rgb(bg)} / ${op})`:'','--card-fg':fg||'','--card-fg-rgb':fg?rgb(fg):'','--card-title-rgb':ti?rgb(ti):'','--card-bd':bd||''};
+  }
+  const cardsOf=(T,key)=>{                     // the page-wide card settings with one section's own settings on top
+    const g=T.cards||{},s=((T.secCards||{})[key])||{};
+    if(!key||!Object.keys(s).some(k=>s[k]))return g;
+    return {bg:s.bg||g.bg,opacity:s.bg?(s.opacity!=null?s.opacity:100):g.opacity,text:s.text||g.text,title:s.title||g.title,border:s.border||g.border};
+  };
+  function look(T){
+    const m=lookMap(T),st=root.style;
+    for(const k in m)put(st,k,m[k]);
+    root.classList.toggle('hdr-bg',!!m['--hdr-bg-rgb']);root.classList.toggle('hdr-fg',!!m['--hdr-fg-rgb']);root.classList.toggle('hdr-bd',!!m['--hdr-bd']);
+    cardVars(root,cardsOf(T,''),T);
+  }
+  function cardVars(el,C,T){
+    const m=cardMap(C,T);for(const k in m)put(el.style,k,m[k]);
+    if(m['--card-fg'])el.setAttribute('data-cfg','1');else el.removeAttribute('data-cfg');
+  }
+  function paintLook(T){
+    document.querySelectorAll('[data-sec]').forEach(el=>{
+      const s=(T.secCards||{})[el.dataset.sec];
+      cardVars(el,s&&Object.keys(s).some(k=>s[k])?cardsOf(T,el.dataset.sec):{},T);   // nothing special: the page-wide values apply
+    });
+  }
+  /* ---------- Look settings, phase 2: text alignment and logos ----------
+     theme.align  {all:{m,t,d}, sec:{<section>:{m,t,d}}}   m = phone, t = tablet, d = desktop; start | center | end | justify
+     theme.logos  {header|home|about: {image, m, t, d}}      image = file in assets/ (or a web address); m/t/d = width in px per screen */
+  const ALIGN=['start','center','end','justify'];
+  const LOGOS=[['header','Header logo','khaled-hamada-ip-logo.png',[60,500]],['home','Home page logo','khip-logo.jpg',[40,600]],['about','About page logo','khip-logo.jpg',[40,600]]];
+  const DEV=['m','t','d'];
+  function align(T){
+    const A=T.align||{},g=A.all||{},S=A.sec||{};
+    document.querySelectorAll('[data-sec]').forEach(el=>{
+      const s=S[el.dataset.sec]||{};
+      DEV.forEach(k=>{const v=ALIGN.includes(s[k])?s[k]:(ALIGN.includes(g[k])?g[k]:'');if(v)el.setAttribute('data-ta-'+k,v);else el.removeAttribute('data-ta-'+k)});
+    });
+  }
+  // The size classes and variables go on <html> early (before the page paints); the pictures are swapped once they exist
+  function logoVars(T){
+    const L=T.logos||{};
+    LOGOS.forEach(([k,,,lim])=>DEV.forEach(d=>{
+      const n=parseFloat((L[k]||{})[d]),ok=isFinite(n),v=ok?Math.round(Math.min(lim[1],Math.max(lim[0],n))):0;
+      if(ok)root.style.setProperty(`--lg-${k}-${d}`,v+'px');else root.style.removeProperty(`--lg-${k}-${d}`);
+      root.classList.toggle(`lg-${k}-${d}`,ok);
+    }));
+  }
+  function logoImgs(T){
+    const L=T.logos||{};
+    document.querySelectorAll('img[data-logo]').forEach(im=>{
+      const k=im.dataset.logo,img=String((L[k]||{}).image||'').trim();
+      if(!im.dataset.src0)im.dataset.src0=im.getAttribute('src');
+      const want=img?imgUrl(img):im.dataset.src0;
+      if(im.getAttribute('src')!==want){im.setAttribute('src',want);if(img){im.removeAttribute('width');im.removeAttribute('height')}}
+    });
+  }
+  const logos=T=>{logoVars(T);logoImgs(T)};
+  /* ---------- Look settings, phase 4: image effects ----------
+     theme.imgfx {all, hero, news, team, sections, sec:{<section>}}   each {opacity 0-100, color (ref or #rrggbb), intensity 0-100}
+     opacity = how solid the picture is; color + intensity = a colour filter over the picture. Groups fall back to "all"; one section's photo
+     falls back to "sections", then "all". Pictures keep their own look until something is set. */
+  const FXG=[['hero','Home page slider',80],['news','News pictures',100],['team','Team photos',100],['sections','Section background photos',100]];
+  // The effective settings: {op: 0..1 or null, color: '#rrggbb' or null, k: 0..1, tint: bool}
+  function fxVals(T,g,key){
+    const X=T.imgfx||{},chain=[X.all||{},g==='sections'?(X.sections||{}):(X[g]||{})];
+    if(key)chain.push((X.sec||{})[key]||{});
+    let op=null,ref='',k=null;
+    chain.forEach(o=>{
+      if(o.opacity!==undefined&&o.opacity!==''&&isFinite(parseFloat(o.opacity)))op=num(o.opacity,100,0,100)/100;
+      if(o.color)ref=o.color;
+      if(o.intensity!==undefined&&o.intensity!==''&&isFinite(parseFloat(o.intensity)))k=num(o.intensity,35,0,100)/100;
+    });
+    const color=ref?resolve(ref,T):null,kk=color?(k===null?.35:k):0;
+    return {op,color,k:kk,tint:!!color&&kk>0};
+  }
+  // Pictures in the page get an SVG colour filter (one per group); section photos are backgrounds and are handled in paint()
+  function images(T){
+    let svg=document.getElementById('khip-fx');
+    if(!svg){
+      svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.id='khip-fx';svg.setAttribute('width','0');svg.setAttribute('height','0');svg.setAttribute('aria-hidden','true');
+      svg.style.cssText='position:absolute;width:0;height:0;overflow:hidden';svg.appendChild(document.createElementNS('http://www.w3.org/2000/svg','defs'));
+      (document.body||document.documentElement).appendChild(svg);
+    }
+    let defs='';
+    FXG.forEach(([g])=>{
+      if(g==='sections')return;
+      const f=fxVals(T,g);
+      root.classList.toggle('fxo-'+g,f.op!==null);root.classList.toggle('fxf-'+g,f.tint);
+      if(f.op!==null)root.style.setProperty('--fx-'+g+'-o',f.op.toFixed(2));else root.style.removeProperty('--fx-'+g+'-o');
+      if(f.tint)defs+=`<filter id="fx-${g}" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feFlood flood-color="${f.color}" flood-opacity="${f.k.toFixed(2)}" result="f"/><feComposite in="f" in2="SourceGraphic" operator="atop"/></filter>`;
+    });
+    svg.firstChild.innerHTML=defs;
+  }
+  /* ---------- Look settings, phase 5: animation of cards and text ----------
+     theme.anim {all:{cards:{...}, text:{...}}, sec:{<section>:{cards:{...}, text:{...}}}}
+     each {effect, distance, speed, delay, stagger, easing, repeat}  (cards also: hover)
+     A section is animated by look.js as soon as it has any effect set (here or in "all"); otherwise the original fade-up stays. */
+  const AXE=[['','As designed (fade up)'],['none','No animation'],['fade','Fade'],['up','Rise'],['down','Drop'],['start','Slide in from the start'],['end','Slide in from the end'],['zoom','Zoom in'],['zoomout','Zoom out'],['flip','Flip up'],['blur','Come into focus']];
+  const AXDIST=[['small','Small',14],['medium','Medium',28],['large','Large',60]];
+  const AXEASE=[['smooth','Smooth (default)','cubic-bezier(.16,1,.3,1)'],['soft','Soft','ease'],['snappy','Snappy','cubic-bezier(.4,0,.2,1)'],['bounce','Bounce','cubic-bezier(.34,1.56,.64,1)'],['linear','Even','linear']];
+  const AXHOVER=[['','As designed (lift)'],['none','No movement'],['lift','Lift'],['zoom','Grow'],['glow','Glow']];
+  const AXKEYS=['effect','distance','speed','delay','stagger','easing','repeat','hover'];
+  // The effective settings of one target ('cards' or 'text') in one section: the page-wide values with the section's own on top
+  function axCfg(T,key,target){
+    const A=T.anim||{},out={},parts_=[((A.all||{})[target])||{},((((A.sec||{})[key])||{})[target])||{}];
+    parts_.forEach(o=>AXKEYS.forEach(k=>{if(o[k]!==undefined&&o[k]!==null&&o[k]!=='')out[k]=o[k]}));
+    return out;
+  }
+  // From a setting to what the browser needs: start offsets (x, y in px, scale, rotateX deg, blur px), seconds and easing
+  function axVars(c,rtl,isCards){
+    const e=c.effect&&c.effect!=='none'?c.effect:'up',d=(AXDIST.find(x=>x[0]===c.distance)||AXDIST[1])[2],k=d/28,dir=rtl?-1:1,v={x:0,y:0,s:1,rx:0,b:0};
+    if(e==='up')v.y=d;else if(e==='down')v.y=-d;else if(e==='start')v.x=-d*dir;else if(e==='end')v.x=d*dir;
+    else if(e==='zoom')v.s=Math.max(.5,1-.15*k);else if(e==='zoomout')v.s=1+.15*k;else if(e==='flip')v.rx=Math.min(80,Math.max(25,55*k));else if(e==='blur')v.b=Math.round(6*k);
+    v.t=num(c.speed,.9,.2,2.5);v.d=num(c.delay,0,0,2);v.st=num(c.stagger,isCards?.08:0,0,.5);
+    v.e=(AXEASE.find(x=>x[0]===c.easing)||AXEASE[0])[2];v.repeat=c.repeat==='always';
+    return v;
+  }
+  /* ---------- Look settings, phase 6: animation of the map and the logos ----------
+     theme.motion.map   {entrance, speed, delay, stagger, base, idle, hover, pulse, pulseColor}
+     theme.motion.logos {all, header, home, about}  each {effect, distance, speed, delay, idle, idleSpeed, hover}
+     Nothing is animated until something is set. Played by look.js. */
+  const LGE=AXE.filter(x=>x[0]!=='none').map(x=>x[0]===''?['','None (as designed)']:x);
+  const LGIDLE=[['','None'],['float','Float'],['breathe','Breathe'],['sway','Sway'],['glow','Glow']];
+  const LGHOVER=[['','None (as designed)'],['grow','Grow'],['tilt','Tilt'],['lift','Lift'],['glow','Glow']];
+  const MAPE=[['','None (as designed)'],['fade','Countries fade in'],['pop','Countries pop in'],['rise','Countries rise in']];
+  const MAPIDLE=[['','None'],['breathe','Highlighted countries breathe'],['wave','A wave of light runs across them']];
+  const MAPHOVER=[['','As designed (darker fill)'],['glow','Glow'],['pop','Grow'],['raise','Raise']];
+  const MAPPULSE=[['','As designed'],['none','No pulse'],['slow','Slow and soft'],['fast','Fast'],['big','Wide']];
+  const LGKEYS=['effect','distance','speed','delay','idle','idleSpeed','hover'];
+  function lgCfg(T,k){
+    const L=((T.motion||{}).logos)||{},out={};
+    [L.all||{},L[k]||{}].forEach(o=>LGKEYS.forEach(x=>{if(o[x]!==undefined&&o[x]!==null&&o[x]!=='')out[x]=o[x]}));
+    return out;
+  }
+  const mapCfg=T=>{const o=((T.motion||{}).map)||{},out={};Object.keys(o).forEach(k=>{if(o[k]!==undefined&&o[k]!==null&&o[k]!=='')out[k]=o[k]});return out};
+  function apply(D){const T=(D&&D.theme)||{};vars(T);paint(T);paintLook(T);align(T);logos(T);images(T);window.KTHEME.current=T;document.dispatchEvent(new CustomEvent('khip-theme',{detail:T}))}
+  window.KTHEME={DEFAULTS,ROLES,SECTIONS,HEX,HERO,ALIGN,LOGOS,FXG,fxVals,AXE,AXDIST,AXEASE,AXHOVER,axCfg,axVars,LGE,LGIDLE,LGHOVER,MAPE,MAPIDLE,MAPHOVER,MAPPULSE,lgCfg,mapCfg,resolve,lum,palette,apply,lookMap,cardMap,cardsOf};
   // The admin page uses the definitions only; it must not recolour itself.
   if(/admin\.html$/.test(location.pathname))return;
   let cached=null;try{cached=JSON.parse(localStorage.getItem(CACHE))}catch{}
-  if(cached&&cached.theme)vars(cached.theme);               // colours before first paint: no flash
+  if(cached&&cached.theme){
+    window.KTHEME.current=cached.theme;vars(cached.theme);logoVars(cached.theme);               // colours and logo sizes before first paint: no flash
+    if(window.MutationObserver&&(cached.theme.logos||{})){const mo=new MutationObserver(()=>logoImgs(cached.theme));mo.observe(document,{childList:true,subtree:true});document.addEventListener('DOMContentLoaded',()=>mo.disconnect())}   // a replaced logo shows as soon as its tag exists
+  }
   const go=D=>{apply(D)};
   const ready=fn=>document.readyState==='loading'?document.addEventListener('DOMContentLoaded',fn):fn();
   ready(()=>{if(cached)go(cached)});

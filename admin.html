@@ -21,7 +21,7 @@ details[open]>summary .chev{transform:rotate(90deg)}
 
 <!-- Top bar -->
 <div class="sticky top-0 z-40 bg-gray-900 text-white">
-  <div class="max-w-3xl mx-auto px-4 h-12 flex items-center gap-3">
+  <div class="max-w-5xl mx-auto px-4 h-12 flex items-center gap-3">
     <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center font-black text-xs flex-shrink-0">KH</div>
     <span class="text-sm font-bold flex-1">KHIP website admin</span>
     <a href="index.html" target="_blank" rel="noopener" class="text-[11px] text-gray-300 hover:text-white whitespace-nowrap"><i class="fas fa-arrow-up-right-from-square"></i> View site</a>
@@ -31,7 +31,7 @@ details[open]>summary .chev{transform:rotate(90deg)}
 <!-- ============ WEBSITE CONTENT (GitHub) ============ -->
 <div id="pane-content">
 <section id="login" class="max-w-md mx-auto p-5 pt-10">
-  <div class="mb-6"><h1 class="text-xl font-extrabold">KHIP website admin</h1><p class="text-xs text-gray-600">Edit the carousel, services, news, jurisdictions, team, testimonials, FAQ and colors without touching any code.</p></div>
+  <div class="mb-6"><h1 class="text-xl font-extrabold">KHIP website admin</h1><p class="text-xs text-gray-600">Edit the site in English and Arabic, side by side, without touching any code.</p></div>
   <form id="login-form" class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm space-y-3">
     <label class="block text-xs font-bold">GitHub username or organization<input id="f-o" required autocomplete="off" class="mt-1 w-full px-3 py-2 text-sm rounded-lg border border-gray-300 font-normal"></label>
     <label class="block text-xs font-bold">Repository name<input id="f-r" value="KHNew" required autocomplete="off" class="mt-1 w-full px-3 py-2 text-sm rounded-lg border border-gray-300 font-normal"></label>
@@ -58,18 +58,19 @@ details[open]>summary .chev{transform:rotate(90deg)}
 
 <section id="app" class="hidden">
   <header class="sticky top-12 z-30 bg-white/95 backdrop-blur border-b shadow-sm">
-    <div class="max-w-3xl mx-auto px-4 py-3 flex items-center gap-2">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center gap-2">
       <div class="min-w-0 flex-1"><h1 class="font-extrabold truncate" id="repo-name"></h1><p id="state" class="text-[11px] text-gray-500">Loaded</p></div>
-      <div id="lang-seg" class="flex rounded-xl overflow-hidden border border-gray-200 text-xs font-bold flex-shrink-0" role="group" aria-label="Content language"><button data-act="lang" data-l="en" class="px-3 py-2">EN</button><button data-act="lang" data-l="ar" class="px-3 py-2" lang="ar" dir="rtl">عربي</button></div>
+      
       <button data-act="discard" id="discard" disabled class="text-xs bg-gray-100 hover:bg-gray-200 disabled:opacity-40 font-bold px-3 py-2 rounded-xl" title="Discard unsaved changes" aria-label="Discard unsaved changes"><i class="fas fa-rotate-left"></i></button>
-      <button data-act="backup" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl" title="Download a copy" aria-label="Download a copy"><i class="fas fa-download"></i></button>
+      <button data-act="backup" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl" title="Download a copy of both files" aria-label="Download a copy of both files"><i class="fas fa-download"></i></button>
       <button data-act="out" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl">Sign out</button>
       <button id="save" data-act="save" disabled class="text-xs bg-brand-600 hover:bg-brand-700 disabled:bg-gray-300 text-white font-bold px-4 py-2 rounded-xl" title="Ctrl+S">Save to GitHub</button>
     </div>
-    <nav id="tabs" class="max-w-3xl mx-auto flex gap-1.5 overflow-x-auto px-4 pb-2" aria-label="Sections"></nav>
+    <nav id="tabs" class="max-w-5xl mx-auto flex gap-1.5 overflow-x-auto px-4 pb-2" aria-label="Sections"></nav>
   </header>
   <datalist id="assets"></datalist>
-  <main id="view" class="max-w-3xl mx-auto p-4 space-y-3"></main>
+  <nav id="subnav" class="hidden max-w-5xl mx-auto px-4 pt-3 flex flex-wrap gap-1.5" aria-label="General settings"></nav>
+  <main id="view" class="max-w-5xl mx-auto p-4 space-y-3"></main>
 </section>
 </div>
 
@@ -105,13 +106,14 @@ SC.jurisdictions.where='About page, the Jurisdictions slider with country cards,
 SC.news.where='Home page, Latest news, and the article pop-up.';SC.news.page='index.html#news';
 const CONTACT=[['contact.whatsapp','WhatsApp number: digits with the country code, no + or spaces (e.g. 201006552255). The chat box at the bottom of every page opens a WhatsApp chat with this number'],['contact.phones','Phone numbers (one per line). Shown on the About page; the first one is also on the Patents, Trademarks and Translation pages','lines'],['contact.emails','Email addresses (one per line). Same places; the first one is on the service pages','lines'],['contact.address','Address (one line per row). Shown on the About page; leave empty to hide it','lines'],['contact.map','Map on the About page: coordinates (e.g. 30.0279,31.4876) or an address to search on Google Maps. Leave empty to hide the map']];
 const SOCIAL=[['social.linkedin','LinkedIn page address (https://...)'],['social.youtube','YouTube channel address'],['social.facebook','Facebook page address'],['social.instagram','Instagram address'],['social.x','X (Twitter) address'],['social.tiktok','TikTok address']];
-const contactCard=()=>`<div class="bg-white p-4 rounded-2xl border border-gray-200 space-y-3 mt-3"><div><h2 class="font-extrabold text-lg">Contact details &amp; social links</h2><p class="text-xs text-gray-600">Used everywhere on the site: the About page contact block, the contact buttons on the service pages, the WhatsApp box and the icons in the header. Leave a box empty to hide that item. Social addresses must start with https://.</p></div>${CONTACT.map(f=>fld('',f)).join('')}<h3 class="font-bold text-sm pt-2 border-t border-gray-200">Social media</h3>${SOCIAL.map(f=>fld('',f)).join('')}</div>`;
 const GEN=[['aboutMainText','About text (home page)','area'],['about','Short tagline'],['ipServicesText','Services section: short text of the "IP Services" card (home page). Empty = the built-in sentence','area'],['chatPrompts','Suggestions typed into the WhatsApp box (one per line)','lines'],['newsCategories','News categories / labels (one per line)','lines']];
 const DEFCATS=['General','KHIP News','Intellectual Property','Patents','Trademarks','Translation'];
-let S={},D=null,sha='',tab='general',dirty=false,openItem=null,q='',ASSETS=[],lang='en',DEN=null,DAR=null,shaAR='';
+let S={},D=null,sha='',tab='general',dirty=false,openItem=null,q='',ASSETS=[],lang='en',A={},EN0='',AR0='',shaAR='',gsub='brand';
 
-const get=(o,p)=>p.split('.').reduce((a,k)=>a?.[k],o)??'';
-const set=(o,p,v)=>{const k=p.split('.'),l=k.pop();k.forEach(x=>o=o[x]??={});o[l]=v};
+// A path starting with "ar:" reads and writes the Arabic copy (A); anything else is the English data (D).
+const side=(o,p)=>o===D&&p.startsWith('ar:')?[A,p.slice(3)]:[o,p];
+const get=(o,p)=>{[o,p]=side(o,p);return p.split('.').reduce((a,k)=>a?.[k],o)??''};
+const set=(o,p,v)=>{[o,p]=side(o,p);const k=p.split('.'),l=k.pop();k.forEach(x=>o=o[x]??={});o[l]=v};
 const full=v=>!v?'':/^(https?:|\.\/|\/)/.test(v)?v:'./assets/'+v;
 const imgSrc=v=>!v?'':/^https?:/.test(v)?v:`https://raw.githubusercontent.com/${S.o}/${S.r}/${S.b}/${full(v).replace(/^\.?\//,'')}?v=${KVER.imgV}`;
 const b64=u8=>{let s='';for(let i=0;i<u8.length;i+=0x8000)s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000));return btoa(s)};
@@ -131,62 +133,80 @@ async function connect(creds){
   S=creds;
   try{
     const j=await api(S.p,{query:'?ref='+encodeURIComponent(S.b)});
-    D=JSON.parse(unb64(j.content));sha=j.sha;DEN=D;lang='en';DAR=null;shaAR='';
+    D=JSON.parse(unb64(j.content));sha=j.sha;shaAR='';
+    let ar={};
+    try{const a=await api(arPath(),{query:'?ref='+encodeURIComponent(S.b)});ar=JSON.parse(unb64(a.content));shaAR=a.sha}
+    catch(e){if(e.status!==404)throw e}
+    A=mirror(D,ar);EN0=JSON.stringify(D);AR0=JSON.stringify(compact(A));
     try{ASSETS=(await api('assets',{query:'?ref='+encodeURIComponent(S.b)})).map(f=>f.name)}catch{}
-  }catch(e){$('login-err').textContent=e instanceof SyntaxError?'The data file is not valid JSON.':e.message;$('login-err').classList.remove('hidden');return}
+  }catch(e){$('login-err').textContent=e instanceof SyntaxError?'A data file (app-data.json or app-data.ar.json) is not valid JSON.':e.message;$('login-err').classList.remove('hidden');return}
   localStorage.setItem('khip-admin',JSON.stringify({o:S.o,r:S.r,b:S.b,p:S.p}));
   if($('f-s').checked)sessionStorage.setItem('khip-admin-t',S.t);
   $('login').classList.add('hidden');$('app').classList.remove('hidden');
-  $('repo-name').textContent=`${S.o}/${S.r}`;q='';openItem=null;mark(false);tabs();view();syncLang();
+  $('repo-name').textContent=`${S.o}/${S.r}`;tab='general';gsub='brand';q='';openItem=null;mark(false);tabs();view();
   $('assets').innerHTML=ASSETS.map(n=>`<option value="${esc(n)}">`).join('');
 }
 
-const TABINFO={general:['General','fa-house'],faq:['FAQ','fa-circle-question'],colors:['Colors','fa-palette'],backgrounds:['Backgrounds','fa-fill-drip'],ui:['Interface text','fa-language'],pages:['Page texts','fa-file-lines']};
-const TABGROUPS=[['Content',['general','carousel','services','news','jurisdictions','employees','testimonials','faq']],['Look',['colors','backgrounds']]];
-const tabCount=k=>SC[k]?` (${(D[k]||[]).length})`:k==='faq'?` (${faqTotal()})`:'';
+const TABINFO={general:['General','fa-house'],sections:['Sections','fa-table-list']};
+const TABGROUPS=[['',['general','sections']]];
+const tabCount=k=>'';
+const curKey=()=>tab==='general'?gsub:tab;      // which screen is showing (the Look previews are keyed by it)
 function tabs(){
-  const ar=lang==='ar',btn=k=>{const [l,i]=SC[k]?[SC[k].label,SC[k].icon]:TABINFO[k];return `<button data-act="tab" data-k="${k}" class="flex-shrink-0 text-xs font-bold px-3 py-2 rounded-xl ${k===tab?'bg-brand-600 text-white':'bg-gray-100 hover:bg-gray-200'}"><i class="fas ${i}"></i> ${l}${tabCount(k)}</button>`};
-  const groups=ar?[['Content',['general','ui','pages','carousel','services','news','jurisdictions','employees','testimonials','faq']]]:TABGROUPS;
-  $('tabs').innerHTML=groups.map(([g,ks],n)=>`<span class="flex-shrink-0 flex items-center gap-1.5 ${n?'ml-2 pl-3 border-l border-gray-300':''}"><span class="text-[10px] uppercase tracking-wider text-gray-400 font-bold">${g}</span>${ks.map(btn).join('')}</span>`).join('');
+  const btn=k=>{const [l,i]=SC[k]?[SC[k].label,SC[k].icon]:TABINFO[k];return `<button data-act="tab" data-k="${k}" class="flex-shrink-0 text-xs font-bold px-3 py-2 rounded-xl ${k===tab?'bg-brand-600 text-white':'bg-gray-100 hover:bg-gray-200'}"><i class="fas ${i}"></i> ${l}${tabCount(k)}</button>`};
+  $('tabs').innerHTML=TABGROUPS.map(([g,ks],n)=>`<span class="flex-shrink-0 flex items-center gap-1.5 ${n?'ml-2 pl-3 border-l border-gray-300':''}">${g?`<span class="text-[10px] uppercase tracking-wider text-gray-400 font-bold">${g}</span>`:''}${ks.map(btn).join('')}</span>`).join('');
 }
 const tb=(k,p,title,inner,cls='')=>`<button type="button" onmousedown="event.preventDefault()" data-act="fmt" data-k="${k}" data-t="${p}" title="${title}" class="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 ${cls}">${inner}</button>`;
-function fld(base,[k,l,t],req=[]){
-  const p=base+k,v=get(D,p);
+// The control itself. p may start with "ar:" (Arabic copy). o: {rtl, ph}
+function ctl(p,[k,l,t],o={}){
+  const v=get(D,p),xa=o.rtl?'dir="rtl"':'',ph=o.rtl||o.ph?`placeholder="${esc(o.ph||'Empty: the English text is shown')}"`:'';
   if(t==='check')return `<label class="flex items-start gap-2 text-xs font-bold text-gray-700 bg-gray-50 border border-gray-200 rounded-lg p-3 cursor-pointer"><input type="checkbox" data-p="${p}" data-bool="1" ${v===true?'checked':''} class="mt-0.5"><span>${esc(l)}</span></label>`;
-  const star=req.includes(k)&&lang!=='ar'?'<span class="text-red-600" title="Required"> *</span>':'';let h;const xa=lang==='ar'?'dir="rtl"':'',ref=lang==='ar'?enRef(p):'';
-  if(t==='area')h=`<div class="flex items-center gap-1 mb-1">${tb('b',p,'Bold','B','text-sm font-bold')}${tb('h',p,'Subtitle','H','text-xs font-bold')}${tb('l',p,'Bullet list','<i class="fas fa-list-ul text-xs"></i>')}<span class="text-[11px] text-gray-500 ml-2">**bold** &nbsp; ## subtitle &nbsp; - bullet</span></div><textarea data-p="${p}" ${xa} aria-label="${esc(l)}" rows="5" class="${inp}">${esc(v)}</textarea>`;
-  else if(t==='lines')h=`<textarea data-p="${p}" ${xa} data-lines="1" aria-label="${esc(l)}" rows="4" class="${inp}">${esc(Array.isArray(v)?v.join('\n'):v)}</textarea>`;
-  else if(t==='select'){const o=((D.newsCategories||[]).filter(Boolean).length?D.newsCategories.filter(Boolean):DEFCATS).slice(),cur=v||o[0];if(cur&&!o.includes(cur))o.push(cur);h=`<select data-p="${p}" ${xa} aria-label="${esc(l)}" class="${inp}">${o.map(x=>`<option ${x===cur?'selected':''}>${esc(x)}</option>`).join('')}</select>`}
-  else if(t==='img')h=`<div class="flex items-center gap-2"><img data-prev="${p}" src="${esc(imgSrc(v))}" alt="" onerror="this.style.visibility='hidden'" class="w-12 h-12 rounded-lg object-cover bg-gray-200 flex-shrink-0"><input data-p="${p}" ${xa} aria-label="${esc(l)}" value="${esc(v)}" list="assets" placeholder="File name in assets, or upload" class="${inp}"><label class="flex-shrink-0 text-xs bg-brand-50 text-brand-700 font-bold px-3 py-2.5 rounded-lg cursor-pointer hover:bg-brand-100" title="Upload an image"><i class="fas fa-upload"></i><input type="file" accept="image/*" data-up="${p}" class="hidden"></label></div>`;
-  else h=`<input data-p="${p}" ${xa} aria-label="${esc(l)}" type="${t==='date'?'date':'text'}" value="${esc(v)}" class="${inp}">`;
-  return `<div><span class="text-xs font-bold text-gray-700">${esc(l)}${star}</span>${ref?`<span class="block text-[11px] text-gray-500 mb-1 line-clamp-3" dir="ltr">${esc(ref)}</span>`:''}${h}</div>`;
+  if(t==='area')return `<div class="flex items-center gap-1 mb-1">${tb('b',p,'Bold','B','text-sm font-bold')}${tb('h',p,'Subtitle','H','text-xs font-bold')}${tb('l',p,'Bullet list','<i class="fas fa-list-ul text-xs"></i>')}<span class="text-[11px] text-gray-500 ml-2" dir="ltr">**bold** &nbsp; ## subtitle &nbsp; - bullet</span></div><textarea data-p="${p}" ${xa} ${ph} aria-label="${esc(l)}" rows="${o.rows||5}" class="${inp}">${esc(v)}</textarea>`;
+  if(t==='lines')return `<textarea data-p="${p}" ${xa} ${ph} data-lines="1" aria-label="${esc(l)}" rows="${o.rows||4}" class="${inp}">${esc(Array.isArray(v)?v.join('\n'):v)}</textarea>`;
+  if(t==='select'){const c=((D.newsCategories||[]).filter(Boolean).length?D.newsCategories.filter(Boolean):DEFCATS).slice(),cur=v||c[0];if(cur&&!c.includes(cur))c.push(cur);return `<select data-p="${p}" ${xa} aria-label="${esc(l)}" class="${inp}">${c.map(x=>`<option ${x===cur?'selected':''}>${esc(x)}</option>`).join('')}</select>`}
+  if(t==='img')return `<div class="flex items-center gap-2"><img data-prev="${p}" src="${esc(imgSrc(v))}" alt="" onerror="this.style.visibility='hidden'" class="w-12 h-12 rounded-lg object-cover bg-gray-200 flex-shrink-0"><input data-p="${p}" ${xa} aria-label="${esc(l)}" value="${esc(v)}" list="assets" placeholder="File name in assets, or upload" class="${inp}"><label class="flex-shrink-0 text-xs bg-brand-50 text-brand-700 font-bold px-3 py-2.5 rounded-lg cursor-pointer hover:bg-brand-100" title="Upload an image"><i class="fas fa-upload"></i><input type="file" accept="image/*" data-up="${p}" class="hidden"></label></div>`;
+  return `<input data-p="${p}" ${xa} ${ph} aria-label="${esc(l)}" type="${t==='date'?'date':'text'}" value="${esc(v)}" class="${inp}">`;
 }
+function fld(base,f,req=[]){
+  const [k,l,t]=f;if(t==='check')return ctl(base+k,f);
+  const star=req.includes(k)?'<span class="text-red-600" title="Required"> *</span>':'';
+  return `<div><span class="text-xs font-bold text-gray-700">${esc(l)}${star}</span>${ctl(base+k,f)}</div>`;
+}
+// English and Arabic side by side. o: {phEn, phAr} placeholders (the built-in wording), rows
+function bi(base,f,req=[],o={}){
+  const [k,l]=f,star=req.includes(k)?'<span class="text-red-600" title="Required in English"> *</span>':'';
+  const half=(p,rtl)=>`<div class="min-w-0"><span ${rtl?'lang="ar"':''} class="inline-block text-[10px] font-extrabold tracking-wider px-1.5 py-0.5 rounded mb-1 ${rtl?'bg-amber-100 text-amber-800':'bg-brand-100 text-brand-700'}">${rtl?'عربي':'EN'}</span>${ctl(p,f,{rtl,ph:rtl?o.phAr:o.phEn,rows:o.rows})}</div>`;
+  return `<div><span class="text-xs font-bold text-gray-700">${esc(l)}${star}</span><div class="grid md:grid-cols-2 gap-3 mt-0.5">${half(base+k,false)}${half('ar:'+base+k,true)}</div></div>`;
+}
+const isTr=(sec,f)=>(TRF[sec]||[]).includes(f[0])&&!['check','img','select','date'].includes(f[2]);
+let listKey='';
+const LK=()=>tab==='sections'?listKey:tab;          // the list being edited (carousel, services, news, ...)
 function view(){
-  const m=$('view');
-  if(tab==='general'){if(lang==='ar')return viewGenAr();m.innerHTML=`<div class="bg-white p-4 rounded-2xl border border-gray-200 space-y-3">${langCard()}${GEN.map(f=>fld('',f)).join('')}</div>${contactCard()}`;return}
-  if(tab==='ui')return viewUi();
-  if(tab==='pages')return viewPages();
-  if(tab==='colors')return viewColors();
-  if(tab==='backgrounds')return viewBg();
-  if(tab==='faq')return lang==='ar'?viewFaqAr():viewFaq();
-  const s=SC[tab],arr=D[tab]=D[tab]||[];
-  m.innerHTML=(tab==='carousel'&&lang!=='ar'?heroCard():'')+`<div class="flex items-center justify-between"><div class="min-w-0 pr-2"><h2 class="font-extrabold text-lg">${s.label}</h2>${s.where?`<p class="text-[11px] text-gray-500">${s.where} <a href="${s.page}" target="_blank" rel="noopener" class="text-brand-700 underline whitespace-nowrap">View on the site</a></p>`:''}</div>${lang==='ar'?'':`<div class="flex items-center gap-2 flex-shrink-0">${tab==='news'?`<button data-act="import" class="text-xs bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold px-3.5 py-2 rounded-xl" title="Add many articles from Word or Markdown files"><i class="fas fa-file-import"></i> Import</button>`:''}${tab==='carousel'?`<button data-act="simport" class="text-xs bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold px-3.5 py-2 rounded-xl" title="Add slides from a Word, Markdown or spreadsheet file"><i class="fas fa-file-import"></i> Import slides</button>`:''}<button data-act="add" class="text-xs bg-[#d9c8a4] hover:bg-[#cdb98f] text-[#1b2433] font-bold px-3.5 py-2 rounded-xl"><i class="fas fa-plus"></i> Add ${s.one}</button></div>`}</div>`
+  A=mirror(D,A);                     // the Arabic copy always has the same items, in the same order, as the English data
+  $('subnav').classList.toggle('hidden',tab!=='general'&&tab!=='sections');
+  if(tab==='general')return AGEN.render();
+  if(tab==='sections')return ASEC.render();
+}
+// A list of items (slides, countries, articles, services, quotes, team members): header, search box and the items.
+function listHtml(c){
+  const s=SC[c],arr=D[c]=D[c]||[];listKey=c;
+  return `<div class="flex items-center justify-between"><div class="min-w-0 pr-2"><h3 class="font-extrabold text-base">${s.label} (${arr.length})</h3>${s.where?`<p class="text-[11px] text-gray-500">${s.where} <a href="${s.page}" target="_blank" rel="noopener" class="text-brand-700 underline whitespace-nowrap">View on the site</a></p>`:''}</div><div class="flex items-center gap-2 flex-shrink-0">${c==='news'?`<button data-act="import" class="text-xs bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold px-3.5 py-2 rounded-xl" title="Add many articles from Word or Markdown files"><i class="fas fa-file-import"></i> Import</button>`:''}${c==='carousel'?`<button data-act="simport" class="text-xs bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold px-3.5 py-2 rounded-xl" title="Add slides from a Word, Markdown or spreadsheet file"><i class="fas fa-file-import"></i> Import slides</button>`:''}<button data-act="add" class="text-xs bg-[#d9c8a4] hover:bg-[#cdb98f] text-[#1b2433] font-bold px-3.5 py-2 rounded-xl"><i class="fas fa-plus"></i> Add ${s.one}</button></div></div>`
   +(arr.length>5?`<input id="filter" type="search" placeholder="Search ${s.label.toLowerCase()}" aria-label="Search ${s.label.toLowerCase()}" value="${esc(q)}" class="${inp}">`:'')
   +'<div id="items" class="space-y-3"></div>';
-  items();
 }
 function items(){
-  const s=SC[tab],arr=D[tab],imgF=s.f.find(f=>f[2]==='img'),ql=q.trim().toLowerCase();
+  const tab=LK(),s=SC[tab],arr=D[tab],imgF=s.f.find(f=>f[2]==='img'),ql=q.trim().toLowerCase();
   const rows=arr.map((x,i)=>[x,i]).filter(([x])=>!ql||s.f.some(([k])=>String(x[k]??'').toLowerCase().includes(ql)));
   $('items').innerHTML=(arr.length?'':`<p class="text-sm text-gray-600 bg-white p-4 rounded-2xl border">Nothing here yet. Add the first ${s.one}.</p>`)
   +(arr.length&&!rows.length?'<p class="text-sm text-gray-600 bg-white p-4 rounded-2xl border">No match.</p>':'')
-  +rows.map(([x,i])=>`<details ${openItem===`${tab}.${i}`?'open':''} class="bg-white rounded-2xl border border-gray-200 shadow-sm"><summary class="flex items-center gap-2 p-3 cursor-pointer"><i class="fas fa-chevron-right chev text-[10px] text-gray-400"></i>${imgF&&x[imgF[0]]?`<img src="${esc(imgSrc(x[imgF[0]]))}" alt="" onerror="this.style.display='none'" class="w-8 h-8 rounded-md object-cover bg-gray-200 flex-shrink-0">`:''}<span class="flex-1 min-w-0 font-bold text-sm truncate">${esc(x[s.title]||(lang==='ar'&&DEN[tab][i]?DEN[tab][i][s.title]:'')||'Untitled '+s.one)}</span>
-    ${lang==='ar'?'':`<button data-act="up" data-i="${i}" ${i&&!ql?'':'disabled'} aria-label="Move up" class="w-8 h-8 rounded-lg bg-gray-100 disabled:opacity-30"><i class="fas fa-arrow-up text-xs"></i></button>
+  +rows.map(([x,i])=>`<details ${openItem===`${tab}.${i}`?'open':''} class="bg-white rounded-2xl border border-gray-200 shadow-sm"><summary class="flex items-center gap-2 p-3 cursor-pointer"><i class="fas fa-chevron-right chev text-[10px] text-gray-400"></i>${imgF&&x[imgF[0]]?`<img src="${esc(imgSrc(x[imgF[0]]))}" alt="" onerror="this.style.display='none'" class="w-8 h-8 rounded-md object-cover bg-gray-200 flex-shrink-0">`:''}<span class="flex-1 min-w-0 font-bold text-sm truncate">${esc(x[s.title]||'Untitled '+s.one)}</span>
+    <button data-act="up" data-i="${i}" ${i&&!ql?'':'disabled'} aria-label="Move up" class="w-8 h-8 rounded-lg bg-gray-100 disabled:opacity-30"><i class="fas fa-arrow-up text-xs"></i></button>
     <button data-act="down" data-i="${i}" ${i<arr.length-1&&!ql?'':'disabled'} aria-label="Move down" class="w-8 h-8 rounded-lg bg-gray-100 disabled:opacity-30"><i class="fas fa-arrow-down text-xs"></i></button>
     <button data-act="dup" data-i="${i}" aria-label="Duplicate" title="Duplicate" class="w-8 h-8 rounded-lg bg-gray-100"><i class="fas fa-clone text-xs"></i></button>
-    <button data-act="del" data-i="${i}" aria-label="Delete" class="w-8 h-8 rounded-lg bg-red-50 text-red-600"><i class="fas fa-trash text-xs"></i></button>`}</summary>
-    <div class="p-4 pt-1 space-y-3 border-t">${(lang==='ar'?s.f.filter(f=>TRF[tab].includes(f[0])):s.f).map(f=>fld(`${tab}.${i}.`,f,s.req)).join('')}</div></details>`).join('');
+    <button data-act="del" data-i="${i}" aria-label="Delete" class="w-8 h-8 rounded-lg bg-red-50 text-red-600"><i class="fas fa-trash text-xs"></i></button></summary>
+    <div class="p-4 pt-1 space-y-3 border-t">${itemFields(tab,i)}</div></details>`).join('');
 }
+// The fields of one item: words are English | Arabic side by side, the rest (picture, date, category, tick boxes) once.
+const itemFields=(sec,i)=>SC[sec].f.map(f=>isTr(sec,f)?bi(`${sec}.${i}.`,f,SC[sec].req):fld(`${sec}.${i}.`,f,SC[sec].req)).join('');
 
 /* ---------- Import articles from Word (.docx) or Markdown (.md) files (parser: news-import.js) ---------- */
 const IM={arts:[],warn:[],on:new Set(),busy:false,seq:0,mode:'news'};   // mode: 'news' (articles) or 'slides' (hero slider); both use the same window
@@ -286,7 +306,7 @@ async function impRun(){
     out.push({id:String(++id),title:a.title,subtitle:a.subtitle||'',date:a.date||'',category:c.name,image:cover,excerpt:a.excerpt||autoEx(text),text});
   }
   if(pos==='top')D.news.unshift(...out);else D.news.push(...out);
-  IM.busy=false;mark();tab='news';openItem=null;q='';tabs();view();
+  IM.busy=false;mark();ASEC.goList('news');openItem=null;q='';tabs();view();
   impModal(`${impHead('Import finished',`${out.length} article${out.length>1?'s were':' was'} added.`)}
    <div class="mt-4 text-sm bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-xl p-3"><i class="fas fa-circle-check"></i> Press <b>Save</b> at the top to publish them on the website.</div>
    ${fails.length?`<div class="mt-3 text-xs rounded-lg p-3 border text-red-700 bg-red-50 border-red-200 space-y-1"><p class="font-bold">Some pictures could not be added:</p>${fails.map(f=>`<p>${esc(f)}</p>`).join('')}</div>`:''}
@@ -359,7 +379,7 @@ async function slRun(){
     out.push({id:String(++id),title:a.title,subtitle:a.subtitle||'',tag:a.tag||'',image});
   }
   if(how==='replace')D.carousel=out;else if(how==='top')D.carousel=[...out,...(D.carousel||[])];else D.carousel=[...(D.carousel||[]),...out];
-  IM.busy=false;mark();tab='carousel';openItem=null;q='';tabs();view();
+  IM.busy=false;mark();ASEC.goList('carousel');openItem=null;q='';tabs();view();
   impModal(`${impHead('Import finished',`${out.length} slide${out.length>1?'s were':' was'} ${how==='replace'?'put in the slider':'added'}.`)}
    <div class="mt-4 text-sm bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-xl p-3"><i class="fas fa-circle-check"></i> Press <b>Save</b> at the top to publish them on the website.</div>
    ${fails.length?`<div class="mt-3 text-xs rounded-lg p-3 border text-red-700 bg-red-50 border-red-200 space-y-1"><p class="font-bold">Some pictures could not be added:</p>${fails.map(f=>`<p>${esc(f)}</p>`).join('')}</div>`:''}
@@ -389,7 +409,6 @@ const PRESETS=[
  ['graphite','Graphite',{title:'#1c2f5e',ink:'#1f2328',gold:'#b88a44',accent:'#3b5bdb',accentDark:'#2f49b0',accentSoft:'#eef2ff',sand:'#d6c7a1',page:'#f4f4f2',surface:'#ffffff',text:'#3b3f46'}]
 ];
 const hexc='w-24 px-2 py-2 text-xs rounded-lg border border-gray-300 bg-white font-mono';
-const bgOpen=new Set();
 function theme(){
   const t=D.theme=D.theme||{};t.colors=t.colors||{};t.custom=t.custom||[];t.sections=t.sections||{};
   if(t.sectionWidth==null||t.sectionWidth==='')t.sectionWidth=67;
@@ -397,6 +416,7 @@ function theme(){
   return t;
 }
 function cleanTheme(){ // before saving: drop backgrounds that are set back to "Default"
+  if(window.ALOOK)ALOOK.clean(D.theme);
   if(!D.theme||!D.theme.sections)return;
   for(const k of Object.keys(D.theme.sections)){const m=(D.theme.sections[k]||{}).mode;if(m!=='color'&&m!=='image')delete D.theme.sections[k]}
 }
@@ -415,7 +435,7 @@ function viewColors(){
   <div class="bg-white px-4 py-2 rounded-2xl border border-gray-200">${TH.ROLES.map(row).join('')}
     <div class="py-3"><button data-act="col-reset-all" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl"><i class="fas fa-rotate-left"></i> Reset all colors to the defaults</button></div></div>
   <div class="bg-white p-4 rounded-2xl border border-gray-200">
-    <div class="flex items-center justify-between gap-2"><div><h2 class="font-extrabold text-lg">Your own colors</h2><p class="text-xs text-gray-600">Add colors to the palette. You can pick them as a section background (Backgrounds tab).</p></div><button data-act="cc-add" class="text-xs bg-[#d9c8a4] hover:bg-[#cdb98f] text-[#1b2433] font-bold px-3.5 py-2 rounded-xl flex-shrink-0"><i class="fas fa-plus"></i> Add color</button></div>
+    <div class="flex items-center justify-between gap-2"><div><h2 class="font-extrabold text-lg">Your own colors</h2><p class="text-xs text-gray-600">Add colors to the palette. You can pick them as a section background (Sections, Look of this section).</p></div><button data-act="cc-add" class="text-xs bg-[#d9c8a4] hover:bg-[#cdb98f] text-[#1b2433] font-bold px-3.5 py-2 rounded-xl flex-shrink-0"><i class="fas fa-plus"></i> Add color</button></div>
     <div class="mt-2">${t.custom.length?t.custom.map(cust).join(''):'<p class="text-xs text-gray-500 py-3">No extra colors yet.</p>'}</div>
   </div>
   <div class="bg-white p-4 rounded-2xl border border-gray-200">
@@ -436,28 +456,25 @@ function bgStyle(t,s){
   if(s.mode==='image'&&s.image){const ov=Math.min(85,Math.max(0,parseFloat(s.overlay)||0))/100,i=imgSrc(s.image);return `background:${ov?`linear-gradient(rgba(27,36,51,${ov}),rgba(27,36,51,${ov})),`:''}url('${i}') center/cover no-repeat`}
   return '';
 }
-function viewBg(){
+// The background of one section: {mode, badge, body}. Drawn inside the Sections page ("Look of this section", see admin-look.js).
+function bgInfo(key){
   const t=theme();
-  $('view').innerHTML=`<div class="bg-white p-4 rounded-2xl border border-gray-200"><h2 class="font-extrabold text-lg">Section backgrounds</h2><p class="text-xs text-gray-600 mt-1">Give any section a background color from your palette, or a photo that covers the whole section. Leave it on Default to keep the normal look. On dark colors and darkened photos the text turns light by itself.</p></div>`
-  +TH.SECTIONS.map(([key,label])=>{
-    const s=t.sections[key]||{},mode=s.mode==='color'||s.mode==='image'?s.mode:'default',pre=bgStyle(t,s);
-    const base=`theme.sections.${key}.`;
-    let body=`<label class="block text-xs font-bold">Background<select data-p="${base}mode" data-rr="1" data-sec="${key}" class="${inp} mt-1">${BGMODES.map(([v,n])=>`<option value="${v}" ${v===mode?'selected':''}>${n}</option>`).join('')}</select></label>`;
-    if(mode==='color'){
-      const sel=s.color||'role:accentSoft';
-      body+=`<div class="flex items-end gap-2"><label class="block text-xs font-bold flex-1">Color<select data-bgsel="${key}" class="${inp} mt-1">${palOptions(t,sel)}</select></label>${TH.HEX.test(sel)?`<input type="color" data-p="${base}color" value="${esc(sel)}" aria-label="Custom color" class="w-11 h-11 p-0 border border-gray-300 rounded-lg bg-white cursor-pointer flex-shrink-0">`:''}</div>`;
-    }
-    if(mode==='image'){
-      body+=fld(base,['image','Photo (file name in assets, or upload)','img'])
-        +`<label class="block text-xs font-bold">Darken the photo: <span id="ov-${key}">${esc(s.overlay||0)}</span>%<input type="range" min="0" max="85" step="5" data-p="${base}overlay" data-out="ov-${key}" data-pct="1" value="${esc(s.overlay||0)}" class="mt-1 w-full"></label>`;
-    }
-    if(mode!=='default')body+=`<label class="block text-xs font-bold">Text color on this section<select data-p="${base}tone" class="${inp} mt-1">${TONES.map(([v,n])=>`<option value="${v}" ${(s.tone||'auto')===v?'selected':''}>${n}</option>`).join('')}</select></label>`
-      +`<div class="h-12 rounded-xl border border-gray-200" style="${pre}" role="img" aria-label="Preview of the background"></div>`;
-    const badge=mode==='default'?'Default':mode==='color'?'Color':'Photo';
-    return `<details data-bg="${key}" ${bgOpen.has(key)?'open':''} class="bg-white rounded-2xl border border-gray-200 shadow-sm"><summary class="flex items-center gap-2 p-3 cursor-pointer"><i class="fas fa-chevron-right chev text-[10px] text-gray-400"></i><span class="flex-1 min-w-0 font-bold text-sm truncate">${esc(label)}</span><span class="text-[11px] font-bold px-2 py-1 rounded-lg ${mode==='default'?'bg-gray-100 text-gray-500':'bg-brand-50 text-brand-700'}">${badge}</span></summary><div class="p-4 pt-2 space-y-3 border-t">${body}</div></details>`;
-  }).join('');
+  const s=t.sections[key]||{},mode=s.mode==='color'||s.mode==='image'?s.mode:'default',pre=bgStyle(t,s);
+  const base=`theme.sections.${key}.`;
+  let body=`<label class="block text-xs font-bold">Background<select data-p="${base}mode" data-rr="1" data-sec="${key}" class="${inp} mt-1">${BGMODES.map(([v,n])=>`<option value="${v}" ${v===mode?'selected':''}>${n}</option>`).join('')}</select></label>`;
+  if(mode==='color'){
+    const sel=s.color||'role:accentSoft';
+    body+=`<div class="flex items-end gap-2"><label class="block text-xs font-bold flex-1">Color<select data-bgsel="${key}" class="${inp} mt-1">${palOptions(t,sel)}</select></label>${TH.HEX.test(sel)?`<input type="color" data-p="${base}color" value="${esc(sel)}" aria-label="Custom color" class="w-11 h-11 p-0 border border-gray-300 rounded-lg bg-white cursor-pointer flex-shrink-0">`:''}</div>`;
+  }
+  if(mode==='image'){
+    body+=fld(base,['image','Photo (file name in assets, or upload)','img'])
+      +`<label class="block text-xs font-bold">Darken the photo: <span id="ov-${key}">${esc(s.overlay||0)}</span>%<input type="range" min="0" max="85" step="5" data-p="${base}overlay" data-out="ov-${key}" data-pct="1" value="${esc(s.overlay||0)}" class="mt-1 w-full"></label>`;
+  }
+  if(mode!=='default')body+=`<label class="block text-xs font-bold">Text color on this section<select data-p="${base}tone" class="${inp} mt-1">${TONES.map(([v,n])=>`<option value="${v}" ${(s.tone||'auto')===v?'selected':''}>${n}</option>`).join('')}</select></label>`
+    +`<div class="h-12 rounded-xl border border-gray-200" style="${pre}" role="img" aria-label="Preview of the background"></div>`;
+  const badge=mode==='default'?'Default':mode==='color'?'Color':'Photo';
+  return {mode,badge,body};
 }
-document.addEventListener('toggle',e=>{const d=e.target;if(d&&d.dataset&&d.dataset.bg){d.open?bgOpen.add(d.dataset.bg):bgOpen.delete(d.dataset.bg)}},true);
 
 /* ---------- Hero height (Carousel tab). Saved as theme.hero; applied by theme.js. Not set = the built-in heights ---------- */
 const HERO_DEF={unit:'px',mobile:128,tablet:208,desktop:256};
@@ -527,22 +544,22 @@ function cleanFaq(){            // before saving: drop blank rows and pages with
     if(!p.items.length&&!String(p.title||'').trim()&&!String(p.intro||'').trim()&&!p.hidden)delete f.pages[k];
   }
 }
-function viewFaq(){
-  const f=D.faq||{},items=faqItems(),label=FAQ_PAGES.find(x=>x[0]===faqPage)[1],base=`faq.pages.${faqPage}.`,hid=((f.pages||{})[faqPage]||{}).hidden===true;
+function faqBody(page){
+  faqPage=page;
+  const f=D.faq||{},items=faqItems(),label=FAQ_PAGES.find(x=>x[0]===faqPage)[1],base=`faq.pages.${faqPage}.`;
   const btn=(act,i,ic,t,dis,cls='bg-gray-100')=>`<button data-act="${act}" data-i="${i}" ${dis?'disabled':''} aria-label="${t}" title="${t}" class="w-8 h-8 rounded-lg ${cls} disabled:opacity-30"><i class="fas ${ic} text-xs"></i></button>`;
-  $('view').innerHTML=`<div class="bg-white p-4 rounded-2xl border border-gray-200 space-y-3">
-    <div><h2 class="font-extrabold text-lg">FAQ</h2><p class="text-xs text-gray-600">Questions and answers, shown as an open-and-close list near the bottom of a page. Each page has its own list; a page with no questions shows no FAQ section. Press Save to publish.</p></div>
-    <div class="grid sm:grid-cols-2 gap-3">${fld('faq.',['title','Section heading, all pages (empty: "Frequently asked questions")'])}${fld('faq.',['intro','Short introduction under the heading (optional, all pages)','area'])}</div></div>
-  <div class="flex flex-wrap gap-2">${FAQ_PAGES.map(([k,n])=>`<button data-act="faq-page" data-k="${k}" class="text-xs font-bold px-3.5 py-2 rounded-xl ${k===faqPage?'bg-brand-600 text-white':'bg-white border border-gray-200 hover:bg-gray-100'}">${n} <span class="opacity-70">(${faqItems(k).length})</span></button>`).join('')}</div>
-  <div class="bg-white p-4 rounded-2xl border border-gray-200 space-y-3">
-    <div class="flex items-center justify-between gap-2"><h3 class="font-extrabold text-base">${label} page</h3><button data-act="faq-add" class="text-xs bg-[#d9c8a4] hover:bg-[#cdb98f] text-[#1b2433] font-bold px-3.5 py-2 rounded-xl"><i class="fas fa-plus"></i> Add question</button></div>
-    ${(D.services||[]).some(x=>x.page===faqPage+'.html'&&x.hidden===true)?`<p class="text-xs rounded-lg p-3 border text-amber-900 bg-amber-50 border-amber-200"><b>The ${label} service is switched off</b> (Services tab, "Hide this service"), so its page sends visitors to the home page and this FAQ is not shown. Untick that option to bring the page back.</p>`:''}
+  return `<div class="bg-white p-4 rounded-2xl border border-gray-200 space-y-3">
+    <div class="flex items-center justify-between gap-2"><div><h3 class="font-extrabold text-base">Questions and answers (${items.length})</h3><p class="text-xs text-gray-600">Shown as an open-and-close list. A page with no questions shows no FAQ section. An Arabic box left empty shows the English text.</p></div><button data-act="faq-add" class="text-xs bg-[#d9c8a4] hover:bg-[#cdb98f] text-[#1b2433] font-bold px-3.5 py-2 rounded-xl flex-shrink-0"><i class="fas fa-plus"></i> Add question</button></div>
+    ${(D.services||[]).some(x=>x.page===faqPage+'.html'&&x.hidden===true)?`<p class="text-xs rounded-lg p-3 border text-amber-900 bg-amber-50 border-amber-200"><b>The ${label} service is switched off</b> (Services section, "Hide this service"), so its page sends visitors to the home page and this FAQ is not shown. Untick that option to bring the page back.</p>`:''}
     ${fld(base,['hidden','Hide the FAQ on this page (the questions are kept)','check'])}
-    <details class="bg-gray-50 rounded-xl border border-gray-200"><summary class="p-3 text-xs font-bold cursor-pointer">Heading for this page only (optional)</summary><div class="p-3 pt-0 grid sm:grid-cols-2 gap-3">${fld(base,['title','Heading (empty: the heading above)'])}${fld(base,['intro','Introduction (empty: the introduction above)','area'])}</div></details>
+    <details class="bg-gray-50 rounded-xl border border-gray-200"><summary class="p-3 text-xs font-bold cursor-pointer">Heading and introduction (optional)</summary><div class="p-3 pt-0 space-y-3">
+      <p class="text-[11px] text-gray-500">The first two apply to the FAQ on every page; the next two only to this page (empty: the first two).</p>
+      ${bi('faq.',['title','Heading, all pages (empty: "Frequently asked questions")'])}${bi('faq.',['intro','Introduction, all pages','area'],[],{rows:3})}
+      ${bi(base,['title','Heading, this page only'])}${bi(base,['intro','Introduction, this page only','area'],[],{rows:3})}</div></details>
   </div>
   <div id="faq-items" class="space-y-3">${items.length?items.map((x,i)=>`<details ${faqOpen===i?'open':''} class="bg-white rounded-2xl border border-gray-200 shadow-sm"><summary class="flex items-center gap-2 p-3 cursor-pointer"><i class="fas fa-chevron-right chev text-[10px] text-gray-400"></i><span class="flex-1 min-w-0 font-bold text-sm truncate">${esc(x.q||'New question')}</span>
       ${btn('faq-up',i,'fa-arrow-up','Move up',!i)}${btn('faq-down',i,'fa-arrow-down','Move down',i>=items.length-1)}${btn('faq-dup',i,'fa-clone','Duplicate')}${btn('faq-del',i,'fa-trash','Delete',false,'bg-red-50 text-red-600')}</summary>
-      <div class="p-4 pt-1 space-y-3 border-t">${fld(`${base}items.${i}.`,['q','Question'],['q','a'])}${fld(`${base}items.${i}.`,['a','Answer','area'],['q','a'])}</div></details>`).join(''):`<p class="text-sm text-gray-600 bg-white p-4 rounded-2xl border">No questions on the ${label} page yet. Add the first one; until then this page shows no FAQ.</p>`}</div>`;
+      <div class="p-4 pt-1 space-y-3 border-t">${bi(`${base}items.${i}.`,['q','Question'],['q','a'])}${bi(`${base}items.${i}.`,['a','Answer','area'],['q','a'])}</div></details>`).join(''):`<p class="text-sm text-gray-600 bg-white p-4 rounded-2xl border">No questions yet. Add the first one; until then this page shows no FAQ.</p>`}</div>`;
 }
 document.addEventListener('input',e=>{
   const p=e.target.dataset.p;if(!p||!/^faq\.pages\.\w+\.items\.\d+\.q$/.test(p))return;
@@ -551,11 +568,10 @@ document.addEventListener('input',e=>{
 document.addEventListener('click',e=>{
   const t=e.target.closest('[data-act^="faq-"]');if(!t||!D)return;
   const a=t.dataset.act,i=+t.dataset.i;
-  if(a==='faq-page'){faqPage=t.dataset.k;faqOpen=null;view();return}
   if(a==='faq-add'){const p=faqP();p.items.push({id:String(Math.max(0,...p.items.map(x=>+x.id||0))+1),q:'',a:''});faqOpen=p.items.length-1;mark();tabs();view();document.querySelector('#faq-items details[open] input')?.focus();return}
   const p=faqP(),arr=p.items;
   if(a==='faq-up'||a==='faq-down'){const j=a==='faq-up'?i-1:i+1;if(j<0||j>=arr.length)return;[arr[i],arr[j]]=[arr[j],arr[i]];faqOpen=j;mark();view()}
-  else if(a==='faq-dup'){const c=JSON.parse(JSON.stringify(arr[i]));c.id=String(Math.max(0,...arr.map(x=>+x.id||0))+1);arr.splice(i+1,0,c);faqOpen=i+1;mark();tabs();view()}
+  else if(a==='faq-dup'){const c=JSON.parse(JSON.stringify(arr[i])),old=arr[i].id;c.id=String(Math.max(0,...arr.map(x=>+x.id||0))+1);const ai=(((A.faq||{}).pages||{})[faqPage]||{}).items||[],ac=ai.find(y=>String(y.id)===String(old));if(ac)ai.push({...ac,id:c.id});arr.splice(i+1,0,c);faqOpen=i+1;mark();tabs();view()}
   else if(a==='faq-del'){if(confirm(`Delete "${arr[i].q||'this question'}"?`)){arr.splice(i,1);faqOpen=null;mark();tabs();view()}}
 });
 function fmt(k,p){
@@ -589,12 +605,12 @@ function validate(){
   return '';
 }
 function badFaq(pk,i,f,msg){
-  tab='faq';faqPage=pk;faqOpen=i;tabs();view();
+  ASEC.go(`${pk==='home'?'home':pk}-faq`);faqOpen=i;faqPage=pk;tabs();view();
   const el=document.querySelector(`[data-p="faq.pages.${pk}.items.${i}.${f}"]`);if(el){el.classList.add('bad');el.focus();el.scrollIntoView({block:'center'})}
   return msg;
 }
 function bad(k,i,f,msg){
-  tab=k;q='';openItem=`${k}.${i}`;tabs();view();
+  ASEC.goList(k);q='';openItem=`${k}.${i}`;tabs();view();
   const el=document.querySelector(`[data-p="${k}.${i}.${f}"]`);if(el){el.classList.add('bad');el.focus();el.scrollIntoView({block:'center'})}
   return msg;
 }
@@ -602,7 +618,6 @@ function bad(k,i,f,msg){
 const TRF={carousel:['title','subtitle','tag'],jurisdictions:['country','tag','brief','details'],news:['title','subtitle','excerpt','text'],services:['title','description','details','pageContent'],testimonials:['name','role','text'],employees:['name','position']};
 const UIK=Object.keys(KLang.DICT.en).filter(k=>typeof KLang.DICT.en[k]==='string'&&k!=='switch_to');
 const arPath=()=>S.p.replace(/\.json$/,'')+'.ar.json';
-const enRef=p=>{const v=get(DEN,p);return Array.isArray(v)?v.join(' / '):String(v||'')};
 function mirror(en,ar){ // the Arabic form always has the same items, in the same order, as the English content
   ar=ar||{};
   const o={aboutMainText:ar.aboutMainText||'',about:ar.about||'',ipServicesText:ar.ipServicesText||'',contact:{address:(ar.contact||{}).address||[]},chatPrompts:ar.chatPrompts||[],newsCategories:(en.newsCategories||[]).map((c,i)=>(ar.newsCategories||[])[i]||''),ui:{...(ar.ui||{})}};
@@ -639,62 +654,33 @@ function compact(ar){ // only what has been written is saved
   if(has(fo.title)||has(fo.intro)||Object.keys(fo.pages).length)o.faq=fo;
   return o;
 }
-function syncLang(){
-  document.querySelectorAll('[data-act="lang"]').forEach(b=>{const on=b.dataset.l===lang;b.className='px-3 py-2 '+(on?'bg-brand-600 text-white':'bg-white hover:bg-gray-100')});
-  $('repo-name').textContent=`${S.o}/${S.r}`+(lang==='ar'?' · Arabic':'');
-}
-async function switchLang(l){
-  if(l===lang||!D)return;
-  if(dirty)return toast('Save or discard your changes before switching language.',false);
-  if(l==='ar'){
-    DEN=D;
-    if(DAR===null){
-      try{const j=await api(arPath(),{query:'?ref='+encodeURIComponent(S.b)});DAR=JSON.parse(unb64(j.content));shaAR=j.sha}
-      catch(e){if(e.status===404){DAR={};shaAR=''}else return toast(e instanceof SyntaxError?'app-data.ar.json is not valid JSON.':e.message,false)}
-    }
-    D=mirror(DEN,DAR);
-  }else D=DEN;
-  lang=l;tab='general';openItem=null;q='';mark(false);tabs();view();syncLang();
-}
-async function saveAr(){
-  $('save').disabled=true;$('state').textContent='Saving...';
-  try{
-    const out=compact(D),body={message:'Update Arabic content via admin page',content:b64(new TextEncoder().encode(JSON.stringify(out,null,2)+'\n')),branch:S.b};
-    if(shaAR)body.sha=shaAR;
-    const j=await api(arPath(),{method:'PUT',body});shaAR=j.content.sha;DAR=out;mark(false);tabs();toast('Arabic content saved. The site updates in a minute or two.');
-  }catch(e){mark(true);toast(e.message,false)}
-}
-const langCard=()=>`<div class="rounded-xl bg-brand-50 border border-brand-100 p-3"><label class="block text-xs font-bold">Site languages<select data-p="languages" class="${inp} mt-1">${[['en','English only'],['ar','Arabic only (right-to-left)'],['both','English and Arabic (visitors choose with a button in the header)']].map(([v,t])=>`<option value="${v}" ${(D.languages||'en')===v?'selected':''}>${t}</option>`).join('')}</select></label><p class="text-[11px] text-gray-600 mt-1.5">Use the <b>EN | عربي</b> switch at the top of this page to write the Arabic content. It has the same items as the English content; anything left empty shows the English text on the Arabic site. Save the English settings here to apply the language choice.</p></div>`;
-function viewGenAr(){
-  const f=GEN.filter(x=>['aboutMainText','about','ipServicesText','chatPrompts'].includes(x[0])),cats=DEN.newsCategories||[];
-  $('view').innerHTML=`<div class="bg-white p-4 rounded-2xl border border-gray-200 space-y-3">${f.map(x=>fld('',x)).join('')}${fld('',['contact.address','Address (Arabic, one line per row). Empty = the English address','lines'])}${cats.length?`<div><span class="text-xs font-bold text-gray-700">News categories (same order as the English list)</span>${cats.map((c,i)=>`<label class="block mt-1.5"><span class="block text-[11px] text-gray-500" dir="ltr">${esc(c)}</span><input data-p="newsCategories.${i}" dir="rtl" value="${esc((D.newsCategories||[])[i]||'')}" class="${inp}"></label>`).join('')}</div>`:''}</div>`;
-}
-function viewPages(){          // fixed texts of the About, Patents, Trademarks and Translation pages (Arabic only)
-  const names={about:'About page (and texts shared by all pages)',patents:'Patents page',trademarks:'Trademarks page',translation:'Translation page'},by={};
-  Object.keys(window.KTX||{}).forEach(k=>(by[k.split('.')[0]]=by[k.split('.')[0]]||[]).push(k));
-  $('view').innerHTML=`<div class="bg-white p-4 rounded-2xl border border-gray-200 space-y-3"><h2 class="font-extrabold text-lg">Page texts</h2><p class="text-xs text-gray-600">The fixed wording written into the pages themselves (menu, headings, the About page, the contact block). The grey Arabic is the built-in suggestion; type your own to replace it, or leave a box empty to keep it. <b>{khip}</b> is replaced by the styled KHIP name. The text of the service pages (Patents, Trademarks, Translation) is edited in the <b>Services</b> tab, and the FAQ in the <b>FAQ</b> tab.</p></div>`+Object.entries(names).filter(([g])=>by[g]).map(([g,n])=>`<details ${g==='about'?'open':''} class="bg-white rounded-2xl border border-gray-200 shadow-sm"><summary class="flex items-center gap-2 p-3 cursor-pointer"><i class="fas fa-chevron-right chev text-[10px] text-gray-400"></i><span class="font-bold text-sm">${n} (${by[g].length})</span></summary><div class="p-4 pt-1 space-y-3 border-t">${by[g].map(k=>`<label class="block"><span class="block text-[11px] text-gray-500" dir="ltr">${esc(KTX[k].en)}</span><textarea data-p="ui.tx_${k.replace(/\./g,'_')}" dir="rtl" rows="${KTX[k].en.length>110?4:KTX[k].en.length>45?2:1}" placeholder="${esc(KTX[k].ar)}" class="${inp}">${esc((D.ui||{})['tx_'+k.replace(/\./g,'_')]||'')}</textarea></label>`).join('')}</div></details>`).join('');
-}
-function viewFaqAr(){          // Arabic FAQ: same questions as the English list; write the Arabic question and answer under each
-  const label=FAQ_PAGES.find(x=>x[0]===faqPage)[1],base=`faq.pages.${faqPage}.`,items=faqItems(),n=k=>((((DEN||{}).faq||{}).pages||{})[k]||{}).items||[];
-  $('view').innerHTML=`<div class="bg-white p-4 rounded-2xl border border-gray-200 space-y-3"><div><h2 class="font-extrabold text-lg">FAQ</h2><p class="text-xs text-gray-600">The same questions as the English list (add, remove or reorder them in English). Write the Arabic question and answer under each; an item left empty shows in English. Press Save to publish.</p></div>
-    <div class="grid sm:grid-cols-2 gap-3">${fld('faq.',['title','Section heading, all pages'])}${fld('faq.',['intro','Introduction (optional, all pages)','area'])}</div></div>
-  <div class="flex flex-wrap gap-2">${FAQ_PAGES.map(([k,nm])=>`<button data-act="faq-page" data-k="${k}" class="text-xs font-bold px-3.5 py-2 rounded-xl ${k===faqPage?'bg-brand-600 text-white':'bg-white border border-gray-200 hover:bg-gray-100'}">${nm} <span class="opacity-70">(${n(k).length})</span></button>`).join('')}</div>
-  <div class="bg-white p-4 rounded-2xl border border-gray-200 space-y-3"><h3 class="font-extrabold text-base">${label} page</h3>
-    <details class="bg-gray-50 rounded-xl border border-gray-200"><summary class="p-3 text-xs font-bold cursor-pointer">Heading for this page only (optional)</summary><div class="p-3 pt-0 grid sm:grid-cols-2 gap-3">${fld(base,['title','Heading'])}${fld(base,['intro','Introduction','area'])}</div></details></div>
-  <div class="space-y-3">${items.length?items.map((x,i)=>`<details ${faqOpen===i?'open':''} class="bg-white rounded-2xl border border-gray-200 shadow-sm"><summary class="flex items-center gap-2 p-3 cursor-pointer"><i class="fas fa-chevron-right chev text-[10px] text-gray-400"></i><span class="flex-1 min-w-0 font-bold text-sm truncate" dir="auto">${esc(x.q||enRef(`${base}items.${i}.q`))}</span></summary><div class="p-4 pt-1 space-y-3 border-t">${fld(`${base}items.${i}.`,['q','Question'])}${fld(`${base}items.${i}.`,['a','Answer','area'])}</div></details>`).join(''):`<p class="text-sm text-gray-600 bg-white p-4 rounded-2xl border">No questions on the ${label} page yet. Add them in English first.</p>`}</div>`;
-}
-function viewUi(){
-  $('view').innerHTML=`<div class="bg-white p-4 rounded-2xl border border-gray-200 space-y-3"><p class="text-xs text-gray-600">The short words the site uses (menu, buttons, headings). The grey Arabic is a starting suggestion; type your own to replace it, or leave a box empty to keep it. <b>{x}</b> is replaced automatically by a name.</p>${UIK.map(k=>`<label class="block"><span class="block text-[11px] text-gray-500" dir="ltr">${esc(KLang.DICT.en[k])}</span><input data-p="ui.${k}" dir="rtl" value="${esc((D.ui||{})[k]||'')}" placeholder="${esc(KLang.DICT.ar[k])}" class="${inp}"></label>`).join('')}</div>`;
+const langCard=()=>`<div class="rounded-xl bg-brand-50 border border-brand-100 p-3"><label class="block text-xs font-bold">Site languages<select data-p="languages" class="${inp} mt-1">${[['en','English only'],['ar','Arabic only (right-to-left)'],['both','English and Arabic (visitors choose with a button in the header)']].map(([v,t])=>`<option value="${v}" ${(D.languages||'en')===v?'selected':''}>${t}</option>`).join('')}</select></label><p class="text-[11px] text-gray-600 mt-1.5">Everywhere in this admin, English and Arabic are written side by side. Anything left empty in Arabic shows the English text on the Arabic site. The Arabic text only appears on the site when this is set to <b>Arabic only</b> or <b>English and Arabic</b>.</p></div>`;
+async function put(path,obj,shaOld,msg){
+  const body={message:msg,content:b64(new TextEncoder().encode(JSON.stringify(obj,null,2)+'\n')),branch:S.b};
+  if(shaOld)body.sha=shaOld;
+  return (await api(path,{method:'PUT',body})).content.sha;
 }
 async function save(){
-  if(lang==='ar')return saveAr();
   const err=validate();if(err)return toast(err,false);
-  cleanTheme();cleanFaq();
+  cleanTheme();cleanFaq();cleanUi();cleanCats();A=mirror(D,A);
+  const enNow=JSON.stringify(D),arOut=compact(A),arNow=JSON.stringify(arOut);
   $('save').disabled=true;$('state').textContent='Saving...';
+  let step='English';
   try{
-    const j=await api(S.p,{method:'PUT',body:{message:'Update content via admin page',content:b64(new TextEncoder().encode(JSON.stringify(D,null,2)+'\n')),sha,branch:S.b}});
-    sha=j.content.sha;mark(false);tabs();toast('Saved. The site updates in a minute or two.');
-  }catch(e){mark(true);toast(e.message,false)}
+    if(enNow!==EN0){sha=await put(S.p,D,sha,'Update content via admin page');EN0=enNow}
+    step='Arabic';
+    if(arNow!==AR0&&(shaAR||Object.keys(arOut).length)){shaAR=await put(arPath(),arOut,shaAR,'Update Arabic content via admin page')}
+    AR0=arNow;mark(false);tabs();toast('Saved. The site updates in a minute or two.');
+  }catch(e){mark(true);toast((step==='Arabic'&&enNow===EN0?'English saved, but the Arabic file was not: ':'')+e.message,false)}
+}
+// News categories are matched to their Arabic names by position: drop empty rows from both together
+function cleanUi(){   // empty wording boxes mean "built-in text": do not save them
+  if(D.ui){Object.keys(D.ui).forEach(k=>{if(typeof D.ui[k]!=='string'||!D.ui[k].trim())delete D.ui[k]});if(!Object.keys(D.ui).length)delete D.ui}
+}
+function cleanCats(){
+  const en=D.newsCategories||[],ar=A.newsCategories=A.newsCategories||[],ke=[],ka=[];
+  en.forEach((c,i)=>{if(String(c||'').trim()){ke.push(String(c).trim());ka.push(ar[i]||'')}});
+  D.newsCategories=ke;A.newsCategories=ka;
 }
 // Large photos are scaled down in the browser so uploads stay fast and the site stays light
 async function shrink(file){
@@ -751,7 +737,7 @@ document.addEventListener('input',e=>{
   e.target.classList.remove('bad');
   set(D,p,e.target.dataset.lines?e.target.value.split('\n').map(x=>x.trim()).filter(Boolean):e.target.value);mark();
   if(p.endsWith('image')){const im=document.querySelector(`[data-prev="${p}"]`);if(im){im.style.visibility='';im.src=imgSrc(e.target.value)}}
-  if(/\.(title|country|name)$/.test(p)){const sm=e.target.closest('details')?.querySelector('summary span');if(sm)sm.textContent=e.target.value||'Untitled'}
+  if(!p.startsWith('ar:')&&/\.(title|country|name)$/.test(p)){const sm=e.target.closest('details')?.querySelector('summary span');if(sm)sm.textContent=e.target.value||'Untitled'}
 });
 document.addEventListener('change',e=>{
   const bs=e.target.dataset.bgsel;
@@ -765,13 +751,13 @@ document.addEventListener('change',e=>{
   const p=e.target.dataset.p;if(p&&p.endsWith('image')&&e.target.value){const v=e.target.value.trim().replace(/^\.\/assets\//,'');e.target.value=v;set(D,p,v)}const f=e.target.files?.[0];if(f&&e.target.dataset.up){upload(f,e.target.dataset.up);e.target.value=''}});
 document.addEventListener('click',e=>{
   const t=e.target.closest('[data-act]');if(!t)return;
-  const a=t.dataset.act,i=+t.dataset.i,arr=D&&D[tab];
+  const a=t.dataset.act,i=+t.dataset.i,lk=LK(),arr=D&&D[lk];
   if(t.closest('summary'))e.preventDefault();
   if(a==='tab'){tab=t.dataset.k;openItem=null;q='';tabs();view()}
-  else if(a==='add'){const s=SC[tab];const o={id:String(Math.max(0,...arr.map(x=>+x.id||0))+1)};s.f.forEach(([k,,t])=>{if(t!=='check')o[k]=''});if(tab==='news')o.category=(D.newsCategories||[]).filter(Boolean)[0]||'General';arr.push(o);openItem=`${tab}.${arr.length-1}`;q='';mark();tabs();view();document.querySelector('details[open] input')?.focus()}
-  else if(a==='dup'){const c=JSON.parse(JSON.stringify(arr[i]));c.id=String(Math.max(0,...arr.map(x=>+x.id||0))+1);const k=SC[tab].title;c[k]=(c[k]||'')+' (copy)';arr.splice(i+1,0,c);openItem=`${tab}.${i+1}`;mark();tabs();view()}
-  else if(a==='del'){if(confirm(`Delete "${arr[i][SC[tab].title]||'this item'}"?`)){arr.splice(i,1);openItem=null;mark();tabs();view()}}
-  else if(a==='up'||a==='down'){const j=a==='up'?i-1:i+1;[arr[i],arr[j]]=[arr[j],arr[i]];openItem=`${tab}.${j}`;mark();view()}
+  else if(a==='add'){const s=SC[lk];const o={id:String(Math.max(0,...arr.map(x=>+x.id||0))+1)};s.f.forEach(([k,,t])=>{if(t!=='check')o[k]=''});if(lk==='news')o.category=(D.newsCategories||[]).filter(Boolean)[0]||'General';arr.push(o);openItem=`${lk}.${arr.length-1}`;q='';mark();tabs();view();document.querySelector('details[open] input')?.focus()}
+  else if(a==='dup'){const c=JSON.parse(JSON.stringify(arr[i])),old=arr[i].id;c.id=String(Math.max(0,...arr.map(x=>+x.id||0))+1);const ai=A[lk]||[],ac=ai.find(y=>String(y.id)===String(old));if(ac)ai.push({...ac,id:c.id});const k=SC[lk].title;c[k]=(c[k]||'')+' (copy)';arr.splice(i+1,0,c);openItem=`${lk}.${i+1}`;mark();tabs();view()}
+  else if(a==='del'){if(confirm(`Delete "${arr[i][SC[lk].title]||'this item'}"?`)){arr.splice(i,1);openItem=null;mark();tabs();view()}}
+  else if(a==='up'||a==='down'){const j=a==='up'?i-1:i+1;[arr[i],arr[j]]=[arr[j],arr[i]];openItem=`${lk}.${j}`;mark();view()}
   else if(a==='col-reset'){theme().colors[t.dataset.k]=TH.DEFAULTS[t.dataset.k];mark();view()}
   else if(a==='col-reset-all'){if(confirm('Set every site color back to its default?')){Object.assign(theme().colors,TH.DEFAULTS);mark();view()}}
   else if(a==='preset'){const pr=PRESETS.find(x=>x[0]===t.dataset.k);if(pr&&confirm(`Use the "${pr[1]}" palette? It replaces the site colors above (your own colors are kept).`)){Object.assign(theme().colors,pr[2]);mark();view()}}
@@ -779,11 +765,10 @@ document.addEventListener('click',e=>{
   else if(a==='cc-del'){const c=theme().custom[i];if(c&&confirm(`Delete "${c.name||c.hex}"? Sections that use it go back to their normal background.`)){theme().custom.splice(i,1);mark();view()}}
   else if(a==='import')impOpen();
   else if(a==='simport')slOpen();
-  else if(a==='lang')switchLang(t.dataset.l);
   else if(a==='fmt')fmt(t.dataset.k,t.dataset.t);
   else if(a==='save')save();
-  else if(a==='discard'){if(confirm('Discard all unsaved changes and reload from GitHub?')){dirty=false;if(lang==='ar'){DAR=null;D=DEN;lang='en';switchLang('ar')}else connect(S)}}
-  else if(a==='backup'){const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([JSON.stringify(D,null,2)],{type:'application/json'}));l.download='app-data-backup.json';l.click()}
+  else if(a==='discard'){if(confirm('Discard all unsaved changes and reload from GitHub?')){dirty=false;connect(S)}}
+  else if(a==='backup'){const dl=(o,n)=>{const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([JSON.stringify(o,null,2)],{type:'application/json'}));l.download=n;l.click()};dl(D,'app-data-backup.json');dl(compact(mirror(D,A)),'app-data.ar-backup.json')}
   else if(a==='out'){if(!dirty||confirm('You have unsaved changes. Sign out anyway?')){sessionStorage.removeItem('khip-admin-t');dirty=false;location.reload()}}
 });
 $('login-form').addEventListener('submit',e=>{
@@ -799,5 +784,9 @@ if(tk&&$('f-o').value){$('f-t').value=tk;$('f-s').checked=true;connect({o:$('f-o
 
 
 </script>
+<script src="admin-look.js"></script>
+<script src="sections-map.js"></script>
+<script src="admin-sections.js"></script>
+<script src="admin-general.js"></script>
 </body>
 </html>

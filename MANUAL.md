@@ -55,7 +55,7 @@ Saving in the admin writes a commit to the repository. The host republishes the 
 ## 6. File map
 - `index.html`, `about.html`, `patents.html`, `trademarks.html`, `translation.html`: the pages.
 - `app-data.json`, `app-data.ar.json`: all editable content. `app-data.sample.json` is a minimal example.
-- `admin.html`: the admin page. `news-import.js`, `slider-import.js`: Word / Markdown / spreadsheet import readers used by the admin.
-- `theme.js` (colors, backgrounds, hero height), `lang.js` (English / Arabic engine), `pages-i18n.js` (fixed page texts, English and Arabic), `rich.js` (text formatting), `faq.js`, `service-page.js`, `footer.js` (bottom bar and WhatsApp box), `tailwind-config.js`, `styles.css`.
+- `admin.html`: the admin page. `admin-look.js`: the look controls (header & bar, cards, text alignment, logos, picture effects, animation, map & logo motion), drawn in General (site-wide) and in Sections ("Look of this section"); `admin-general.js`, `admin-sections.js`, `sections-map.js`: the General and Sections pages. `news-import.js`, `slider-import.js`: Word / Markdown / spreadsheet import readers used by the admin.
+- `theme.js` (colors, backgrounds, hero height, header / bar / card colours, text alignment, logo sizes), `lang.js` (English / Arabic engine), `pages-i18n.js` (fixed page texts, English and Arabic), `rich.js` (text formatting), `look.js` (menu behaviour), `faq.js`, `service-page.js`, `footer.js` (bottom bar and WhatsApp box), `tailwind-config.js`, `styles.css`.
 - `assets/`: logos, team photos and uploaded pictures.
 - `scripts/validate.js`, `.github/workflows/validate.yml`: content check run by GitHub.

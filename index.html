@@ -6,22 +6,22 @@
 <title>KHIP - Intellectual Property & Legal Solutions</title>
 <meta name="description" content="KHIP (Khaled Hamada Intellectual Property): patents and trademarks across the Middle East.">
 <meta name="theme-color" content="#1d4ed8">
-<script src="site-version.js?v=6b"></script>
-<script src="lang.js?v=6b"></script>
+<script src="site-version.js?v=8b"></script>
+<script src="lang.js?v=8b"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/light/style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/7.2.3/css/flag-icons.min.css">
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="tailwind-config.js?v=6b"></script>
-<script src="theme.js?v=6b"></script>
-<link rel="stylesheet" href="styles.css?v=6b">
+<script src="tailwind-config.js?v=8b"></script>
+<script src="theme.js?v=8b"></script>
+<link rel="stylesheet" href="styles.css?v=8b">
 </head>
 <body class="font-sans font-light antialiased">
 <div id="app-top"></div>
 <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-xl border-b border-stone-200">
   <div class="wrap py-3 flex items-center justify-between">
-    <div class="flex items-center"><a href="index.html" class="site-logo-link" aria-label="Khaled Hamada Intellectual Property, home"><img src="assets/khaled-hamada-ip-logo.png?v=2" width="757" height="127" alt="Khaled Hamada Intellectual Property" class="site-logo" decoding="async"></a></div>
+    <div class="flex items-center"><a href="index.html" class="site-logo-link" aria-label="Khaled Hamada Intellectual Property, home"><img src="assets/khaled-hamada-ip-logo.png?v=2" width="757" height="127" alt="Khaled Hamada Intellectual Property" class="site-logo" data-logo="header" decoding="async"></a></div>
     <nav class="hidden lg:flex gap-8 text-sm text-stone-600" aria-label="Main">
       <a href="#about" class="hover:text-brand-600 transition" data-i18n="nav_about">About</a><a href="#jurisdictions" class="hover:text-brand-600 transition" data-i18n="nav_jur">Jurisdictions</a><a href="#services" class="hover:text-brand-600 transition" data-i18n="nav_services">Services</a><a href="#news" class="hover:text-brand-600 transition" data-i18n="nav_news">News</a></nav>
     <div class="flex items-center gap-2"><div id="lang-switch"></div><div class="flex gap-2" id="socials"></div></div>
@@ -34,7 +34,7 @@
   <section class="w-full"><div id="carousel" class="relative w-full h-32 sm:h-40 md:h-52 lg:h-64 overflow-hidden bg-ink" aria-roledescription="carousel"></div></section>
 
   <section id="about" data-sec="home-about" class="band"><div class="wrap grid md:grid-cols-[minmax(0,9.5rem)_1fr] lg:grid-cols-[minmax(0,11rem)_1fr] gap-8 md:gap-10 lg:gap-14 items-center">
-    <div class="fu flex justify-center"><img src="assets/khip-logo.jpg?v=2" width="800" height="822" alt="Khaled Hamada Intellectual Property" class="about-logo w-56 sm:w-64 md:w-full max-w-[22rem] md:max-w-[9.5rem] lg:max-w-[11rem] h-auto" decoding="async"></div>
+    <div class="fu flex justify-center"><img src="assets/khip-logo.jpg?v=2" width="800" height="822" alt="Khaled Hamada Intellectual Property" data-logo="home" class="about-logo w-56 sm:w-64 md:w-full max-w-[22rem] md:max-w-[9.5rem] lg:max-w-[11rem] h-auto" decoding="async"></div>
     <div class="fu text-center md:text-start" style="--d:.15s"><span class="rule mx-auto md:mx-0 !mt-0"></span><p id="about-text" class="text-base md:text-lg leading-relaxed"></p>
       <a href="about.html" class="mt-8 inline-flex items-center gap-2 text-sm border border-ink/30 hover:bg-ink hover:text-white px-9 py-2.5 rounded-full transition"><span data-i18n="more">More</span> <i class="ph-light ph-arrow-right rtl:-scale-x-100"></i></a></div>
   </div></section>
@@ -85,10 +85,11 @@
   </div>
 </div>
 
-<script src="rich.js?v=6b"></script>
-<script src="faq.js?v=6b"></script>
-<script src="footer.js?v=6b"></script>
-<script src="contact.js?v=6b"></script>
+<script src="rich.js?v=8b"></script>
+<script src="faq.js?v=8b"></script>
+<script src="footer.js?v=8b"></script>
+<script src="look.js?v=1"></script>
+<script src="contact.js?v=8b"></script>
 <script>
 const SHOW_PRODUCTS=false; // products / search reports hidden for now
 const DATA_URL="./app-data.json", CACHE="khip-data-v3";
@@ -118,7 +119,7 @@ async function load(){
 }
 
 function render(){
-  KLang.dom();
+  KLang.useUi(D);KLang.dom();
   $('about-text').innerHTML=KRich.card(D.aboutMainText||D.about||'');
   KHIP.setPrompts(D.chatPrompts);
   const s=D.social||{};

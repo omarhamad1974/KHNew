@@ -17,7 +17,7 @@
 <body class="font-sans font-light antialiased">
 <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-xl border-b border-stone-200">
   <div class="wrap py-3 flex items-center justify-between">
-    <a href="index.html" class="site-logo-link" aria-label="Khaled Hamada Intellectual Property, home"><img src="assets/khaled-hamada-ip-logo.png" width="757" height="127" alt="Khaled Hamada Intellectual Property" class="site-logo" decoding="async"></a>
+    <a href="index.html" class="site-logo-link" aria-label="Khaled Hamada Intellectual Property, home"><img src="assets/khaled-hamada-ip-logo.png" width="757" height="127" alt="Khaled Hamada Intellectual Property" class="site-logo" data-logo="header" decoding="async"></a>
     <nav class="hidden lg:flex gap-8 text-sm text-stone-600" aria-label="Main">
       <a href="index.html" class="hover:text-brand-600 transition">Home</a><a href="patents.html" class="text-brand-700 font-normal transition">Patents</a><a href="trademarks.html" class="hover:text-brand-600 transition">Trademarks</a><a href="translation.html" data-svc-page="translation.html" hidden class="hover:text-brand-600 transition">Translation</a><a href="about.html" class="hover:text-brand-600 transition">About</a>
     <a href="my-stuff.html" class="hover:text-brand-600 transition">My files</a></nav>
@@ -34,6 +34,7 @@
 </div></section>
 </main>
 <script src="footer.js"></script>
+<script src="look.js?v=1"></script>
 <script src="auth.js"></script>
 <script>
 const io=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}}),{threshold:.08});
