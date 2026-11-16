@@ -6,21 +6,21 @@
     {
       "id": "1",
       "title": "Using Legal Skills with Technical Knowledge",
-      "subtitle": "Discover legal and IP services.",
+      "subtitle": "",
       "tag": "Featured",
       "image": "mwiioilp-1000097178.jpg"
     },
     {
       "id": "2",
       "title": "Protecting Innovation",
-      "subtitle": "Discover legal and IP services.",
+      "subtitle": "",
       "tag": "Featured",
       "image": "./assets/slider2.jpg"
     },
     {
       "id": "3",
       "title": "Making a difference ",
-      "subtitle": "To people lives and people business ",
+      "subtitle": "",
       "tag": "",
       "image": "mwiip53o-1000097174.jpg"
     }
@@ -419,6 +419,13 @@
       "mobile": 120,
       "tablet": 160,
       "desktop": 200
+    },
+    "fonts": {
+      "all": {
+        "head": {
+          "en": "Lora"
+        }
+      }
     }
   },
   "newsCategories": [
