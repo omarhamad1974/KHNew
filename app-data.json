@@ -378,10 +378,6 @@
         "mode": "color",
         "color": "role:accent"
       },
-      "home-jurisdictions": {
-        "mode": "color",
-        "color": "role:accent"
-      },
       "home-services": {
         "mode": "color",
         "color": "role:accent"
@@ -435,6 +431,19 @@
           "delay": "0.1",
           "hover": "zoom"
         }
+      },
+      "sec": {
+        "home-jurisdictions": {
+          "cards": {
+            "effect": "zoom"
+          }
+        }
+      }
+    },
+    "secCards": {
+      "home-jurisdictions": {
+        "bg": "role:ink",
+        "border": "role:accentDark"
       }
     }
   },
