@@ -461,6 +461,10 @@
     "secCards": {
       "home-services": {
         "bg": "role:sand"
+      },
+      "patents-intro": {
+        "bg": "role:gold",
+        "opacity": "25"
       }
     },
     "wa": {
@@ -470,6 +474,13 @@
     "menu": {
       "mode": "both",
       "bg": "role:accentDark"
+    },
+    "logos": {
+      "home": {
+        "m": "80",
+        "t": "90",
+        "d": "100"
+      }
     }
   },
   "newsCategories": [
