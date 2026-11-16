@@ -444,6 +444,11 @@
           "cards": {
             "effect": "zoom"
           }
+        },
+        "patents-details": {
+          "cards": {
+            "effect": "start"
+          }
         }
       }
     },
