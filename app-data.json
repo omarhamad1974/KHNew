@@ -136,6 +136,24 @@
       "excerpt": "KHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egypt",
       "text": "What will be the future of IP in the region and middle east What will be the future of IP in the region and middle east What will be the future of IP in the region and middle east ",
       "category": "KHIP News"
+    },
+    {
+      "id": "4",
+      "title": "IP future in the middle east  (copy)",
+      "date": "2026-10-24",
+      "image": "mwj63ia2-psammotherapy.jpg",
+      "excerpt": "KHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egypt",
+      "text": "What will be the future of IP in the region and middle east What will be the future of IP in the region and middle east What will be the future of IP in the region and middle east ",
+      "category": "KHIP News"
+    },
+    {
+      "id": "3",
+      "title": "IP future in the middle east  (copy)",
+      "date": "2026-10-24",
+      "image": "mwj63txx-Siwa-Shali-385.jpg",
+      "excerpt": "KHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egypt",
+      "text": "What will be the future of IP in the region and middle east What will be the future of IP in the region and middle east What will be the future of IP in the region and middle east ",
+      "category": "KHIP News"
     }
   ],
   "services": [
@@ -476,7 +494,7 @@
       },
       "home-news": {
         "bg": "role:accentDark",
-        "opacity": "10",
+        "opacity": "5",
         "border": "role:accentDark"
       }
     },
