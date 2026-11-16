@@ -121,20 +121,21 @@
   "news": [
     {
       "id": "1",
-      "title": "KHIP attends the event bla bla bla",
-      "image": "mwiirc1q-1000008469.jpg",
+      "title": "IP future in the middle east ",
+      "image": "mwj5wdgf-photo-1491895200222-0fc4a4c35e18.jpg",
       "excerpt": "KHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egypt",
       "text": "KHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egypt\n\nKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egyptKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egyptKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egypt\n\nKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egyptKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egypt\n\nKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egyptKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egyptKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egypt",
-      "category": "General"
+      "category": "General",
+      "date": "2026-11-16"
     },
     {
       "id": "2",
       "title": "IP future in the middle east ",
       "date": "2026-10-24",
-      "image": "slider1.jpg",
+      "image": "mwj5wqx0-SIWA-6.jpg",
       "excerpt": "What will be the future of IP in the region and middle east ",
       "text": "What will be the future of IP in the region and middle east What will be the future of IP in the region and middle east What will be the future of IP in the region and middle east ",
-      "category": "General"
+      "category": "KHIP News"
     }
   ],
   "services": [
@@ -453,6 +454,14 @@
           "cards": {
             "effect": "start"
           }
+        },
+        "home-news": {
+          "cards": {
+            "effect": "start"
+          },
+          "text": {
+            "effect": "start"
+          }
         }
       }
     },
@@ -464,6 +473,11 @@
       "translation-intro": {
         "bg": "role:ink",
         "opacity": "5"
+      },
+      "home-news": {
+        "bg": "role:accentDark",
+        "opacity": "10",
+        "border": "role:accentDark"
       }
     },
     "logos": {
