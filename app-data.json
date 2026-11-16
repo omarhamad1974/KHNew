@@ -426,6 +426,17 @@
           "en": "Lora"
         }
       }
+    },
+    "motion": {
+      "map": {
+        "entrance": "rise"
+      },
+      "logos": {
+        "home": {
+          "effect": "fade",
+          "speed": "1.4"
+        }
+      }
     }
   },
   "newsCategories": [
