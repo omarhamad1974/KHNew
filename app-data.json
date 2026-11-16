@@ -122,7 +122,7 @@
     {
       "id": "1",
       "title": "KHIP attends the event bla bla bla",
-      "image": "./assets/slider1.jpg",
+      "image": "mwiirc1q-1000008469.jpg",
       "excerpt": "KHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egypt",
       "text": "KHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egypt\n\nKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egyptKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egyptKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egypt\n\nKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egyptKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egypt\n\nKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egyptKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egyptKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egypt",
       "category": "General"
@@ -375,6 +375,10 @@
     "sectionWidth": "89",
     "sections": {
       "trademarks-intro": {
+        "mode": "color",
+        "color": "role:accent"
+      },
+      "home-jurisdictions": {
         "mode": "color",
         "color": "role:accent"
       }
