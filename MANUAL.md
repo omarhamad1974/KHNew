@@ -27,15 +27,16 @@ Saving in the admin writes a commit to the repository. The host republishes the 
 5. Set an expiry you can live with and note the date; when it expires, make a new one.
 
 ### 2.3 Before you go live
-- Replace the phone numbers, email and office text in the contact blocks (they are written in the HTML pages, see the file map).
+- Check the phone numbers, emails, address and social links (admin, General, Contact & social).
 - Check `app-data.json` with `node scripts/validate.js` (GitHub runs it on every push).
-- Decide the site languages (admin, General tab, **Site languages**).
+- Decide the site languages (admin, General, Languages & words, **Site languages**).
 
 ## 3. Daily use
 - Open `admin.html`, enter your GitHub user or organization, the repository name, and the token. The first three are remembered by the browser; the token is asked each time unless you tick *Keep me signed in for this browser tab*.
-- Edit in the tabs, then press **Save to GitHub** (or Ctrl+S). The undo arrow discards unsaved changes; the download icon saves a backup copy of the data file.
+- Edit in **General** and **Sections**, then press **Save to GitHub** (or Ctrl+S). The undo arrow discards unsaved changes; the download icon saves a backup copy of the data file.
 - Photos you upload are resized and cropped to their frame automatically and stored in `assets/`.
-- Arabic: switch **EN | عربي** at the top and write the Arabic content (services, FAQ, team, testimonials, news, countries, and the Interface text and Page texts tabs); empty Arabic fields fall back to English.
+- Arabic: every box has English on the left and Arabic on the right; an empty Arabic box falls back to English. Save writes only the file(s) that changed.
+- Fonts: General, **Fonts** (whole site) or Sections, **Look of this section**, **Fonts** (one section). Headings and text, English and Arabic.
 
 ## 4. Troubleshooting
 | Problem | Fix |
@@ -55,7 +56,7 @@ Saving in the admin writes a commit to the repository. The host republishes the 
 ## 6. File map
 - `index.html`, `about.html`, `patents.html`, `trademarks.html`, `translation.html`: the pages.
 - `app-data.json`, `app-data.ar.json`: all editable content. `app-data.sample.json` is a minimal example.
-- `admin.html`: the admin page. `admin-look.js`: the look controls (header & bar, cards, text alignment, logos, picture effects, animation, map & logo motion), drawn in General (site-wide) and in Sections ("Look of this section"); `admin-general.js`, `admin-sections.js`, `sections-map.js`: the General and Sections pages. `news-import.js`, `slider-import.js`: Word / Markdown / spreadsheet import readers used by the admin.
-- `theme.js` (colors, backgrounds, hero height, header / bar / card colours, text alignment, logo sizes), `lang.js` (English / Arabic engine), `pages-i18n.js` (fixed page texts, English and Arabic), `rich.js` (text formatting), `look.js` (menu behaviour), `faq.js`, `service-page.js`, `footer.js` (bottom bar and WhatsApp box), `tailwind-config.js`, `styles.css`.
+- `admin.html`: the admin page. `admin-look.js`: the look controls (fonts, header & bar, cards, text alignment, logos, picture effects, animation, map & logo motion), drawn in General (site-wide) and in Sections ("Look of this section"); `admin-general.js`, `admin-sections.js`, `sections-map.js`: the General and Sections pages. `news-import.js`, `slider-import.js`: Word / Markdown / spreadsheet import readers used by the admin.
+- `theme.js` (colors, fonts, backgrounds, hero height, header / bar / card colours, text alignment, logo sizes), `lang.js` (English / Arabic engine), `pages-i18n.js` (fixed page texts, English and Arabic), `rich.js` (text formatting), `look.js` (menu behaviour), `faq.js`, `service-page.js`, `footer.js` (bottom bar and WhatsApp box), `tailwind-config.js`, `styles.css`.
 - `assets/`: logos, team photos and uploaded pictures.
 - `scripts/validate.js`, `.github/workflows/validate.yml`: content check run by GitHub.

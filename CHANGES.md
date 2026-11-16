@@ -158,3 +158,19 @@
 - The separate **Look** tabs (Backgrounds, Cards, Text alignment, Image effects, Animation) are gone: the admin now has just General and Sections.
 - Nothing changes for visitors and no data moved: the same `theme.sections`, `theme.secCards`, `theme.align`, `theme.imgfx` and `theme.anim` settings are read and written, so earlier work is kept. Version stamp: "Admin phase 3".
 
+
+## Admin restructure, phase 4 of 5: fonts
+- **General, Fonts** (new page after Colors): choose the font of **Headings** (titles, card titles, FAQ questions) and of **Text** (everything else), separately for **English** and **Arabic**, for the whole site. Each box offers 16 Latin and 8 Arabic Google fonts, **the visitor's own font (system)** and **Another Google font** (type its exact name). The first choice keeps the original fonts. A live preview shows an English and an Arabic sample.
+- **Sections, Look of this section, Fonts** (new block between Cards and Text alignment): the same four choices for one section, on top of the site-wide ones. The badge reads "Own fonts" when set; **Reset this section** removes them with the rest of the section's look.
+- On the site: `theme.js` sets `--fh-en`, `--fh-ar`, `--fb-en`, `--fb-ar` (on `<html>`, and on a section's element for its own fonts) before the page paints and loads one Google stylesheet with only the fonts chosen. `styles.css` and `tailwind-config.js` now read `--fh` (headings) and `--fb` (text), which follow the page direction; with nothing set they resolve to the original fonts. The old fixed Arabic font rules were replaced by the same variables, so Arabic headings in `.h2`, FAQ questions and service sub-cards now use the Arabic heading font too (before, they fell back to a browser font).
+- Saved as `theme.fonts` (`all`, `sec`). A font name that is not allowed is dropped when saving. `scripts/validate.js` checks `theme.fonts`.
+- Nothing changes on the site until a font is chosen.
+
+
+## Admin restructure, phase 5 of 5: final checks, manual, lighter zip
+- **Checks run**: every script passes a syntax check; `scripts/validate.js` passes; the five pages were loaded in English and in Arabic with fonts set (no script errors, headings and text in the chosen font, a section's own font winning over the site's); the admin was loaded with the Fonts page and the section block (choosing, "Another Google font", reset, saving clean-up).
+- **Leftovers removed from the package** (they had come back into the upload but belong to the old project and nothing uses them): `my-stuff.html`, `auth.js`, `supabase-config.js`, the three `supabase-*.sql` files, the `supabase/` function, `assets/temp.htm`, and the duplicate root copies `validate.js` and `validate.yml` (GitHub uses `scripts/validate.js` and `.github/workflows/validate.yml`). **Delete these in the repository too** if they are still there.
+- **Documents brought up to date**: README (admin = General + Sections, side-by-side languages, Fonts), MANUAL (daily use, fonts, file map). Plans marked done.
+- **Cache**: script and style addresses now end in `?v=9`, so browsers fetch the new files. Version stamp: "Admin phase 5".
+- **Two zips**: the **complete** site, and a **light** one without the `assets/` folder (about 5 MB smaller) for when the pictures are already in the repository: upload it on top and nothing is lost. 19 pictures in `assets/` are not used by any page or data file (about 3.9 MB); they are kept in the complete zip and listed in README, Notes, so you can delete the ones you do not want.
+

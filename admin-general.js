@@ -10,6 +10,7 @@ const AGEN=(()=>{
     ['contact','Contact & social','fa-address-card'],
     ['words','Languages & words','fa-language'],
     ['colors','Colors','fa-palette'],
+    ['fonts','Fonts','fa-font'],
     ['menu','Header, bar & menu','fa-bars'],
     ['cards','Cards','fa-clone'],
     ['align','Text alignment','fa-align-justify'],
@@ -70,7 +71,7 @@ const AGEN=(()=>{
   const motion=()=>ALOOK.tabs.motion();
   const cards=()=>ALOOK.tabs.cards(),align=()=>ALOOK.tabs.align(),imgfx=()=>ALOOK.tabs.imgfx(),anim=()=>ALOOK.tabs.anim();   // site-wide defaults; one section's own look is in Sections
 
-  const RENDER={brand,contact,words,colors,menu,cards,align,imgfx,anim,motion};
+  const RENDER={brand,contact,words,colors,fonts:()=>ALOOK.tabs.fonts(),menu,cards,align,imgfx,anim,motion};
   function nav(){
     $('subnav').innerHTML=PAGES.map(([k,n,i])=>`<button type="button" data-gs="${k}" class="text-xs font-bold px-3.5 py-2 rounded-xl ${k===gsub?'bg-gray-900 text-white':'bg-white border border-gray-200 hover:bg-gray-100'}"><i class="fas ${i}"></i> ${n}</button>`).join('');
   }

@@ -71,6 +71,7 @@
     r.setProperty('--sec-wn',(w/100).toFixed(4));
     hero((T||{}).hero);
     look(T||{});
+    fontsRoot(T||{});
   }
   // Hero slider height: {unit:'px'|'vh', mobile, tablet, desktop}. Missing or invalid = the built-in heights.
   const HERO={px:[100,900],vh:[15,100]};
@@ -279,8 +280,66 @@
     return out;
   }
   const mapCfg=T=>{const o=((T.motion||{}).map)||{},out={};Object.keys(o).forEach(k=>{if(o[k]!==undefined&&o[k]!==null&&o[k]!=='')out[k]=o[k]});return out};
-  function apply(D){const T=(D&&D.theme)||{};vars(T);paint(T);paintLook(T);align(T);logos(T);images(T);window.KTHEME.current=T;document.dispatchEvent(new CustomEvent('khip-theme',{detail:T}))}
-  window.KTHEME={DEFAULTS,ROLES,SECTIONS,HEX,HERO,ALIGN,LOGOS,FXG,fxVals,AXE,AXDIST,AXEASE,AXHOVER,axCfg,axVars,LGE,LGIDLE,LGHOVER,MAPE,MAPIDLE,MAPHOVER,MAPPULSE,lgCfg,mapCfg,resolve,lum,palette,apply,lookMap,cardMap,cardsOf};
+
+  /* ---------- Fonts (admin restructure, phase 4) ----------
+     theme.fonts {all:{head:{en,ar}, body:{en,ar}}, sec:{<section>:{head:{en,ar}, body:{en,ar}}}}
+     head = headings, body = all other text. A value is a name from the lists below, "system" (the visitor's own font) or the name of any
+     Google Font (letters, digits and spaces). Empty = the font the site always used. A section's own font replaces the site-wide one there.
+     The pages read the fonts through four CSS variables (--fh-en, --fh-ar, --fb-en, --fb-ar); styles.css chooses by page direction. */
+  // [name, generic family, weights Google Fonts offers]
+  const FONTS={
+    en:[['Cormorant Garamond','serif',[500,600]],['Playfair Display','serif',[400,500,600]],['Lora','serif',[400,500,600]],['EB Garamond','serif',[400,500,600]],['Merriweather','serif',[300,400,700]],['Libre Baskerville','serif',[400,700]],
+        ['Jost','sans-serif',[300,400,500]],['Inter','sans-serif',[300,400,500,600]],['Montserrat','sans-serif',[300,400,500,600]],['Poppins','sans-serif',[300,400,500,600]],['Open Sans','sans-serif',[300,400,500,600]],['Lato','sans-serif',[300,400,700]],['Raleway','sans-serif',[300,400,500,600]],['Source Sans 3','sans-serif',[300,400,500,600]],['DM Sans','sans-serif',[300,400,500]],['Nunito Sans','sans-serif',[300,400,600]]],
+    ar:[['Cairo','sans-serif',[300,400,500,600]],['Tajawal','sans-serif',[300,400,500]],['Almarai','sans-serif',[300,400,700]],['IBM Plex Sans Arabic','sans-serif',[300,400,500,600]],['Noto Kufi Arabic','sans-serif',[300,400,500,600]],
+        ['Noto Naskh Arabic','serif',[400,500,600]],['Amiri','serif',[400,700]],['El Messiri','sans-serif',[400,500,600]]]
+  };
+  const FONT_RE=/^[A-Za-z0-9][A-Za-z0-9 ]{1,39}$/;
+  const FONT_SYS={en:'system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif',ar:'"Segoe UI",Tahoma,Arial,sans-serif'};
+  const fontOk=v=>v==='system'||FONT_RE.test(String(v||''));
+  const fontKind=(lang,name)=>{const f=FONTS[lang].find(x=>x[0]===name)||FONTS.en.concat(FONTS.ar).find(x=>x[0]===name);return f?f[1]:null};
+  // CSS font-family value for a chosen font; role 'head' falls back to a serif for unknown names
+  function fontStack(name,lang,role){
+    if(!fontOk(name))return '';
+    if(name==='system')return FONT_SYS[lang];
+    const kind=fontKind(lang,name)||(role==='head'?'serif':'sans-serif');
+    return `"${name}",${kind==='serif'?(lang==='ar'?'"Noto Naskh Arabic"':'Georgia')+',serif':(lang==='ar'?'"Segoe UI",Tahoma,':'system-ui,')+'sans-serif'}`;
+  }
+  // The chosen fonts of one level ({head:{en,ar}, body:{en,ar}}): {fh-en, fh-ar, fb-en, fb-ar} as CSS values ('' = not set)
+  function fontVars(L){
+    const o={};
+    [['head','fh'],['body','fb']].forEach(([role,k])=>['en','ar'].forEach(lang=>{const v=((L||{})[role]||{})[lang];o[`${k}-${lang}`]=v?fontStack(v,lang,role):''}));
+    return o;
+  }
+  // Every Google font used anywhere in the settings, as one stylesheet address ('' when none is needed)
+  function fontUrl(T){
+    const F=(T||{}).fonts||{},use=new Map(),lvls=[F.all].concat(Object.values(F.sec||{}));
+    lvls.forEach(L=>['head','body'].forEach(role=>['en','ar'].forEach(lang=>{
+      const v=((L||{})[role]||{})[lang];if(!v||v==='system'||!fontOk(v))return;
+      const f=FONTS.en.concat(FONTS.ar).find(x=>x[0]===v);use.set(v,f?f[2]:null);
+    })));
+    if(!use.size)return '';
+    return 'https://fonts.googleapis.com/css2?'+[...use].sort((a,b)=>a[0]<b[0]?-1:1).map(([n,w])=>'family='+n.replace(/ /g,'+')+(w?':wght@'+w.join(';'):'')).join('&')+'&display=swap';
+  }
+  function fontLink(T,id){
+    const url=fontUrl(T);let l=document.getElementById(id||'khip-fonts');
+    if(!url){if(l)l.remove();return}
+    if(!l){l=document.createElement('link');l.id=id||'khip-fonts';l.rel='stylesheet';document.head.appendChild(l)}
+    if(l.getAttribute('href')!==url)l.setAttribute('href',url);
+  }
+  function fontsRoot(T){                                 // the whole site (before the page paints)
+    const v=fontVars(((T||{}).fonts||{}).all);
+    for(const k in v)put(root.style,'--'+k,v[k]);
+    fontLink(T);
+  }
+  function fontsSec(T){                                  // one section's own fonts, on top of the site-wide ones
+    const S=((T||{}).fonts||{}).sec||{};
+    document.querySelectorAll('[data-sec]').forEach(el=>{
+      const v=fontVars(S[el.dataset.sec]);
+      for(const k in v)put(el.style,'--'+k,v[k]);
+    });
+  }
+  function apply(D){const T=(D&&D.theme)||{};vars(T);paint(T);paintLook(T);fontsSec(T);align(T);logos(T);images(T);window.KTHEME.current=T;document.dispatchEvent(new CustomEvent('khip-theme',{detail:T}))}
+  window.KTHEME={DEFAULTS,ROLES,SECTIONS,HEX,HERO,ALIGN,LOGOS,FXG,fxVals,AXE,AXDIST,AXEASE,AXHOVER,axCfg,axVars,LGE,LGIDLE,LGHOVER,MAPE,MAPIDLE,MAPHOVER,MAPPULSE,lgCfg,mapCfg,FONTS,fontOk,fontStack,fontVars,fontUrl,fontLink,resolve,lum,palette,apply,lookMap,cardMap,cardsOf};
   // The admin page uses the definitions only; it must not recolour itself.
   if(/admin\.html$/.test(location.pathname))return;
   let cached=null;try{cached=JSON.parse(localStorage.getItem(CACHE))}catch{}

@@ -13,7 +13,7 @@ Admin controls for how the site looks. Six phases. Each phase is delivered as a 
 ## Where things live
 - Admin screens: `admin-look.js` (loaded by `admin.html`). Since admin restructure phase 3 the Look tabs are gone: site-wide settings are pages of **General** (Colors, Header, bar & menu, Cards, Text alignment, Picture effects, Animation, Map & logo motion, Brand & logos); the settings of one section are in **Sections**, under **Look of this section**.
 - Site behaviour: `theme.js` (colours and layout, applied before the page paints), `styles.css`; `look.js` (menu, and later image effects and animation).
-- Data: `theme.header`, `theme.bar`, `theme.wa`, `theme.cards`, `theme.secCards` (phase 1); phase 2: `theme.align`, `theme.logos`; phase 3: `theme.menu`; phase 4: `theme.imgfx`; phase 5: `theme.anim`; phase 6: `theme.motion`; later phases add their own keys. `node scripts/validate.js` checks them.
+- Data: `theme.header`, `theme.bar`, `theme.wa`, `theme.cards`, `theme.secCards` (phase 1); phase 2: `theme.align`, `theme.logos`; phase 3: `theme.menu`; phase 4: `theme.imgfx`; phase 5: `theme.anim`; phase 6: `theme.motion`; the admin restructure added `theme.fonts` (fonts, `all` and `sec`). `node scripts/validate.js` checks them.
 
 ## Notes
 - Colours are always chosen from the site palette, from your own colours (Colors tab), or as any colour. They are stored as references (`role:ink`, `custom:<id>`) or `#rrggbb`, so changing the palette later updates everything that uses it.

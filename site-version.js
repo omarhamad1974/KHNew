@@ -12,7 +12,7 @@
         - to remove it for good, set STAMP=false below. */
 (function(){
   'use strict';
-  const BUILD='Admin phase 3 · 16-11-2026', IMG_V='2', STAMP=true;
+  const BUILD='Admin phase 5 · 16-11-2026', IMG_V='2', STAMP=true;
 
   const LOCAL=u=>typeof u==='string'&&u&&!/^([a-z][a-z0-9+.-]*:|\/\/)/i.test(u);   // not http:, https:, data:, blob:, //host
   const img=u=>{

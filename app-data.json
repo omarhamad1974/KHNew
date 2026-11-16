@@ -15,7 +15,7 @@
       "title": "Protecting Innovation",
       "subtitle": "Discover legal and IP services.",
       "tag": "Featured",
-      "image": "mwj4z60v-nikhil-fHOc-5r6LMg-unsplash.jpg"
+      "image": "./assets/slider2.jpg"
     },
     {
       "id": "3",
@@ -121,39 +121,20 @@
   "news": [
     {
       "id": "1",
-      "title": "IP future in the middle east ",
-      "image": "mwj5wdgf-photo-1491895200222-0fc4a4c35e18.jpg",
+      "title": "KHIP attends the event bla bla bla",
+      "image": "mwiirc1q-1000008469.jpg",
       "excerpt": "KHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egypt",
       "text": "KHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egypt\n\nKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egyptKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egyptKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egypt\n\nKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egyptKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egypt\n\nKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egyptKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egyptKHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egypt",
-      "category": "General",
-      "date": "2026-11-16"
+      "category": "General"
     },
     {
       "id": "2",
       "title": "IP future in the middle east ",
       "date": "2026-10-24",
-      "image": "mwj5wqx0-SIWA-6.jpg",
-      "excerpt": "KHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egypt",
+      "image": "slider1.jpg",
+      "excerpt": "What will be the future of IP in the region and middle east ",
       "text": "What will be the future of IP in the region and middle east What will be the future of IP in the region and middle east What will be the future of IP in the region and middle east ",
-      "category": "KHIP News"
-    },
-    {
-      "id": "4",
-      "title": "IP future in the middle east  (copy)",
-      "date": "2026-10-24",
-      "image": "mwj63ia2-psammotherapy.jpg",
-      "excerpt": "KHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egypt",
-      "text": "What will be the future of IP in the region and middle east What will be the future of IP in the region and middle east What will be the future of IP in the region and middle east ",
-      "category": "KHIP News"
-    },
-    {
-      "id": "3",
-      "title": "IP future in the middle east  (copy)",
-      "date": "2026-10-24",
-      "image": "mwj63txx-Siwa-Shali-385.jpg",
-      "excerpt": "KHIP attends the event in brussels representing egypt as one of the premier servics proverder sin egypt",
-      "text": "What will be the future of IP in the region and middle east What will be the future of IP in the region and middle east What will be the future of IP in the region and middle east ",
-      "category": "KHIP News"
+      "category": "General"
     }
   ],
   "services": [
@@ -386,8 +367,8 @@
       "accentDark": "#1e40af",
       "accentSoft": "#eff6ff",
       "sand": "#d9c8a4",
-      "page": "#ffffff",
-      "surface": "#f7f6f3",
+      "page": "#f7f6f3",
+      "surface": "#ffffff",
       "text": "#3a4051"
     },
     "custom": [],
@@ -397,20 +378,9 @@
         "mode": "color",
         "color": "role:accent"
       },
-      "translation-intro": {
-        "mode": "image",
-        "overlay": "5",
-        "image": "mwj4nopm-mikael-kristenson-MYXf7tGEntk-unsplash.jpg"
-      },
-      "patents-intro": {
-        "mode": "image",
-        "color": "role:accentSoft",
-        "overlay": 0,
-        "image": "mwj5afdd-photo-1476445704028-a36e0c798192.jpg"
-      },
-      "home-testimonials": {
+      "home-jurisdictions": {
         "mode": "color",
-        "color": "role:page"
+        "color": "role:accent"
       }
     },
     "sectionWidthTablet": "86",
@@ -449,93 +419,6 @@
       "mobile": 120,
       "tablet": 160,
       "desktop": 200
-    },
-    "cards": {
-      "bg": "role:accentSoft",
-      "opacity": "100"
-    },
-    "anim": {
-      "all": {
-        "cards": {
-          "effect": "up",
-          "delay": "0.1",
-          "hover": "zoom"
-        }
-      },
-      "sec": {
-        "home-jurisdictions": {
-          "cards": {
-            "effect": "zoom"
-          }
-        },
-        "patents-details": {
-          "cards": {
-            "effect": "start"
-          }
-        },
-        "home-news": {
-          "cards": {
-            "effect": "start"
-          },
-          "text": {
-            "effect": "start"
-          }
-        }
-      }
-    },
-    "secCards": {
-      "home-jurisdictions": {
-        "bg": "role:ink",
-        "border": "role:accentDark"
-      },
-      "translation-intro": {
-        "bg": "role:ink",
-        "opacity": "5"
-      },
-      "home-news": {
-        "bg": "role:accentDark",
-        "opacity": "5",
-        "border": "role:accentDark"
-      }
-    },
-    "logos": {
-      "home": {
-        "m": "120",
-        "t": "140",
-        "d": "160"
-      }
-    },
-    "bar": {
-      "bg": "role:title"
-    },
-    "wa": {
-      "bg": "role:page"
-    },
-    "imgfx": {
-      "sec": {
-        "translation-intro": {
-          "opacity": "5"
-        },
-        "patents-intro": {
-          "opacity": "10",
-          "color": "role:page"
-        }
-      },
-      "all": {
-        "color": "role:accentDark",
-        "intensity": "50"
-      },
-      "hero": {
-        "opacity": "100"
-      },
-      "sections": {
-        "opacity": "25"
-      },
-      "team": {
-        "opacity": "100",
-        "color": "role:text",
-        "intensity": "0"
-      }
     }
   },
   "newsCategories": [

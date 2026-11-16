@@ -1,3 +1,8 @@
+:root{--fh-d-en:"Cormorant Garamond",Georgia,serif;--fb-d-en:Jost,system-ui,sans-serif;--fh-d-ar:'Noto Naskh Arabic','Cairo',serif;--fb-d-ar:'Cairo','Segoe UI',Tahoma,Arial,sans-serif}
+/* Fonts: theme.js sets --fh-en, --fh-ar, --fb-en, --fb-ar (site-wide on <html>, own values on a [data-sec] section); with nothing set the original fonts apply */
+:root,[data-sec]{--fh:var(--fh-en,var(--fh-d-en));--fb:var(--fb-en,var(--fb-d-en))}
+html[dir=rtl],html[dir=rtl] [data-sec]{--fh:var(--fh-ar,var(--fh-d-ar));--fb:var(--fb-ar,var(--fb-d-ar))}
+[data-sec]{font-family:var(--fb)}
 /* KHIP shared styles. Linked from every page: <link rel="stylesheet" href="styles.css"> */
 
 /* ---------- Palette (defaults; theme.js replaces them with the values saved in admin.html) ---------- */
@@ -34,7 +39,7 @@ body.lock #khip-page{overflow:hidden}
 /* the header keeps the full width; only the page sections get narrower */
 header .wrap{width:100%;max-width:76rem}
 .band{padding-top:3.5rem;padding-bottom:3.5rem}
-.h2{font-family:"Cormorant Garamond",Georgia,serif;font-size:1.875rem;line-height:1.25;font-weight:500;color:rgb(var(--c-title-rgb))}
+.h2{font-family:var(--fh);font-size:1.875rem;line-height:1.25;font-weight:500;color:rgb(var(--c-title-rgb))}
 .rule{display:block;width:3rem;height:1px;background:rgb(var(--c-gold-rgb));margin:.75rem 0 1.75rem}
 .card{background:var(--card-bg,#fff);color:var(--card-fg,rgb(var(--c-text-rgb)));border-radius:1rem;border:1px solid var(--card-bd,rgba(231,229,228,.8));box-shadow:0 1px 2px rgba(0,0,0,.05);transition:transform .3s,box-shadow .3s}
 .card:hover{transform:translateY(-.25rem);box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1)}
@@ -70,7 +75,7 @@ header .wrap{width:100%;max-width:76rem}
 .c{fill:#e7e5e4;stroke:#fff;stroke-width:.6}
 .c.on{fill:rgb(var(--c-accent-rgb));stroke-width:.8;cursor:pointer;transition:fill .25s}
 .c.on:hover,.c.on:focus,.c.on.sel{fill:rgb(var(--c-accent-dark-rgb));outline:none}
-#mena-map text{font-family:Jost,sans-serif;pointer-events:none}
+#mena-map text{font-family:var(--fb);pointer-events:none}
 #mena-map .lw{font-size:15px;font-weight:500;fill:#fff}
 #mena-map .lo{font-size:13px;font-weight:500;fill:rgb(var(--c-ink-rgb));paint-order:stroke;stroke:#fff;stroke-width:3px}
 #mena-map .ld{stroke:rgb(var(--c-ink-rgb));stroke-width:1}
@@ -193,8 +198,7 @@ a.ct-tile:hover{border-color:rgb(var(--c-accent-rgb));transform:translateY(-2px)
 /* ---------- Language button and Arabic / right-to-left (see lang.js) ---------- */
 .lang-btn{font:inherit;font-size:.8125rem;line-height:1;padding:.5rem .9rem;border-radius:999px;border:1px solid #d6d3d1;background:#fff;color:rgb(var(--c-ink-rgb));cursor:pointer;white-space:nowrap;transition:border-color .2s,color .2s}
 .lang-btn:hover,.lang-btn:focus-visible{border-color:rgb(var(--c-accent-rgb,29 78 216));color:rgb(var(--c-accent-rgb,29 78 216))}
-html[dir=rtl] body,html[dir=rtl] .font-sans,html[dir=rtl] button,html[dir=rtl] input,html[dir=rtl] textarea,html[dir=rtl] select{font-family:'Cairo','Segoe UI',Tahoma,Arial,sans-serif}
-html[dir=rtl] .font-display{font-family:'Noto Naskh Arabic','Cairo',serif}
+html[dir=rtl] button,html[dir=rtl] input,html[dir=rtl] textarea,html[dir=rtl] select{font-family:var(--fb)}
 html[dir=rtl] *{letter-spacing:0!important}
 html[dir=rtl] .khip,html[dir=rtl] .khip-lg{direction:ltr;unicode-bidi:isolate}
 html[dir=rtl] #khip-bar .kf i{left:auto;right:14px}
@@ -233,7 +237,7 @@ html.hero-custom #carousel{height:var(--hero-h-m)}
 /* FAQ section (faq.js) */
 .faq-list{max-width:52rem}
 .faq-item{background:var(--card-bg,#fff);color:var(--card-fg,rgb(var(--c-text-rgb)));border:1px solid var(--card-bd,rgba(231,229,228,.9));border-radius:1rem;box-shadow:0 1px 2px rgba(0,0,0,.05);margin-bottom:.75rem;overflow:hidden}
-.faq-item>summary{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 1.25rem;cursor:pointer;list-style:none;font-family:"Cormorant Garamond",Georgia,serif;font-size:1.3rem;font-weight:600;line-height:1.3;color:rgb(var(--c-title-rgb))}
+.faq-item>summary{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 1.25rem;cursor:pointer;list-style:none;font-family:var(--fh);font-size:1.3rem;font-weight:600;line-height:1.3;color:rgb(var(--c-title-rgb))}
 .faq-item>summary::-webkit-details-marker{display:none}
 .faq-item>summary i{flex-shrink:0;font-size:1.25rem;color:rgb(var(--c-accent-rgb));transition:transform .25s}
 .faq-item[open]>summary i{transform:rotate(180deg)}
@@ -251,7 +255,7 @@ html.hero-custom #carousel{height:var(--hero-h-m)}
 .svc-ic{width:3.5rem;height:3.5rem;border-radius:999px;background:rgb(var(--c-accent-soft-rgb));color:rgb(var(--c-accent-rgb));display:flex;align-items:center;justify-content:center}
 @media(min-width:768px){.svc-ic{width:4.25rem;height:4.25rem}}
 .svc-subs{display:grid;gap:.6rem;margin-top:1.5rem}
-.svc-sub{display:flex;align-items:center;gap:.85rem;width:100%;padding:.8rem 1rem;border:1px solid rgba(27,36,51,.18);border-radius:.9rem;background:transparent;color:rgb(var(--c-title-rgb));font-family:"Cormorant Garamond",Georgia,serif;font-size:1.3rem;font-weight:600;text-align:start;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.svc-sub{display:flex;align-items:center;gap:.85rem;width:100%;padding:.8rem 1rem;border:1px solid rgba(27,36,51,.18);border-radius:.9rem;background:transparent;color:rgb(var(--c-title-rgb));font-family:var(--fh);font-size:1.3rem;font-weight:600;text-align:start;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
 .svc-sub:hover,.svc-sub:focus-visible{background:rgb(var(--c-ink-rgb));color:#fff;border-color:rgb(var(--c-ink-rgb))}
 
 /* ---------- Header: Services drop-down (desktop) ---------- */

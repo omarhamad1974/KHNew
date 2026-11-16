@@ -280,11 +280,62 @@ const ALOOK=(()=>{
 
 
   /* ---------- Look of one section (Sections page, admin restructure phase 3) ---------- */
+
+  /* ---------- Fonts (admin restructure, phase 4) ---------- */
+  const FSLOTS=[['head','Headings'],['body','Text']];
+  const FSAMPLE={en:{h:'Protecting your ideas',p:'We file and manage patents and trademarks across the region, and keep every deadline for you.'},ar:{h:'نحمي أفكارك',p:'نسجّل ونُدير براءات الاختراع والعلامات التجارية في المنطقة، ونتابع كل المواعيد نيابةً عنك.'}};
+  const fontBase=key=>key?`theme.fonts.sec.${key}.`:'theme.fonts.all.';
+  // One font picker: a list of ready fonts plus "Another Google font" with a name box
+  function fontPick(base,role,lang,label,sec){
+    const p=`${base}${role}.${lang}`,v=val(p),list=TH().FONTS[lang],known=v===''||v==='system'||list.some(x=>x[0]===v)||TH().FONTS.en.concat(TH().FONTS.ar).some(x=>x[0]===v);
+    const other=v!==''&&v!=='system'&&!list.some(x=>x[0]===v);
+    const opts=`<option value="" ${v===''?'selected':''}>${sec?'Same as the whole site':'Original font of the site'}</option>`
+      +`<option value="system" ${v==='system'?'selected':''}>The visitor's own font (system)</option>`
+      +list.map(([n,k])=>`<option value="${esc(n)}" ${v===n?'selected':''}>${esc(n)} · ${k==='serif'?'serif':'sans'}</option>`).join('')
+      +`<option value="__other" ${other?'selected':''}>Another Google font…</option>`;
+    const bad=other&&!TH().fontOk(v);
+    return `<div class="block min-w-0"><label class="block text-xs font-bold">${esc(label)}<select data-fsel="${p}" class="${inp} mt-1" ${lang==='ar'?'dir="rtl"':''}>${opts}</select></label>`
+      +(other?`<input data-p="${p}" data-fother="1" value="${esc(v)}" placeholder="Exact name, e.g. Roboto Slab" maxlength="40" class="${inp} mt-1 ${bad?'bad':''}" aria-label="Name of the Google font"><p class="text-[10px] ${bad?'text-red-600':'text-gray-500'} mt-0.5">${bad?'Use letters, digits and spaces only (2 to 40 characters).':'Type the name exactly as on fonts.google.com, then leave the box.'}</p>`:'')
+      +`</div>`;
+  }
+  // The effective font of a slot for the preview: the section's own value, else the whole site's, else empty (original)
+  function fontEff(key,role,lang){
+    const F=T().fonts||{},own=key?((((F.sec||{})[key])||{})[role]||{})[lang]:'',all=(((F.all||{})[role])||{})[lang];
+    return own||all||'';
+  }
+  function fontPrev(key){
+    TH().fontLink(T(),'khip-fonts-admin');
+    const cell=lang=>{
+      const h=TH().fontStack(fontEff(key,'head',lang),lang,'head')||(lang==='ar'?"'Noto Naskh Arabic','Cairo',serif":'"Cormorant Garamond",Georgia,serif');
+      const b=TH().fontStack(fontEff(key,'body',lang),lang,'body')||(lang==='ar'?"'Cairo','Segoe UI',Tahoma,Arial,sans-serif":'Jost,system-ui,sans-serif');
+      return `<div ${lang==='ar'?'dir="rtl" lang="ar"':''} class="p-4 bg-white"><p style="font-family:${h};font-size:1.7rem;line-height:1.25;font-weight:500;color:${TH().palette(T()).title}">${FSAMPLE[lang].h}</p><p style="font-family:${b};font-size:.95rem;line-height:1.7;font-weight:300;color:${TH().palette(T()).text}" class="mt-1">${FSAMPLE[lang].p}</p></div>`;
+    };
+    return `<div class="grid sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-gray-200">${cell('en')+cell('ar')}</div>`;
+  }
+  function fontFields(base,sec){
+    return `<div class="grid sm:grid-cols-2 gap-3"><span class="text-[10px] font-extrabold tracking-wider text-brand-700">EN</span><span lang="ar" class="text-[10px] font-extrabold tracking-wider text-amber-800">عربي</span></div>`
+      +FSLOTS.map(([r,n])=>`<div class="grid sm:grid-cols-2 gap-3">${fontPick(base,r,'en',n+' (English)',sec)}${fontPick(base,r,'ar',n+' (Arabic)',sec)}</div>`).join('');
+  }
+  function viewFonts(){
+    T();
+    $('view').innerHTML=
+      card('Fonts','The letters of the whole site: <b>Headings</b> (titles, card titles, questions) and <b>Text</b> (everything else), set separately for English and Arabic. Leave a box on its first choice to keep the original fonts. The fonts are free Google Fonts; only the ones you choose are loaded by visitors.',
+        fontFields(fontBase(''),false)+`<div><span class="text-xs font-bold text-gray-700">Preview</span><div class="mt-1 rounded-xl overflow-hidden border border-gray-200" data-fprev="all">${fontPrev('')}</div></div>`
+        +`<p class="text-[11px] text-gray-500">Logos, the KHIP word mark and the icons keep their own look. A very decorative font can be hard to read in small text: choose a plain one for <b>Text</b>.</p>`,
+        reset('reset-fonts-all','Reset all'))
+      +seeSections('Fonts');
+  }
+  function secFonts(key){
+    const s=((T().fonts||{}).sec||{})[key]||{},on=!!Object.values(s).some(o=>o&&Object.values(o).some(v=>v));
+    return det('t:'+key,'Fonts',on,'Own fonts','Same as the site',
+      fontFields(fontBase(key),true)+`<div><span class="text-xs font-bold text-gray-700">Preview</span><div class="mt-1 rounded-xl overflow-hidden border border-gray-200" data-fprev="${esc(key)}">${fontPrev(key)}</div></div>`
+      +`<div><button type="button" data-lk="reset-fonts-sec" data-k="${key}" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl"><i class="fas fa-rotate-left"></i> Same as the whole site</button></div>`);
+  }
   const SECKEYS=()=>TH().SECTIONS.map(x=>x[0]);
   function hasLook(key){
     const t=T(),has=o=>!!o&&Object.values(o).some(v=>v&&typeof v==='object'?has(v):v!==''&&v!=null);
     if(key==='home-hero')return has((t.imgfx||{}).hero);
-    return ['color','image'].includes(((t.sections||{})[key]||{}).mode)||has((t.secCards||{})[key])||has(((t.align||{}).sec||{})[key])||has(((t.imgfx||{}).sec||{})[key])||has(((t.anim||{}).sec||{})[key]);
+    return ['color','image'].includes(((t.sections||{})[key]||{}).mode)||has((t.secCards||{})[key])||has(((t.align||{}).sec||{})[key])||has(((t.imgfx||{}).sec||{})[key])||has(((t.anim||{}).sec||{})[key])||has(((t.fonts||{}).sec||{})[key]);
   }
   function secLook(key){
     const wrap=(intro,body,extra='')=>`<div class="bg-white p-4 rounded-2xl border border-gray-200 space-y-3"><div class="flex items-start justify-between gap-3"><div><h3 class="font-extrabold text-base">Look of this section</h3><p class="text-xs text-gray-600 mt-0.5">${intro}</p></div>${extra}</div>${body}</div>`;
@@ -295,16 +346,16 @@ const ALOOK=(()=>{
     }
     if(!SECKEYS().includes(key))return '';
     const bg=bgInfo(key);
-    return wrap('Background, cards, text alignment, photo effect and animation of this section only. Whatever you leave on its default follows the site-wide settings in <b>General</b> (Colors, Cards, Text alignment, Picture effects, Animation). Cards settings only matter where the section has cards.',
+    return wrap('Background, cards, fonts, text alignment, photo effect and animation of this section only. Whatever you leave on its default follows the site-wide settings in <b>General</b> (Colors, Cards, Fonts, Text alignment, Picture effects, Animation). Cards settings only matter where the section has cards.',
       det('b:'+key,'Background',bg.mode!=='default',bg.badge,'Default',bg.body)
-      +secCards(key)+secAlign(key)+secFx(key)+secAx(key),
+      +secCards(key)+secFonts(key)+secAlign(key)+secFx(key)+secAx(key),
       hasLook(key)?`<button type="button" data-lk="reset-sec-look" data-k="${key}" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl flex-shrink-0" title="Remove every look setting of this section"><i class="fas fa-rotate-left"></i> Reset this section</button>`:'');
   }
 
   /* ---------- tabs registry (later phases add to it) ---------- */
 
-  const tabs={header:viewHeader,cards:viewCards,align:viewAlign,logos:viewLogos,menu:viewMenu,imgfx:viewFx,anim:viewAnim,motion:viewMotion};
-  const previews={imgfx:()=>{document.querySelectorAll('[data-fxprev]').forEach(b=>{const [g,k]=b.dataset.fxprev.split(':');b.innerHTML=fxPrev(g==='all'?'news':g,k)})},menu:()=>{const a=$('lk-menu');if(a)a.innerHTML=menuPrev()},header:()=>{const a=$('lk-hdr'),b=$('lk-bar');if(a)a.innerHTML=hdrPrev();if(b)b.innerHTML=barPrev()},cards:()=>{const a=$('lk-cards');if(a)a.innerHTML=cardsPrev()},align:()=>{const a=$('lk-align');if(a)a.innerHTML=alignPrev()},logos:()=>{['header','home','about'].forEach(k=>{const a=$('lk-lg-'+k);if(a)a.innerHTML=logoPrev(k)})}};
+  const tabs={fonts:viewFonts,header:viewHeader,cards:viewCards,align:viewAlign,logos:viewLogos,menu:viewMenu,imgfx:viewFx,anim:viewAnim,motion:viewMotion};
+  const previews={fonts:()=>{document.querySelectorAll('[data-fprev]').forEach(b=>{b.innerHTML=fontPrev(b.dataset.fprev==='all'?'':b.dataset.fprev)})},imgfx:()=>{document.querySelectorAll('[data-fxprev]').forEach(b=>{const [g,k]=b.dataset.fxprev.split(':');b.innerHTML=fxPrev(g==='all'?'news':g,k)})},menu:()=>{const a=$('lk-menu');if(a)a.innerHTML=menuPrev()},header:()=>{const a=$('lk-hdr'),b=$('lk-bar');if(a)a.innerHTML=hdrPrev();if(b)b.innerHTML=barPrev()},cards:()=>{const a=$('lk-cards');if(a)a.innerHTML=cardsPrev()},align:()=>{const a=$('lk-align');if(a)a.innerHTML=alignPrev()},logos:()=>{['header','home','about'].forEach(k=>{const a=$('lk-lg-'+k);if(a)a.innerHTML=logoPrev(k)})}};
 
   /* ---------- saving: drop empty values so the data file stays small ---------- */
   function clean(t){
@@ -317,7 +368,10 @@ const ALOOK=(()=>{
         if(v===''||v==null||(v&&typeof v==='object'&&!Array.isArray(v)&&!Object.keys(v).length))delete o[k];
       }
     };
-    ['header','bar','wa','cards','secCards','align','logos','menu','imgfx','anim','motion'].forEach(k=>{if(t[k]){prune(t[k]);if(!Object.keys(t[k]).length)delete t[k]}});
+    ['header','bar','wa','cards','secCards','align','logos','menu','imgfx','anim','motion','fonts'].forEach(k=>{if(t[k]){prune(t[k]);if(!Object.keys(t[k]).length)delete t[k]}});
+    // a font name that is not allowed is dropped rather than saved
+    const okF=o=>{if(!o||typeof o!=='object')return;['head','body'].forEach(r=>['en','ar'].forEach(l=>{if(o[r]&&o[r][l]&&!TH().fontOk(o[r][l]))delete o[r][l]}))};
+    if(t.fonts){okF(t.fonts.all);Object.values(t.fonts.sec||{}).forEach(okF);[t.fonts].concat([t.fonts.all],Object.values(t.fonts.sec||{})).forEach(o=>{if(o)prune(o)});if(!Object.keys(t.fonts).length)delete t.fonts}
     if(t.menu&&t.menu.keepNav!==true)delete t.menu.keepNav;
     if(t.menu&&t.menu.mode!=='both'){['side','keepNav','bg','text','overlay','width'].forEach(k=>delete t.menu[k])}
     // an opacity with no color chosen means nothing
@@ -332,6 +386,14 @@ const ALOOK=(()=>{
     if(v==='')unset(p);else if(v==='__custom')set(D,p,TH().resolve(val(p),D.theme)||'#cccccc');else set(D,p,v);
     mark();view();
   });
+  // font pickers: "Another Google font" shows a name box, pre-filled with an example
+  document.addEventListener('change',e=>{
+    const p=e.target.dataset&&e.target.dataset.fsel;if(!p||!D)return;
+    const v=e.target.value;T();
+    if(v==='')unset(p);else if(v==='__other')set(D,p,'Roboto');else set(D,p,v);
+    mark();view();
+  });
+  document.addEventListener('change',e=>{if(e.target.dataset&&e.target.dataset.fother&&D)setTimeout(()=>{view()},0)});   // a typed font name: load it and redraw the previews
   document.addEventListener('input',e=>{
     const t=e.target;if(!D||!t.dataset)return;
     if(t.dataset.p&&t.type==='range'){document.querySelectorAll(`[data-lkout="${t.dataset.p}"]`).forEach(o=>{o.textContent=t.value+(o.dataset.unit||'')})}
@@ -354,6 +416,8 @@ const ALOOK=(()=>{
     else if(a==='reset-fx-all'){if(confirm('Remove the opacity and color filter of every picture group? Effects set for a single section are kept.')){if(t.imgfx){['all','hero','news','team','sections'].forEach(g=>delete t.imgfx[g])}mark();view()}}
     else if(a.startsWith('reset-fx-')&&a!=='reset-fx-sec'){const g=a.slice(9);if(t.imgfx)delete t.imgfx[g];mark();view()}
     else if(a==='reset-fx-sec'){if(t.imgfx&&t.imgfx.sec)delete t.imgfx.sec[b.dataset.k];mark();view()}
+    else if(a==='reset-fonts-all'){if(confirm('Go back to the original fonts of the site? Fonts set for a single section are kept.')){if(t.fonts)delete t.fonts.all;mark();view()}}
+    else if(a==='reset-fonts-sec'){if(t.fonts&&t.fonts.sec)delete t.fonts.sec[b.dataset.k];mark();view()}
     else if(a==='reset-mo-map'){if(t.motion)delete t.motion.map;mark();view()}
     else if(a==='reset-mo-all')wipe(['motion'],'Remove all map and logo animation settings?');
     else if(a==='reset-mo-logo'){if(t.motion&&t.motion.logos)delete t.motion.logos[b.dataset.k];mark();view()}
@@ -363,7 +427,7 @@ const ALOOK=(()=>{
     else if(a==='ax-play')axRun(b);
     else if(a==='reset-menu')wipe(['menu'],'Set the menu back to the original (links in the header, bottom bar)?');
     else if(a==='reset-sec'){if(t.secCards)delete t.secCards[b.dataset.k];mark();view()}
-    else if(a==='reset-sec-look'){const k=b.dataset.k;if(confirm('Remove the background, cards colors, text alignment, photo effect and animation set for this section? It will follow the site-wide settings.')){if(t.sections)delete t.sections[k];[['secCards'],['align','sec'],['imgfx','sec'],['anim','sec']].forEach(([a1,a2])=>{const o=a2?(t[a1]||{})[a2]:t[a1];if(o)delete o[k]});mark();view()}}
+    else if(a==='reset-sec-look'){const k=b.dataset.k;if(confirm('Remove the background, cards colors, fonts, text alignment, photo effect and animation set for this section? It will follow the site-wide settings.')){if(t.sections)delete t.sections[k];[['secCards'],['align','sec'],['imgfx','sec'],['anim','sec'],['fonts','sec']].forEach(([a1,a2])=>{const o=a2?(t[a1]||{})[a2]:t[a1];if(o)delete o[k]});mark();view()}}
   });
 
   return {tabs,clean,previews,secLook,hasLook};

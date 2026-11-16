@@ -7,8 +7,8 @@ The admin is being rebuilt around two places: **General** (brand and general inf
 | 1 | **General** page (brand and logos, contact and social, languages and words, colors, header / bar / menu, map and logo motion). English and Arabic are written **side by side** everywhere; both files are loaded together and saved together. The old language switch is gone. English wording of the site's fixed texts can now be changed too. | **Done** |
 | 2 | **Sections** page: every section of every page, with its content (fixed texts, lists such as services, news, team, FAQ) in English and Arabic | **Done** |
 | 3 | **Sections**: the look of each section in the same place (background, text alignment, cards, picture effects, animation), under **Look of this section**. The site-wide defaults moved into General (Cards, Text alignment, Picture effects, Animation). The old Look tabs are gone | **Done** |
-| 4 | **Fonts**: choose the fonts for headings and text, in English and Arabic, for the whole site and per section | Planned |
-| 5 | Final checks, manual, and a lighter zip without the image assets | Planned |
+| 4 | **Fonts**: choose the fonts for headings and text, in English and Arabic, for the whole site (General, Fonts) and per section (Look of this section) | **Done** |
+| 5 | Final checks, manual, and a lighter zip without the image assets | **Done** |
 
 ## How the two languages are stored
 - `app-data.json`: English content and all settings. `app-data.ar.json`: the Arabic text of the same items (matched by `id`).
