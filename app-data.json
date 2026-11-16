@@ -428,7 +428,10 @@
     "fonts": {
       "all": {
         "head": {
-          "en": "Lora"
+          "en": "Montserrat"
+        },
+        "body": {
+          "en": "Lato"
         }
       }
     },
