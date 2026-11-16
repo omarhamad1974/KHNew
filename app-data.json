@@ -470,7 +470,7 @@
     "wa": {
       "bg": "role:page",
       "btn": "role:sand",
-      "opacity": "30"
+      "opacity": "100"
     },
     "menu": {
       "mode": "both",
