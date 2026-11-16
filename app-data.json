@@ -469,7 +469,8 @@
     },
     "wa": {
       "bg": "role:page",
-      "btn": "role:sand"
+      "btn": "role:sand",
+      "opacity": "30"
     },
     "menu": {
       "mode": "both",
@@ -481,6 +482,9 @@
         "t": "90",
         "d": "100"
       }
+    },
+    "bar": {
+      "bg": "role:accentDark"
     }
   },
   "newsCategories": [
