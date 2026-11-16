@@ -8,7 +8,7 @@
       "title": "Using Legal Skills with Technical Knowledge",
       "subtitle": "Discover legal and IP services.",
       "tag": "Featured",
-      "image": "./assets/slider1.jpg"
+      "image": "mwiioilp-1000097178.jpg"
     },
     {
       "id": "2",
@@ -22,7 +22,7 @@
       "title": "Making a difference ",
       "subtitle": "To people lives and people business ",
       "tag": "",
-      "image": "mvm9bed7-65080.jpg"
+      "image": "mwiip53o-1000097174.jpg"
     }
   ],
   "jurisdictions": [
@@ -409,7 +409,13 @@
         "name": "Neutral",
         "hex": "#3a4051"
       }
-    ]
+    ],
+    "hero": {
+      "unit": "px",
+      "mobile": 240,
+      "tablet": 208,
+      "desktop": 256
+    }
   },
   "newsCategories": [
     "General",
