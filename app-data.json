@@ -15,7 +15,7 @@
       "title": "Protecting Innovation",
       "subtitle": "Discover legal and IP services.",
       "tag": "Featured",
-      "image": "./assets/slider2.jpg"
+      "image": "mwj4z60v-nikhil-fHOc-5r6LMg-unsplash.jpg"
     },
     {
       "id": "3",
@@ -382,6 +382,12 @@
         "mode": "image",
         "overlay": "5",
         "image": "mwj4nopm-mikael-kristenson-MYXf7tGEntk-unsplash.jpg"
+      },
+      "patents-intro": {
+        "mode": "image",
+        "color": "role:accentSoft",
+        "overlay": 0,
+        "image": "mwj5afdd-photo-1476445704028-a36e0c798192.jpg"
       }
     },
     "sectionWidthTablet": "86",
@@ -472,7 +478,26 @@
       "sec": {
         "translation-intro": {
           "opacity": "5"
+        },
+        "patents-intro": {
+          "opacity": "10",
+          "color": "role:page"
         }
+      },
+      "all": {
+        "color": "role:accentDark",
+        "intensity": "50"
+      },
+      "hero": {
+        "opacity": "100"
+      },
+      "sections": {
+        "opacity": "25"
+      },
+      "team": {
+        "opacity": "100",
+        "color": "role:text",
+        "intensity": "0"
       }
     }
   },
