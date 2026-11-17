@@ -434,6 +434,14 @@
       "home-jurisdictions": {
         "mode": "color",
         "color": "role:page"
+      },
+      "home-services": {
+        "mode": "color",
+        "color": "role:surface"
+      },
+      "home-news": {
+        "mode": "color",
+        "color": "role:accentSoft"
       }
     },
     "sectionWidthTablet": "86",
@@ -563,6 +571,11 @@
         "about": {
           "effect": "up"
         }
+      }
+    },
+    "cols": {
+      "home-news": {
+        "d": "3"
       }
     }
   },
