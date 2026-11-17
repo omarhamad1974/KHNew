@@ -61,7 +61,7 @@
     oc.addEventListener('click',e=>{
       if(e.target.closest('[data-oc-close]'))return close();
       const g=e.target.closest('[data-sec-go]');
-      if(g){const el=document.getElementById(g.dataset.secGo);if(el&&el.offsetParent!==null){e.preventDefault();close();setTimeout(()=>el.scrollIntoView({behavior:'smooth'}),60)}else close();return}
+      if(g){const el=document.getElementById(g.dataset.secGo);if(el&&el.offsetParent!==null){e.preventDefault();close();setTimeout(()=>window.KHIP&&KHIP.goTo?KHIP.goTo(el):el.scrollIntoView({behavior:'smooth'}),60)}else close();return}
       if(e.target.closest('a'))close();
     });
     oc.addEventListener('keydown',e=>{

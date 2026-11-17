@@ -147,8 +147,8 @@
 <script src="rich.js?v=9"></script>
 <script src="video.js?v=4"></script>
 <script src="faq.js?v=9"></script>
-<script src="footer.js?v=11"></script>
-<script src="look.js?v=1"></script>
+<script src="footer.js?v=12"></script>
+<script src="look.js?v=2"></script>
 <script src="contact.js?v=10"></script>
 <script>
 let J=[],SV=[],lastFocus=null;
@@ -167,7 +167,7 @@ function render(D){
   team(D.employees||[],D.imgSizes);
   jurUI();
   observe();
-  if(location.hash==='#team')setTimeout(()=>$('team').scrollIntoView(),80);
+  if(location.hash==='#team')setTimeout(()=>window.KHIP&&KHIP.goTo?KHIP.goTo($('team'),false):$('team').scrollIntoView(),80);
 }
 // ---- Team slider: 4 across on tablet and desktop, 1 on mobile; moves by itself every 10 seconds ----
 const REDUCED=matchMedia('(prefers-reduced-motion: reduce)').matches;
