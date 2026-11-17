@@ -198,7 +198,8 @@
       "id": "2",
       "name": "Sherif Youssef",
       "position": "Translation Department Head",
-      "image": "./assets/Sherif-Youssef.jpg"
+      "image": "mwkvsfty-logo-photo-1.jpg",
+      "cardShade": "0"
     },
     {
       "id": "3",
@@ -463,9 +464,12 @@
       }
     },
     "imgfx": {
-      "all": {
-        "color": "role:accent",
-        "intensity": "60"
+      "hero": {
+        "color": "role:accentDark",
+        "intensity": "45"
+      },
+      "news": {
+        "color": "role:accentDark"
       }
     },
     "secCards": {
