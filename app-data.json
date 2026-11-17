@@ -475,7 +475,16 @@
       }
     },
     "secCards": {
-      "home-services": {}
+      "translation-intro": {
+        "bg": "role:surface",
+        "opacity": "100",
+        "border": "role:sand"
+      },
+      "translation-details": {
+        "bg": "role:accent",
+        "text": "role:sand",
+        "title": "role:page"
+      }
     },
     "align": {
       "sec": {
