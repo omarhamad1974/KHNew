@@ -419,6 +419,16 @@
       "mobile": 120,
       "tablet": 160,
       "desktop": 200
+    },
+    "bar": {
+      "bg": "role:accent"
+    },
+    "menu": {
+      "mode": "both",
+      "keepNav": true
+    },
+    "wa": {
+      "bg": "role:page"
     }
   },
   "newsCategories": [
