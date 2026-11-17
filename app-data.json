@@ -479,8 +479,6 @@
   "videos": {
     "home": {
       "url": "https://youtu.be/Oj_VwmI-Q18?si=Wrz6fx8ovX1ITUPa",
-      "text": "This is what we do \nThis is what we do",
-      "ctaText": "Go go go",
       "ctaLink": "index.html",
       "after": "home-about"
     }
