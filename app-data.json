@@ -120,6 +120,56 @@
   ],
   "news": [
     {
+      "id": "3",
+      "title": "Navigating the Future of AI-Generated Inventions",
+      "subtitle": "How patent offices are adapting to the rise of machine-assisted innovation",
+      "date": "2026-11-17",
+      "category": "Patents",
+      "image": "mwkwzbos-nikhil-fHOc-5r6LMg-unsplash.jpg",
+      "excerpt": "As artificial intelligence takes a larger role in research and development, inventors and legal experts face new questions about inventorship and intellectual property protection.",
+      "text": "The rapid integration of artificial intelligence into research and development pipelines has sparked a global debate over what constitutes a patentable invention. While current laws in most jurisdictions require a **human inventor** to be named on a patent application, the tools used to reach those breakthroughs are becoming increasingly autonomous.\n\n## Key Considerations for R&D Teams\n- Document the human contribution at every stage of the ideation process.\n- Distinguish between AI used as a mere tool versus autonomous generation.\n- Stay updated on evolving guidelines from major patent offices worldwide.\n\nUnderstanding these boundaries early ensures your company's most valuable innovations remain protected as legal frameworks catch up with technological reality."
+    },
+    {
+      "id": "4",
+      "title": "The Hidden Value of Defensive Publishing",
+      "subtitle": "A cost-effective strategy to protect your freedom to operate",
+      "date": "2026-11-12",
+      "category": "IP Strategy",
+      "image": "mwkwzznx-zizi-zi-Brlj6pi-g1I-unsplash.jpg",
+      "excerpt": "Not every innovation requires a full patent application. Discover how defensive publishing can prevent competitors from locking you out of key markets.",
+      "text": "Securing a patent is often expensive and time-consuming, making it impractical for every incremental improvement your engineering team develops. **Defensive publishing** offers a strategic alternative by intentionally disclosing an innovation to the public, thereby establishing prior art.\n\n## When to Choose Defensive Publishing\n- When the technology has a short commercial lifecycle.\n- When enforcing a patent would be difficult to detect in a competitor's product.\n- When budget constraints require prioritizing core foundational patents.\n\nBy placing these details into the public domain, you ensure no one else can claim exclusive rights over the technology, preserving your team's **freedom to operate**."
+    },
+    {
+      "id": "5",
+      "title": "Sustainable Tech: Patent Trends in Green Energy",
+      "subtitle": "A look at the surging filings in battery storage and carbon capture",
+      "date": "2026-11-05",
+      "category": "Industry Trends",
+      "image": "",
+      "excerpt": "Global patent filings in clean energy technologies have reached record highs, signaling a major shift in corporate R&D priorities.",
+      "text": "Over the past few years, innovation in renewable energy has shifted from basic generation to efficiency, storage, and grid integration. Patent analytics reveal a massive surge in filings related to **solid-state batteries** and scalable carbon capture systems.\n\n## Top Growth Areas in Clean Tech\n- Next-generation grid-scale energy storage solutions.\n- Green hydrogen production and transport infrastructure.\n- AI-driven smart grid optimization software.\n\nCompanies investing in these sectors are building robust patent portfolios not just for protection, but to attract venture capital and form strategic licensing partnerships."
+    },
+    {
+      "id": "6",
+      "title": "Common Mistakes Startups Make with Intellectual Property",
+      "subtitle": "Avoid these early pitfalls before pitching to investors",
+      "date": "2026-10-28",
+      "category": "Startups",
+      "image": "",
+      "excerpt": "Early-stage founders often overlook crucial IP steps in the rush to launch. Here is how to safeguard your core assets from day one.",
+      "text": "When building a startup from the ground up, speed is everything. However, moving too fast without an **intellectual property strategy** can accidentally forfeit your rights to your own technology before you even secure seed funding.\n\n## Three Critical Pitfalls to Avoid\n- **Public Disclosure Before Filing:** Discussing your invention at a conference or launching a product before filing a provisional patent can destroy novelty requirements.\n- **Unclear Ownership Agreements:** Ensure all founders, employees, and freelance contractors sign clear IP assignment agreements.\n- **Ignoring Trademark Searches:** Rebranding after a cease-and-desist letter is an expensive distraction no early-stage company needs.\n\nTaking a few proactive legal steps early on builds investor confidence and lays a solid foundation for long-term valuation."
+    },
+    {
+      "id": "7",
+      "title": "Building a Culture of Innovation Within Your Organization",
+      "subtitle": "Practical steps to encourage engineers to document and share ideas",
+      "date": "2026-10-20",
+      "category": "General",
+      "image": "",
+      "excerpt": "Great patents start with everyday problem-solving. Learn how to create an internal system that rewards curiosity and captures breakthrough ideas.",
+      "text": "Many groundbreaking inventions go unnoticed simply because engineers view their creative workarounds as routine problem-solving rather than **patentable innovations**. Bridging this gap requires fostering an internal culture that values and rewards documentation.\n\n## How to Capture More Ideas\n- Host regular, informal invention harvesting sessions with engineering teams.\n- Simplify the internal invention disclosure form to reduce friction.\n- Celebrate patent milestones publicly to recognize your top innovators.\n\nWhen employees see that their creative solutions are valued and protected, innovation becomes a natural, ongoing part of your company's DNA."
+    },
+    {
       "id": "1",
       "title": "KHIP attends the event bla bla bla",
       "image": "mwiirc1q-1000008469.jpg",
@@ -522,7 +572,10 @@
     "Intellectual Property",
     "Patents",
     "Trademarks",
-    "Translation"
+    "Translation",
+    "IP Strategy",
+    "Industry Trends",
+    "Startups"
   ],
   "contact": {
     "whatsapp": "201006552255",
@@ -547,5 +600,21 @@
     "cardImage": "",
     "cardShade": "0",
     "cardBg": "role:sand"
+  },
+  "imgSizes": {
+    "mwkwzbos-nikhil-fHOc-5r6LMg-unsplash.jpg": {
+      "w": 1600,
+      "v": [
+        480,
+        960
+      ]
+    },
+    "mwkwzznx-zizi-zi-Brlj6pi-g1I-unsplash.jpg": {
+      "w": 1600,
+      "v": [
+        480,
+        960
+      ]
+    }
   }
 }
