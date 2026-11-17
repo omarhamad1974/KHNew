@@ -49,6 +49,9 @@ A YouTube video with an optional title and text, on the **Home** page and on the
 ## Section header (admin: Sections, Look of this section, Section header)
 Hide or show the **title**, the **icon**, the **thin line** under the title and, on the Patents / Trademarks / Translation pages, the **WhatsApp button** of any section. A hidden title is only visually hidden (search engines and screen readers still read it). Saved as `theme.secHead` (`{ "<section>": { "title": true } }`, only hidden parts are written). See [CONTROL-PLAN.md](CONTROL-PLAN.md), phase 2.
 
+## Page layout (admin: Sections, Sections of this page)
+Show or hide any **section**, hide single **parts** of a section (logo, buttons, map, slider arrows, one card, contact tiles, ...: *Look of this section, Parts of this section*), **change the order** of the sections of a page and **duplicate** a section. A copy shows the same content as its section and has its own look. Saved as `theme.layout` (`hide`, `order`, `copies`) and `theme.parts`; applied by `layout.js`. See [CONTROL-PLAN.md](CONTROL-PLAN.md), phase 5.
+
 ## Columns per row (admin: Sections, Look of this section, Columns per row)
 Set how many cards sit side by side (1 to 4) on **tablet** and **desktop** for Home Services, Home Latest news, About Advantages, About Our team and the Details cards of the service pages. Phones are not affected. Saved as `theme.cols` (`{ "<section>": { "t": "2", "d": "3" } }`). See [CONTROL-PLAN.md](CONTROL-PLAN.md), phase 3.
 

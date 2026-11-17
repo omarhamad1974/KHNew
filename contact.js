@@ -11,7 +11,7 @@
   const NET={linkedin:['ph-linkedin-logo','LinkedIn'],youtube:['ph-youtube-logo','YouTube'],facebook:['ph-facebook-logo','Facebook'],instagram:['ph-instagram-logo','Instagram'],x:['ph-x-logo','X'],tiktok:['ph-tiktok-logo','TikTok']};
   const list=v=>(Array.isArray(v)?v:String(v||'').split('\n')).map(x=>String(x).trim()).filter(Boolean);
   const tel=p=>'tel:'+String(p).replace(/[^\d+]/g,'');
-  const tile=(href,ico,tx,label,body,ltr)=>`<${href?`a href="${esc(href)}"`:'div'} class="ct-tile"><span class="ct-ico"><i class="ph-light ${ico}"></i></span><span><span class="block text-xs uppercase tracking-widest text-stone-500" data-tx="${tx}">${label}</span><span class="block text-base text-ink"${ltr?' dir="ltr" style="unicode-bidi:plaintext"':''}>${body}</span></span></${href?'a':'div'}>`;
+  const tile=(href,ico,tx,label,body,ltr,part)=>`<${href?`a href="${esc(href)}"`:'div'} data-part="${part}" class="ct-tile"><span class="ct-ico"><i class="ph-light ${ico}"></i></span><span><span class="block text-xs uppercase tracking-widest text-stone-500" data-tx="${tx}">${label}</span><span class="block text-base text-ink"${ltr?' dir="ltr" style="unicode-bidi:plaintext"':''}>${body}</span></span></${href?'a':'div'}>`;
   const mapQ=m=>encodeURIComponent(String(m).replace(/\s+/g,' ').trim());
 
   function run(D){
@@ -31,9 +31,9 @@
     if(map){
       const host=map.parentElement;
       host.querySelectorAll('.ct-tile').forEach(e=>e.remove());
-      const html=phones.map(p=>tile(tel(p),'ph-phone','about.span1','Phone',esc(p),true)).join('')
-        +emails.map(m=>tile('mailto:'+m,'ph-envelope-simple','about.span2','Email',esc(m),true)).join('')
-        +(addr.length?tile('','ph-map-pin','about.span3','Address',addr.map(esc).join('<br>')):'');
+      const html=phones.map(p=>tile(tel(p),'ph-phone','about.span1','Phone',esc(p),true,'phone')).join('')
+        +emails.map(m=>tile('mailto:'+m,'ph-envelope-simple','about.span2','Email',esc(m),true,'email')).join('')
+        +(addr.length?tile('','ph-map-pin','about.span3','Address',addr.map(esc).join('<br>'),false,'address'):'');
       map.insertAdjacentHTML('beforebegin',html);KLang.tx(host);
       const m=String(c.map||'').trim();
       if(m){

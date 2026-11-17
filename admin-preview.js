@@ -35,7 +35,7 @@ const KPV=(()=>{
 
   /* ---------- what to show ---------- */
   function want(){
-    if(typeof tab!=='undefined'&&tab==='sections'){const c=ASEC.cur();return {page:c.page,key:c.key,label:(PAGES.find(p=>p[0]===c.page)||[])[1]+' page · '+((ASEC.SECS.find(s=>s.key===c.key)||{}).label||'')}}
+    if(typeof tab!=='undefined'&&tab==='sections'){const c=ASEC.cur();return {page:c.page,key:c.key,label:(PAGES.find(p=>p[0]===c.page)||[])[1]+' page · '+((ASEC.entry(c.key)||{}).label||'')}}
     const g=GEN[gsub]||['home',''],p=genPage||g[0];
     return {page:p,key:genPage&&genPage!==g[0]?'':g[1],label:(PAGES.find(x=>x[0]===p)||[])[1]+' page'};
   }

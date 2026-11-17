@@ -77,6 +77,7 @@ Saving in the admin writes a commit to the repository. The host republishes the 
 - `theme.js` (colors, fonts, backgrounds, hero height, header / bar / card colours, text alignment, logo sizes), `lang.js` (English / Arabic engine), `pages-i18n.js` (fixed page texts, English and Arabic), `rich.js` (text formatting), `look.js` (menu behaviour), `faq.js`, `service-page.js`, `footer.js` (bottom bar and WhatsApp box), `tailwind-config.js`, `styles.css`.
 - `preview.js` (public pages, inert for visitors) and `admin-preview.js` (admin): the live preview. Plan of the Control phases: `CONTROL-PLAN.md`.
 - `video.js`: the YouTube video sections of the home and About pages.
+- `layout.js`: which sections show, their order, copies of sections, and hidden parts of a section (admin: Sections, Sections of this page).
 - `assets/`: logos, team photos and uploaded pictures.
 - `scripts/validate.js`, `.github/workflows/validate.yml`: content check run by GitHub.
 - `scripts/build-tailwind.js`, `scripts/tailwind.config.cjs`, `scripts/tailwind-input.css`, `tailwind.css` (generated): the compiled Tailwind stylesheet; run by the same Action as the SEO build.

@@ -333,8 +333,9 @@ const ALOOK=(()=>{
   }
   /* ---------- Section header (control phase 2): hide or show the title, icon, thin line and WhatsApp button of one section ---------- */
   const HEADLBL={title:['Title','Hide the title. It stays in the page for search engines and screen readers; only the look disappears.'],icon:['Icon','Hide the icon above or beside the title.'],rule:['Thin line','Hide the thin gold line under the title.'],wa:['WhatsApp button','Hide the "WhatsApp us" button at the end of the page.']};
+  const BK=k=>window.KLAYOUT?KLAYOUT.base(k):k;          // a copy of a section ("home-faq-c2") has the parts and columns of its section
   function secHead(key){
-    const parts=(((window.KSEC||{}).parts)||{})[key]||[];
+    const parts=(((window.KSEC||{}).parts)||{})[BK(key)]||[];
     if(!parts.length)return '';
     const s=((T().secHead||{})[key])||{},hid=parts.filter(k=>s[k]===true);
     const one=k=>`<label class="flex items-start gap-2 text-xs font-bold text-gray-700 bg-gray-50 border border-gray-200 rounded-lg p-3 cursor-pointer"><input type="checkbox" data-p="theme.secHead.${key}.${k}" data-bool="1" data-lkv="1" ${s[k]===true?'checked':''} class="mt-0.5"><span>${esc(HEADLBL[k][0])}: <span class="font-normal text-gray-600">${esc(HEADLBL[k][1])}</span></span></label>`;
@@ -342,21 +343,29 @@ const ALOOK=(()=>{
   }
   /* ---------- Columns per row (control phase 3): how many cards across on tablet and desktop ---------- */
   function secCols(key){
-    const def=((window.KSEC||{}).cols||{})[key];
+    const def=((window.KSEC||{}).cols||{})[BK(key)];
     if(!def)return '';
     const s=((T().cols||{})[key])||{},base=`theme.cols.${key}.`,on=!!(s.t||s.d);
     const built=(n,l)=>l||(n?String(n):'cards of a fixed width');
     const sel=(k,label,sub,n,l)=>{const v=val(base+k);return `<label class="block text-xs font-bold">${esc(label)} <span class="font-normal text-gray-500">(${esc(sub)})</span><select data-p="${base+k}" data-lkv="1" class="${inp} mt-1"><option value="" ${v===''?'selected':''}>As designed (${esc(built(n,l))})</option>${[1,2,3,4].map(n=>`<option value="${n}" ${v===String(n)?'selected':''}>${n} across</option>`).join('')}</select></label>`};
     return det('n:'+key,'Columns per row',on,'Own columns','As designed',
       grid(sel('t','Tablet','768 to 1023 px',def.t)+sel('d','Desktop','1024 px and up',def.d,def.dl))
-      +`<p class="text-[11px] text-gray-500">How many ${key==='about-team'?'team members':key==='home-news'?'news cards':'cards'} sit side by side. Phones keep one at a time or one above the other. The columns share the section width, so 4 across is narrow when the section width is small (General, Colors, Section width).${key==='home-news'||key==='about-team'?' If there are more than fit, the row slides.':''}</p>`
+      +`<p class="text-[11px] text-gray-500">How many ${BK(key)==='about-team'?'team members':BK(key)==='home-news'?'news cards':'cards'} sit side by side. Phones keep one at a time or one above the other. The columns share the section width, so 4 across is narrow when the section width is small (General, Colors, Section width).${BK(key)==='home-news'||BK(key)==='about-team'?' If there are more than fit, the row slides.':''}</p>`
       +`<div><button type="button" data-lk="reset-sec-cols" data-k="${key}" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl"><i class="fas fa-rotate-left"></i> As designed</button></div>`);
+  }
+  /* ---------- Parts of this section (layout.js): hide or show one part of a section (logo, text, buttons, cards, map, ...) ---------- */
+  function secParts(key){
+    const parts=((window.KLAYOUT||{}).PARTS||{})[BK(key)]||[];
+    if(!parts.length)return '';
+    const s=((T().parts||{})[key])||{},hid=parts.filter(([k])=>s[k]===true);
+    const one=([k,l,w])=>`<label class="flex items-start gap-2 text-xs font-bold text-gray-700 bg-gray-50 border border-gray-200 rounded-lg p-3 cursor-pointer"><input type="checkbox" data-p="theme.parts.${key}.${k}" data-bool="1" data-lkv="1" ${s[k]===true?'checked':''} class="mt-0.5"><span>${esc(l)}${w?`: <span class="font-normal text-gray-600">${esc(w)}</span>`:''}</span></label>`;
+    return det('p:'+key,'Parts of this section',hid.length>0,hid.length+' hidden','All shown',`<div class="grid sm:grid-cols-2 gap-3">${parts.map(one).join('')}</div><p class="text-[11px] text-gray-500">Tick a box to hide that part on the website, in English and Arabic. Untick it to show it again. What is written for a hidden part is kept.</p><div><button type="button" data-lk="reset-sec-parts" data-k="${key}" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl"><i class="fas fa-rotate-left"></i> Show every part</button></div>`);
   }
   const SECKEYS=()=>TH().SECTIONS.map(x=>x[0]);
   function hasLook(key){
     const t=T(),has=o=>!!o&&Object.values(o).some(v=>v&&typeof v==='object'?has(v):v!==''&&v!=null&&v!==false);
     if(key==='home-hero')return has((t.imgfx||{}).hero);
-    return ['color','image'].includes(((t.sections||{})[key]||{}).mode)||has((t.secCards||{})[key])||has((t.secHead||{})[key])||has((t.cols||{})[key])||has(((t.align||{}).sec||{})[key])||has(((t.imgfx||{}).sec||{})[key])||has(((t.anim||{}).sec||{})[key])||has(((t.fonts||{}).sec||{})[key]);
+    return ['color','image'].includes(((t.sections||{})[key]||{}).mode)||has((t.secCards||{})[key])||has((t.secHead||{})[key])||has((t.parts||{})[key])||has((t.cols||{})[key])||has(((t.align||{}).sec||{})[key])||has(((t.imgfx||{}).sec||{})[key])||has(((t.anim||{}).sec||{})[key])||has(((t.fonts||{}).sec||{})[key]);
   }
   function secLook(key){
     const wrap=(intro,body,extra='')=>`<div class="bg-white p-4 rounded-2xl border border-gray-200 space-y-3"><div class="flex items-start justify-between gap-3"><div><h3 class="font-extrabold text-base">Look of this section</h3><p class="text-xs text-gray-600 mt-0.5">${intro}</p></div>${extra}</div>${body}</div>`;
@@ -365,11 +374,11 @@ const ALOOK=(()=>{
       return wrap('The slider is not a section of the page, so only its pictures can be styled here. Its height and controls are in the cards above. Anything left on its default follows <b>General, Picture effects</b>.',
         det('f:hero','Photo effect',on,'Own effect','Same as all pictures',fxBody('theme.imgfx.hero.','hero',null,'Same as all pictures')+`<div><button type="button" data-lk="reset-fx-hero" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl"><i class="fas fa-rotate-left"></i> Same as all pictures</button></div>`));
     }
-    if(!SECKEYS().includes(key))return '';
+    if(!SECKEYS().includes(BK(key)))return '';
     const bg=bgInfo(key);
-    return wrap('Background, header parts, columns, cards, fonts, text alignment, photo effect and animation of this section only. Whatever you leave on its default follows the site-wide settings in <b>General</b> (Colors, Cards, Fonts, Text alignment, Picture effects, Animation). Cards settings only matter where the section has cards.',
+    return wrap('Background, header parts, parts of the section, columns, cards, fonts, text alignment, photo effect and animation of this section only. Whatever you leave on its default follows the site-wide settings in <b>General</b> (Colors, Cards, Fonts, Text alignment, Picture effects, Animation). Cards settings only matter where the section has cards.',
       det('b:'+key,'Background',bg.mode!=='default',bg.badge,'Default',bg.body)
-      +secHead(key)+secCols(key)+secCards(key)+secFonts(key)+secAlign(key)+secFx(key)+secAx(key),
+      +secHead(key)+secParts(key)+secCols(key)+secCards(key)+secFonts(key)+secAlign(key)+secFx(key)+secAx(key),
       hasLook(key)?`<button type="button" data-lk="reset-sec-look" data-k="${key}" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl flex-shrink-0" title="Remove every look setting of this section"><i class="fas fa-rotate-left"></i> Reset this section</button>`:'');
   }
 
@@ -390,7 +399,15 @@ const ALOOK=(()=>{
       }
     };
     if(t.secHead){Object.keys(t.secHead).forEach(k=>{const s=t.secHead[k]||{};Object.keys(s).forEach(p=>{if(s[p]!==true)delete s[p]})})}      // only "hide" is saved
-    ['header','bar','wa','cards','secCards','secHead','cols','align','logos','menu','imgfx','anim','motion','fonts'].forEach(k=>{if(t[k]){prune(t[k]);if(!Object.keys(t[k]).length)delete t[k]}});
+    if(t.parts){Object.keys(t.parts).forEach(k=>{const s=t.parts[k]||{};Object.keys(s).forEach(p=>{if(s[p]!==true)delete s[p]})})}
+    if(t.layout){
+      const Ly=t.layout;
+      if(Ly.hide)Object.keys(Ly.hide).forEach(k=>{if(Ly.hide[k]!==true)delete Ly.hide[k]});
+      if(Ly.order)Object.keys(Ly.order).forEach(p=>{if(!Array.isArray(Ly.order[p])||!Ly.order[p].length)delete Ly.order[p]});
+      ['hide','order','copies'].forEach(k=>{if(Ly[k]&&!Object.keys(Ly[k]).length)delete Ly[k]});
+      if(!Object.keys(Ly).length)delete t.layout;
+    }
+    ['header','bar','wa','cards','secCards','secHead','parts','cols','align','logos','menu','imgfx','anim','motion','fonts'].forEach(k=>{if(t[k]){prune(t[k]);if(!Object.keys(t[k]).length)delete t[k]}});
     // a font name that is not allowed is dropped rather than saved
     const okF=o=>{if(!o||typeof o!=='object')return;['head','body'].forEach(r=>['en','ar'].forEach(l=>{if(o[r]&&o[r][l]&&!TH().fontOk(o[r][l]))delete o[r][l]}))};
     if(t.fonts){okF(t.fonts.all);Object.values(t.fonts.sec||{}).forEach(okF);[t.fonts].concat([t.fonts.all],Object.values(t.fonts.sec||{})).forEach(o=>{if(o)prune(o)});if(!Object.keys(t.fonts).length)delete t.fonts}
@@ -451,7 +468,8 @@ const ALOOK=(()=>{
     else if(a==='reset-sec'){if(t.secCards)delete t.secCards[b.dataset.k];mark();view()}
     else if(a==='reset-sec-cols'){if(t.cols)delete t.cols[b.dataset.k];mark();view()}
     else if(a==='reset-sec-head'){if(t.secHead)delete t.secHead[b.dataset.k];mark();view()}
-    else if(a==='reset-sec-look'){const k=b.dataset.k;if(confirm('Remove the background, hidden header parts, columns, cards colors, fonts, text alignment, photo effect and animation set for this section? It will follow the site-wide settings.')){if(t.sections)delete t.sections[k];[['secCards'],['secHead'],['cols'],['align','sec'],['imgfx','sec'],['anim','sec'],['fonts','sec']].forEach(([a1,a2])=>{const o=a2?(t[a1]||{})[a2]:t[a1];if(o)delete o[k]});mark();view()}}
+    else if(a==='reset-sec-parts'){if(t.parts)delete t.parts[b.dataset.k];mark();view()}
+    else if(a==='reset-sec-look'){const k=b.dataset.k;if(confirm('Remove the background, hidden header parts, hidden parts, columns, cards colors, fonts, text alignment, photo effect and animation set for this section? It will follow the site-wide settings.')){if(t.sections)delete t.sections[k];[['secCards'],['secHead'],['parts'],['cols'],['align','sec'],['imgfx','sec'],['anim','sec'],['fonts','sec']].forEach(([a1,a2])=>{const o=a2?(t[a1]||{})[a2]:t[a1];if(o)delete o[k]});mark();view()}}
   });
 
   return {tabs,clean,previews,secLook,hasLook,cref};

@@ -52,7 +52,7 @@ if(H!==undefined){
   if(T.secCards!==undefined){
     if(typeof T.secCards!=='object'||T.secCards===null||Array.isArray(T.secCards))errs.push('theme.secCards: must be an object');
     else for(const [k,v] of Object.entries(T.secCards)){
-      if(!/^[a-z]+-[a-z-]+$/.test(k))errs.push(`theme.secCards.${k}: not a section name`);
+      if(!/^[a-z]+-[a-z-]+(-c[0-9]{1,3})?$/.test(k))errs.push(`theme.secCards.${k}: not a section name`);
       ['bg','text','title','border'].forEach(c=>color(`secCards.${k}.${c}`,(v||{})[c]));
       range(`secCards.${k}.opacity`,(v||{}).opacity,0,100);
     }
@@ -60,7 +60,7 @@ if(H!==undefined){
 }
 // ---- Look phase 2: text alignment and logos ----
 {
-  const T=d.theme||{},AL=['start','center','end','justify'],SEC=/^[a-z]+-[a-z-]+$/;
+  const T=d.theme||{},AL=['start','center','end','justify'],SEC=/^[a-z]+-[a-z-]+(-c[0-9]{1,3})?$/;
   const al=(path,o)=>{if(o===undefined)return;if(typeof o!=='object'||o===null||Array.isArray(o)){errs.push(`theme.${path}: must be an object`);return}
     for(const k of Object.keys(o)){if(!['m','t','d'].includes(k))errs.push(`theme.${path}.${k}: use m (phone), t (tablet) or d (desktop)`);else if(o[k]!==''&&!AL.includes(o[k]))errs.push(`theme.${path}.${k}: must be ${AL.join(', ')} (is "${o[k]}")`)}};
   if(T.align!==undefined){
@@ -112,7 +112,7 @@ if(H!==undefined){
     if(typeof X!=='object'||X===null||Array.isArray(X))errs.push('theme.imgfx: must be an object');
     else for(const [k,o] of Object.entries(X)){
       if(['all','hero','news','team','sections'].includes(k))fx(k,o);
-      else if(k==='sec'){if(typeof o!=='object'||o===null||Array.isArray(o))errs.push('theme.imgfx.sec: must be an object');else for(const [s,x] of Object.entries(o)){if(!/^[a-z]+-[a-z-]+$/.test(s))errs.push(`theme.imgfx.sec.${s}: not a section name`);fx('sec.'+s,x)}}
+      else if(k==='sec'){if(typeof o!=='object'||o===null||Array.isArray(o))errs.push('theme.imgfx.sec: must be an object');else for(const [s,x] of Object.entries(o)){if(!/^[a-z]+-[a-z-]+(-c[0-9]{1,3})?$/.test(s))errs.push(`theme.imgfx.sec.${s}: not a section name`);fx('sec.'+s,x)}}
       else errs.push(`theme.imgfx.${k}: unknown group (use all, hero, news, team, sections, sec)`);
     }
   }
@@ -137,7 +137,7 @@ if(H!==undefined){
     if(!isObj(A))errs.push('theme.anim: must be an object');
     else for(const [k,o] of Object.entries(A)){
       if(k==='all')pair('all',o);
-      else if(k==='sec'){if(!isObj(o))errs.push('theme.anim.sec: must be an object');else for(const [s,x] of Object.entries(o)){if(!/^[a-z]+-[a-z-]+$/.test(s))errs.push(`theme.anim.sec.${s}: not a section name`);pair('sec.'+s,x)}}
+      else if(k==='sec'){if(!isObj(o))errs.push('theme.anim.sec: must be an object');else for(const [s,x] of Object.entries(o)){if(!/^[a-z]+-[a-z-]+(-c[0-9]{1,3})?$/.test(s))errs.push(`theme.anim.sec.${s}: not a section name`);pair('sec.'+s,x)}}
       else errs.push(`theme.anim.${k}: unknown group (use all or sec)`);
     }
   }
@@ -198,7 +198,7 @@ if(H!==undefined){
       if(k==='all')level('all',o);
       else if(k==='sec'){
         if(!isObj(o))errs.push('theme.fonts.sec: must be an object');
-        else for(const [s,x] of Object.entries(o)){if(!/^[a-z]+-[a-z-]+$/.test(s))errs.push(`theme.fonts.sec.${s}: not a section name`);level('sec.'+s,x)}
+        else for(const [s,x] of Object.entries(o)){if(!/^[a-z]+-[a-z-]+(-c[0-9]{1,3})?$/.test(s))errs.push(`theme.fonts.sec.${s}: not a section name`);level('sec.'+s,x)}
       }else errs.push(`theme.fonts.${k}: unknown group (use all or sec)`);
     }
   }
@@ -210,7 +210,7 @@ if(H!==undefined){
     const isObj=o=>typeof o==='object'&&o!==null&&!Array.isArray(o);
     if(!isObj(H))errs.push('theme.secHead: must be an object');
     else for(const [s,o] of Object.entries(H)){
-      if(!/^[a-z]+-[a-z-]+$/.test(s)){errs.push(`theme.secHead.${s}: not a section name`);continue}
+      if(!/^[a-z]+-[a-z-]+(-c[0-9]{1,3})?$/.test(s)){errs.push(`theme.secHead.${s}: not a section name`);continue}
       if(!isObj(o)){errs.push(`theme.secHead.${s}: must be an object`);continue}
       for(const [k,v] of Object.entries(o)){
         if(!['title','icon','rule','wa'].includes(k))errs.push(`theme.secHead.${s}.${k}: unknown part (use title, icon, rule or wa)`);
@@ -226,12 +226,62 @@ if(H!==undefined){
     const isObj=o=>typeof o==='object'&&o!==null&&!Array.isArray(o);
     if(!isObj(C))errs.push('theme.cols: must be an object');
     else for(const [s,o] of Object.entries(C)){
-      if(!/^[a-z]+-[a-z-]+$/.test(s)){errs.push(`theme.cols.${s}: not a section name`);continue}
+      if(!/^[a-z]+-[a-z-]+(-c[0-9]{1,3})?$/.test(s)){errs.push(`theme.cols.${s}: not a section name`);continue}
       if(!isObj(o)){errs.push(`theme.cols.${s}: must be an object`);continue}
       for(const [k,v] of Object.entries(o)){
         if(!['t','d'].includes(k)){errs.push(`theme.cols.${s}.${k}: use t (tablet) or d (desktop)`);continue}
         if(v===''||v===undefined)continue;
         if(!(Number.isInteger(Number(v))&&Number(v)>=1&&Number(v)<=4))errs.push(`theme.cols.${s}.${k}: must be a whole number from 1 to 4 (is "${v}")`);
+      }
+    }
+  }
+}
+// ---- Page layout (layout.js): theme.layout = {hide: {<section>: true}, order: {<page>: [<section>...]}, copies: {<copy>: <section>}};
+//      theme.parts = {<section>: {<part>: true}} (true = hide that part) ----
+{
+  const isObj=o=>typeof o==='object'&&o!==null&&!Array.isArray(o),T=d.theme||{},SK=/^[a-z]+-[a-z-]+(-c[0-9]{1,3})?$/,CP=/^(.+)-c([0-9]{1,3})$/;
+  const PG=['home','about','patents','trademarks','translation'];
+  let PARTS=null;try{global.window=global.window||{};require(path.resolve(__dirname,'..','layout.js'));PARTS=window.KLAYOUT&&window.KLAYOUT.PARTS}catch(e){}
+  const Ly=T.layout;
+  if(Ly!==undefined){
+    if(!isObj(Ly))errs.push('theme.layout: must be an object');
+    else{
+      for(const k of Object.keys(Ly))if(!['hide','order','copies'].includes(k))errs.push(`theme.layout.${k}: unknown setting (use hide, order or copies)`);
+      const C=Ly.copies||{};
+      if(Ly.copies!==undefined&&!isObj(Ly.copies))errs.push('theme.layout.copies: must be an object');
+      else for(const [c,of] of Object.entries(C)){
+        const m=CP.exec(c);
+        if(!m||!SK.test(c)||m[1]!==of)errs.push(`theme.layout.copies.${c}: a copy is named after its section, e.g. "${of}-c2"`);
+        else if(['home-hero','home-video','about-video'].includes(of))errs.push(`theme.layout.copies.${c}: ${of} cannot be copied`);
+      }
+      if(Ly.hide!==undefined){
+        if(!isObj(Ly.hide))errs.push('theme.layout.hide: must be an object');
+        else for(const [k,v] of Object.entries(Ly.hide)){if(!SK.test(k))errs.push(`theme.layout.hide.${k}: not a section name`);else if(typeof v!=='boolean')errs.push(`theme.layout.hide.${k}: must be true or false`)}
+      }
+      if(Ly.order!==undefined){
+        if(!isObj(Ly.order))errs.push('theme.layout.order: must be an object');
+        else for(const [p,l] of Object.entries(Ly.order)){
+          if(!PG.includes(p)){errs.push(`theme.layout.order.${p}: unknown page (use ${PG.join(', ')})`);continue}
+          if(!Array.isArray(l)){errs.push(`theme.layout.order.${p}: must be a list`);continue}
+          l.forEach((k,i)=>{
+            if(typeof k!=='string'||!SK.test(k))errs.push(`theme.layout.order.${p}[${i}]: not a section name`);
+            else if(!k.startsWith(p+'-'))errs.push(`theme.layout.order.${p}[${i}]: ${k} is not on the ${p} page`);
+            else if(CP.test(k)&&!C[k])warn.push(`theme.layout.order.${p}: ${k} is not a copy any more (ignored)`);
+          });
+        }
+      }
+    }
+  }
+  const P=T.parts;
+  if(P!==undefined){
+    if(!isObj(P))errs.push('theme.parts: must be an object');
+    else for(const [s,o] of Object.entries(P)){
+      if(!SK.test(s)){errs.push(`theme.parts.${s}: not a section name`);continue}
+      if(!isObj(o)){errs.push(`theme.parts.${s}: must be an object`);continue}
+      const b=(CP.exec(s)||[0,s])[1],known=PARTS?(PARTS[b]||[]).map(x=>x[0]):null;
+      for(const [k,v] of Object.entries(o)){
+        if(known&&!known.includes(k))errs.push(`theme.parts.${s}.${k}: unknown part${known.length?` (use ${known.join(', ')})`:' (this section has none)'}`);
+        else if(typeof v!=='boolean')errs.push(`theme.parts.${s}.${k}: must be true or false`);
       }
     }
   }
