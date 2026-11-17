@@ -429,6 +429,25 @@
     },
     "wa": {
       "bg": "role:page"
+    },
+    "fonts": {
+      "all": {
+        "head": {
+          "en": "Montserrat"
+        }
+      }
+    },
+    "logos": {
+      "about": {
+        "m": "64",
+        "t": "72",
+        "d": "80"
+      },
+      "home": {
+        "m": "80",
+        "t": "90",
+        "d": "100"
+      }
     }
   },
   "newsCategories": [
