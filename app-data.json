@@ -480,6 +480,28 @@
           "m": "start"
         }
       }
+    },
+    "motion": {
+      "map": {
+        "entrance": "fade",
+        "speed": "0.3",
+        "delay": "0.1",
+        "base": "fade",
+        "stagger": "0",
+        "idle": "breathe",
+        "hover": "raise"
+      },
+      "logos": {
+        "header": {
+          "effect": "fade"
+        },
+        "home": {
+          "effect": "up"
+        },
+        "about": {
+          "effect": "up"
+        }
+      }
     }
   },
   "newsCategories": [
