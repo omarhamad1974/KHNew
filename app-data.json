@@ -368,8 +368,8 @@
       "accentDark": "#1e40af",
       "accentSoft": "#eff6ff",
       "sand": "#d9c8a4",
-      "page": "#f7f6f3",
-      "surface": "#ffffff",
+      "page": "#ffffff",
+      "surface": "#f7f6f3",
       "text": "#3a4051"
     },
     "custom": [],
@@ -381,7 +381,7 @@
       },
       "home-jurisdictions": {
         "mode": "color",
-        "color": "role:accent"
+        "color": "role:page"
       }
     },
     "sectionWidthTablet": "86",
@@ -535,5 +535,9 @@
       "after": "home-about"
     }
   },
-  "ipCard": {}
+  "ipCard": {
+    "cardImage": "",
+    "cardShade": "0",
+    "cardBg": "role:sand"
+  }
 }
