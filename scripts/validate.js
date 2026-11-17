@@ -343,6 +343,11 @@ if(d.faq!==undefined){
     else errs.push(`${p}.${k}: unknown setting (use size, color, bg, pos)`);
   }};
   per('icons',ico);
+  {const H=(d.theme||{}).headSize;if(H!==undefined){
+    const lvl=(p,o)=>{if(!isObj(o)){errs.push(`${p}: must be an object`);return}for(const [k,v] of Object.entries(o)){if(!['h1','h2','h3'].includes(k))errs.push(`${p}.${k}: use h1, h2 or h3`);else{const n=Number(v);if(v!==''&&!(n>=60&&n<=160))errs.push(`${p}.${k}: must be between 60 and 160 (is "${v}")`)}}};
+    if(!isObj(H))errs.push('theme.headSize: must be an object');
+    else for(const [k,o] of Object.entries(H)){if(k==='all')lvl('theme.headSize.all',o);else if(k==='sec'){if(!isObj(o))errs.push('theme.headSize.sec: must be an object');else for(const [sk,x] of Object.entries(o)){if(!SK.test(sk))errs.push(`theme.headSize.sec.${sk}: not a section name`);else lvl(`theme.headSize.sec.${sk}`,x)}}else errs.push(`theme.headSize.${k}: use all or sec`)}
+  }}
   {const A=(d.theme||{}).iconsAll;if(A!==undefined){if(!isObj(A))errs.push('theme.iconsAll: must be an object');else ico('theme.iconsAll',A)}}
 }
 // ---- Picture sizes: imgSizes = {"<file>": {w: width of the file, v: [widths of the smaller copies name-w480.ext ...]}} ----

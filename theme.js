@@ -447,7 +447,7 @@
         if(!ic||!h)return;
         ic.style.removeProperty('--ti-z');
         const ih=ic.getBoundingClientRect().height;if(!ih)return;
-        const cs=getComputedStyle(h),lh=parseFloat(cs.lineHeight)||parseFloat(cs.fontSize)*1.2;
+        const cs=getComputedStyle(h),lh=(parseFloat(cs.lineHeight)||parseFloat(cs.fontSize)*1.2)*(parseFloat(cs.zoom)||1);   // a resized heading (zoom) counts
         ic.style.setProperty('--ti-z',Math.min(1.5,Math.max(.25,lh*1.05/ih)).toFixed(3));
       });
     });
@@ -458,13 +458,30 @@
     addEventListener('load',fitSoon);
     if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fitSoon);
   }
+  /* ---------- Heading sizes ----------
+     theme.headSize {all: {h1, h2, h3}, sec: {<section>: {h1, h2, h3}}}: 60..160 (% of the designed size). h1 = page titles,
+     h2 = section titles, h3 = card titles. A section's own value goes on top of "all". The heading keeps its own sizes per screen
+     (phone, tablet, desktop) and is scaled from them. styles.css: [data-hs~="2"] h2 {zoom: var(--hs-2)}. */
+  const HS=['h1','h2','h3'];
+  function heads(T){
+    const H=(T||{}).headSize||{},A=H.all||{},S=H.sec||{};
+    secEls().forEach(el=>{
+      const s=S[el.dataset.sec]||{},on=[];
+      HS.forEach((h,i)=>{
+        const raw=s[h]!==undefined&&s[h]!==''?s[h]:A[h],n=parseFloat(raw),v=isFinite(n)&&Math.round(n)!==100?Math.min(160,Math.max(60,n)):0;
+        if(v){el.style.setProperty('--hs-'+(i+1),(v/100).toFixed(2));on.push(i+1)}else el.style.removeProperty('--hs-'+(i+1));
+      });
+      if(on.length)el.setAttribute('data-hs',on.join(' '));else el.removeAttribute('data-hs');
+    });
+    fitSoon();
+  }
   // Apply the per-section settings to some sections only (a copy of a section that layout.js has just made)
   function paintSec(els,T){
     T=T||window.KTHEME.current||{};scope=[...els];
-    try{paint(T);paintLook(T);secHead(T);cols(T);fontsSec(T);align(T);icons(T)}finally{scope=null}
+    try{paint(T);paintLook(T);secHead(T);cols(T);fontsSec(T);align(T);icons(T);heads(T)}finally{scope=null}
     paintBtns(T,els);
   }
-  function apply(D){const T=(D&&D.theme)||{};vars(T);paint(T);paintLook(T);secHead(T);cols(T);icons(T);fontsSec(T);align(T);logos(T);images(T);paintCards(T);paintBtns(T);window.KTHEME.current=T;document.dispatchEvent(new CustomEvent('khip-theme',{detail:T}))}
+  function apply(D){const T=(D&&D.theme)||{};vars(T);paint(T);paintLook(T);secHead(T);cols(T);icons(T);heads(T);fontsSec(T);align(T);logos(T);images(T);paintCards(T);paintBtns(T);window.KTHEME.current=T;document.dispatchEvent(new CustomEvent('khip-theme',{detail:T}))}
   window.KTHEME={DEFAULTS,ROLES,SECTIONS,HEX,HERO,ALIGN,LOGOS,FXG,fxVals,AXE,AXDIST,AXEASE,AXHOVER,axCfg,axVars,LGE,LGIDLE,LGHOVER,MAPE,MAPIDLE,MAPHOVER,MAPPULSE,lgCfg,mapCfg,colsOf,cb:cbAttr,paintCards,paintSec,sb:sbAttr,paintBtns,TI_SECS,fitIcons,FONTS,fontOk,fontStack,fontVars,fontUrl,fontLink,resolve,lum,palette,apply,lookMap,cardMap,cardsOf};
   // The admin page uses the definitions only; it must not recolour itself.
   if(/admin\.html$/.test(location.pathname))return;

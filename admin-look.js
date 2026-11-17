@@ -323,7 +323,26 @@ const ALOOK=(()=>{
         fontFields(fontBase(''),false)+`<div><span class="text-xs font-bold text-gray-700">Preview</span><div class="mt-1 rounded-xl overflow-hidden border border-gray-200" data-fprev="all">${fontPrev('')}</div></div>`
         +`<p class="text-[11px] text-gray-500">Logos, the KHIP word mark and the icons keep their own look. A very decorative font can be hard to read in small text: choose a plain one for <b>Text</b>.</p>`,
         reset('reset-fonts-all','Reset all'))
-      +seeSections('Fonts');
+      +card('Heading sizes','Make the titles of every section bigger or smaller. 100 % = as designed. Each title keeps its phone, tablet and desktop sizes and is scaled from them.',
+        `<div class="grid sm:grid-cols-3 gap-3">${headFields('theme.headSize.all.','')}</div>`,reset('reset-hs-all','Reset'))
+      +seeSections('Fonts and heading sizes');
+  }
+  /* ---------- Heading sizes: page titles (h1), section titles (h2), card titles (h3); all sections or one ---------- */
+  const HSL=[['h1','Page titles','The big title at the top of the About, Patents, Trademarks and Translation pages'],['h2','Section titles','The title of each section (Services, Latest news, FAQ, ...)'],['h3','Card titles','The titles inside cards (services, advantages, details cards, news cards, ...)']];
+  function headFields(base,sec){
+    const A=((T().headSize||{}).all)||{};
+    return HSL.map(([h,l,w])=>{
+      const own=val(base+h)!=='',shown=own?num(base+h,100):(sec&&A[h]?+A[h]:100);
+      return `<div class="bg-gray-50 border border-gray-200 rounded-lg p-3"><label class="block text-xs font-bold">${esc(l)}: <span data-lkout="${base+h}" data-unit="%">${shown}%</span>${sec&&!own&&A[h]?' <span class="font-normal text-gray-500">(same as all sections)</span>':''}<input type="range" min="60" max="160" step="5" data-p="${base+h}" value="${shown}" class="mt-1 w-full"></label><span class="block text-[11px] text-gray-500">${esc(w)}</span></div>`;
+    }).join('');
+  }
+  const hsSet=o=>!!o&&HS0.some(h=>o[h]!==undefined&&o[h]!==''&&+o[h]!==100);
+  const HS0=['h1','h2','h3'];
+  function secHeads(key){
+    const s=(((T().headSize||{}).sec)||{})[key]||{};
+    return det('z:'+key,'Heading sizes',hsSet(s),'Own sizes',hsSet((T().headSize||{}).all)?'Same as all sections':'As designed',
+      `<div class="grid sm:grid-cols-3 gap-3">${headFields(`theme.headSize.sec.${key}.`,key)}</div><p class="text-[11px] text-gray-500">100 % = as designed. Each title keeps its phone, tablet and desktop sizes and is made bigger or smaller from them. For all sections: <b>General, Fonts, Heading sizes</b>.</p>`
+      +`<div><button type="button" data-lk="reset-hs-sec" data-k="${key}" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl"><i class="fas fa-rotate-left"></i> ${hsSet((T().headSize||{}).all)?'Same as all sections':'As designed'}</button></div>`);
   }
   function secFonts(key){
     const s=((T().fonts||{}).sec||{})[key]||{},on=!!Object.values(s).some(o=>o&&Object.values(o).some(v=>v));
@@ -420,7 +439,7 @@ const ALOOK=(()=>{
   function hasLook(key){
     const t=T(),has=o=>!!o&&Object.values(o).some(v=>v&&typeof v==='object'?has(v):v!==''&&v!=null&&v!==false);
     if(key==='home-hero')return has((t.imgfx||{}).hero);
-    return ['color','image'].includes(((t.sections||{})[key]||{}).mode)||has((t.secCards||{})[key])||has((t.secHead||{})[key])||has((t.parts||{})[key])||has((t.secBtns||{})[key])||has(Object.fromEntries(Object.entries((t.icons||{})[key]||{}).filter(([k,v])=>!(k==='size'&&+v===100))))||has((t.cols||{})[key])||has(((t.align||{}).sec||{})[key])||has(((t.imgfx||{}).sec||{})[key])||has(((t.anim||{}).sec||{})[key])||has(((t.fonts||{}).sec||{})[key]);
+    return ['color','image'].includes(((t.sections||{})[key]||{}).mode)||has((t.secCards||{})[key])||has((t.secHead||{})[key])||has((t.parts||{})[key])||hsSet(((t.headSize||{}).sec||{})[key])||has((t.secBtns||{})[key])||has(Object.fromEntries(Object.entries((t.icons||{})[key]||{}).filter(([k,v])=>!(k==='size'&&+v===100))))||has((t.cols||{})[key])||has(((t.align||{}).sec||{})[key])||has(((t.imgfx||{}).sec||{})[key])||has(((t.anim||{}).sec||{})[key])||has(((t.fonts||{}).sec||{})[key]);
   }
   function secLook(key){
     const wrap=(intro,body,extra='')=>`<div class="bg-white p-4 rounded-2xl border border-gray-200 space-y-3"><div class="flex items-start justify-between gap-3"><div><h3 class="font-extrabold text-base">Look of this section</h3><p class="text-xs text-gray-600 mt-0.5">${intro}</p></div>${extra}</div>${body}</div>`;
@@ -433,7 +452,7 @@ const ALOOK=(()=>{
     const bg=bgInfo(key);
     return wrap('Background, header parts, parts of the section, columns, buttons, icons, cards, fonts, text alignment, photo effect and animation of this section only. Whatever you leave on its default follows the site-wide settings in <b>General</b> (Colors, Cards, Fonts, Text alignment, Picture effects, Animation). Cards settings only matter where the section has cards.',
       det('b:'+key,'Background',bg.mode!=='default',bg.badge,'Default',bg.body)
-      +secHead(key)+secParts(key)+secCols(key)+secCards(key)+secBtns(key)+secIcons(key)+secFonts(key)+secAlign(key)+secFx(key)+secAx(key),
+      +secHead(key)+secParts(key)+secCols(key)+secCards(key)+secBtns(key)+secIcons(key)+secHeads(key)+secFonts(key)+secAlign(key)+secFx(key)+secAx(key),
       hasLook(key)?`<button type="button" data-lk="reset-sec-look" data-k="${key}" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl flex-shrink-0" title="Remove every look setting of this section"><i class="fas fa-rotate-left"></i> Reset this section</button>`:'');
   }
 
@@ -457,6 +476,8 @@ const ALOOK=(()=>{
     const tiClean=s=>{if(!s)return;if(s.inline===true&&!s.pos)s.pos='beside';delete s.inline;if(s.pos!=='beside'&&s.pos!=='above')delete s.pos;if(s.size!=null&&s.size!=='fit'&&(s.size===''||+s.size===100))delete s.size};
     if(t.icons)Object.values(t.icons).forEach(tiClean);
     tiClean(t.iconsAll);if(t.iconsAll&&t.iconsAll.pos==='above')delete t.iconsAll.pos;
+    const hsClean=(o,all)=>{if(o)['h1','h2','h3'].forEach(h=>{if(o[h]===''||(+o[h]===100&&!(all&&all[h])))delete o[h]})};   // a section's 100 % is kept when all sections have another size
+    if(t.headSize){hsClean(t.headSize.all);Object.values(t.headSize.sec||{}).forEach(o=>hsClean(o,t.headSize.all))}
     if(t.parts){Object.keys(t.parts).forEach(k=>{const s=t.parts[k]||{};Object.keys(s).forEach(p=>{if(s[p]!==true)delete s[p]})})}
     if(t.layout){
       const Ly=t.layout;
@@ -465,7 +486,7 @@ const ALOOK=(()=>{
       ['hide','order','copies'].forEach(k=>{if(Ly[k]&&!Object.keys(Ly[k]).length)delete Ly[k]});
       if(!Object.keys(Ly).length)delete t.layout;
     }
-    ['header','bar','wa','cards','secCards','secHead','parts','secBtns','icons','iconsAll','cols','align','logos','menu','imgfx','anim','motion','fonts'].forEach(k=>{if(t[k]){prune(t[k]);if(!Object.keys(t[k]).length)delete t[k]}});
+    ['header','bar','wa','cards','secCards','secHead','parts','secBtns','icons','iconsAll','headSize','cols','align','logos','menu','imgfx','anim','motion','fonts'].forEach(k=>{if(t[k]){prune(t[k]);if(!Object.keys(t[k]).length)delete t[k]}});
     // a font name that is not allowed is dropped rather than saved
     const okF=o=>{if(!o||typeof o!=='object')return;['head','body'].forEach(r=>['en','ar'].forEach(l=>{if(o[r]&&o[r][l]&&!TH().fontOk(o[r][l]))delete o[r][l]}))};
     if(t.fonts){okF(t.fonts.all);Object.values(t.fonts.sec||{}).forEach(okF);[t.fonts].concat([t.fonts.all],Object.values(t.fonts.sec||{})).forEach(o=>{if(o)prune(o)});if(!Object.keys(t.fonts).length)delete t.fonts}
@@ -527,11 +548,13 @@ const ALOOK=(()=>{
     else if(a==='reset-sec-cols'){if(t.cols)delete t.cols[b.dataset.k];mark();view()}
     else if(a==='reset-sec-head'){if(t.secHead)delete t.secHead[b.dataset.k];mark();view()}
     else if(a==='reset-sec-btns'){if(t.secBtns)delete t.secBtns[b.dataset.k];mark();view()}
+    else if(a==='reset-hs-sec'){if(t.headSize&&t.headSize.sec)delete t.headSize.sec[b.dataset.k];mark();view()}
+    else if(a==='reset-hs-all'){if(confirm('Set the heading sizes of all sections back to as designed? Sizes set for a single section are kept.')){if(t.headSize)delete t.headSize.all;mark();view()}}
     else if(a==='reset-sec-icons'){if(t.icons)delete t.icons[b.dataset.k];mark();view()}
     else if(a==='reset-icons-all'){if(confirm('Set the icons before titles back to their original look? Icons set for a single section are kept.')){delete t.iconsAll;mark();view()}}
     else if(a==='ti-oneline'){const p=b.dataset.b;set(D,p+'size','fit');set(D,p+'pos','beside');mark();view()}
     else if(a==='reset-sec-parts'){if(t.parts)delete t.parts[b.dataset.k];mark();view()}
-    else if(a==='reset-sec-look'){const k=b.dataset.k;if(confirm('Remove the background, hidden header parts, hidden parts, button and icon settings, columns, cards colors, fonts, text alignment, photo effect and animation set for this section? It will follow the site-wide settings.')){if(t.sections)delete t.sections[k];[['secCards'],['secHead'],['parts'],['secBtns'],['icons'],['cols'],['align','sec'],['imgfx','sec'],['anim','sec'],['fonts','sec']].forEach(([a1,a2])=>{const o=a2?(t[a1]||{})[a2]:t[a1];if(o)delete o[k]});mark();view()}}
+    else if(a==='reset-sec-look'){const k=b.dataset.k;if(confirm('Remove the background, hidden header parts, hidden parts, button and icon settings, columns, cards colors, fonts, text alignment, photo effect and animation set for this section? It will follow the site-wide settings.')){if(t.sections)delete t.sections[k];[['secCards'],['secHead'],['parts'],['secBtns'],['icons'],['headSize','sec'],['cols'],['align','sec'],['imgfx','sec'],['anim','sec'],['fonts','sec']].forEach(([a1,a2])=>{const o=a2?(t[a1]||{})[a2]:t[a1];if(o)delete o[k]});mark();view()}}
   });
 
   return {tabs,clean,previews,secLook,hasLook,cref};

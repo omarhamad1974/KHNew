@@ -1,5 +1,11 @@
 # Change log
 
+## Heading sizes, news slider, pop-ups, map button
+- **Heading sizes** (General, Fonts; and per section): page titles, section titles, card titles, 60 to 160 %. Saved as `theme.headSize`.
+- **News slider** on phones follows the card animation set in the admin (effect, speed, easing, or none).
+- **Pop-ups**: no WhatsApp button any more in the service and country pop-ups.
+- **Map / Jurisdictions button**: "<Country> Filing Requirements" (new wording `req_for`).
+
 ## Icons before titles: all sections at once, fit to the title
 - **General, Icons**: the icons before titles of every section in one place; a section can still be set differently.
 - **Fit to the title**: each icon becomes as tall as one line of its title, on every screen size; with **Beside the title** they sit on one line. One click: **Small, on one line with the title**.

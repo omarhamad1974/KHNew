@@ -494,3 +494,8 @@ html [data-ax] .ax.ax-go{opacity:1;transform:none;filter:none;transition:opacity
 [data-ti-in] [data-ti-row]{display:flex;align-items:center;gap:.9rem;justify-content:var(--ti-j,flex-start)}
 [data-ti-in] [data-ti-row]>[data-ti]{margin:0!important;flex:0 0 auto}
 [data-ti-in] [data-ti-row]>:not([data-ti]){margin-top:0!important;min-width:0}
+
+/* ---------- Heading sizes (theme.headSize, theme.js heads()): page titles h1, section titles h2, card titles h3 ---------- */
+[data-hs~="1"] h1{zoom:var(--hs-1,1)}
+[data-hs~="2"] h2{zoom:var(--hs-2,1)}
+[data-hs~="3"] h3{zoom:var(--hs-3,1)}
