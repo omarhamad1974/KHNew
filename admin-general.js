@@ -13,6 +13,7 @@ const AGEN=(()=>{
     ['fonts','Fonts','fa-font'],
     ['menu','Header, bar & menu','fa-bars'],
     ['cards','Cards','fa-clone'],
+    ['icons','Icons','fa-icons'],
     ['align','Text alignment','fa-align-justify'],
     ['imgfx','Picture effects','fa-wand-magic-sparkles'],
     ['anim','Animation','fa-film'],
@@ -71,7 +72,7 @@ const AGEN=(()=>{
   const motion=()=>ALOOK.tabs.motion();
   const cards=()=>ALOOK.tabs.cards(),align=()=>ALOOK.tabs.align(),imgfx=()=>ALOOK.tabs.imgfx(),anim=()=>ALOOK.tabs.anim();   // site-wide defaults; one section's own look is in Sections
 
-  const RENDER={brand,contact,words,colors,fonts:()=>ALOOK.tabs.fonts(),menu,cards,align,imgfx,anim,motion};
+  const RENDER={brand,contact,words,colors,fonts:()=>ALOOK.tabs.fonts(),menu,cards,icons:()=>ALOOK.tabs.icons(),align,imgfx,anim,motion};
   function nav(){
     $('subnav').innerHTML=PAGES.map(([k,n,i])=>`<button type="button" data-gs="${k}" class="text-xs font-bold px-3.5 py-2 rounded-xl ${k===gsub?'bg-gray-900 text-white':'bg-white border border-gray-200 hover:bg-gray-100'}"><i class="fas ${i}"></i> ${n}</button>`).join('');
   }

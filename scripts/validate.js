@@ -335,12 +335,15 @@ if(d.faq!==undefined){
     }
   };
   per('secBtns',(p,o)=>{for(const [k,v] of Object.entries(o)){if(!['bg','text','border','hbg','htext'].includes(k))errs.push(`${p}.${k}: unknown setting (use bg, text, border, hbg, htext)`);else color(`${p}.${k}`,v)}});
-  per('icons',(p,o)=>{for(const [k,v] of Object.entries(o)){
+  const ico=(p,o)=>{for(const [k,v] of Object.entries(o)){
     if(k==='color'||k==='bg')color(`${p}.${k}`,v);
     else if(k==='inline'){if(typeof v!=='boolean')errs.push(`${p}.inline: must be true or false`)}
-    else if(k==='size'){const n=Number(v);if(v!==''&&!(n>=50&&n<=150))errs.push(`${p}.size: must be between 50 and 150 (is "${v}")`)}
-    else errs.push(`${p}.${k}: unknown setting (use size, color, bg, inline)`);
-  }});
+    else if(k==='pos'){if(v!==''&&!['beside','above'].includes(v))errs.push(`${p}.pos: use beside or above`)}
+    else if(k==='size'){const n=Number(v);if(v!==''&&v!=='fit'&&!(n>=50&&n<=150))errs.push(`${p}.size: must be "fit" or between 50 and 150 (is "${v}")`)}
+    else errs.push(`${p}.${k}: unknown setting (use size, color, bg, pos)`);
+  }};
+  per('icons',ico);
+  {const A=(d.theme||{}).iconsAll;if(A!==undefined){if(!isObj(A))errs.push('theme.iconsAll: must be an object');else ico('theme.iconsAll',A)}}
 }
 // ---- Picture sizes: imgSizes = {"<file>": {w: width of the file, v: [widths of the smaller copies name-w480.ext ...]}} ----
 {

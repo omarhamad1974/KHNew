@@ -1,5 +1,10 @@
 # Change log
 
+## Icons before titles: all sections at once, fit to the title
+- **General, Icons**: the icons before titles of every section in one place; a section can still be set differently.
+- **Fit to the title**: each icon becomes as tall as one line of its title, on every screen size; with **Beside the title** they sit on one line. One click: **Small, on one line with the title**.
+- Saved as `theme.iconsAll` and `pos` (`beside` / `above`) in `theme.icons`; checked by `scripts/validate.js`.
+
 ## IP service buttons and icons before titles
 - **Button colors** on each IP service (Patents, Trademarks, ...): button, text, border, and the colors when pointed at or tapped, with a preview. **IP service buttons** in Look of this section (Home, Services) sets them all at once. IP services no longer show the Card background block, which had no effect on them.
 - **Icons before titles** in Look of this section: size, icon color, circle color, beside the title.

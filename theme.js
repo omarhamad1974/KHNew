@@ -413,21 +413,50 @@
     });
   }
   /* ---------- Icons before titles (the round icon above a card title, the icon above a page title, ...) ----------
-     theme.icons {<section>: {size: 50..150 (% of the designed size), color, bg (the circle), inline: true}}
-     The pages mark these icons data-ti (data-ti="c" when it sits in a circle) and the icon + title pair data-ti-row.
-     inline = the icon beside the title instead of above it. styles.css does the rest. */
+     theme.iconsAll {size, color, bg, pos}  for every section; theme.icons {<section>: {size, color, bg, pos}} on top of it.
+     size: 50..150 (% of the designed size) or "fit" (shrunk or grown to the height of its title, so both sit on one line);
+     color: the icon; bg: the circle; pos: "beside" (icon on the same line as its title) or "above" (as designed).
+     An older setting inline:true means pos "beside". The pages mark the icons data-ti (data-ti="c" when it sits in a circle)
+     and the icon + title pair data-ti-row. styles.css does the rest; fitIcons() measures the titles for "fit". */
   // Sections that have icons before titles, and what they are (shown in the admin)
   const TI_SECS={'home-services':'The round icon above the title of the IP Services and Translation cards','about-intro':'The icons of the Patents, Trademarks and Translation tiles','about-advantages':'The round icon above the title of each card'};
   ['patents','trademarks','translation'].forEach(p=>{TI_SECS[p+'-intro']='The round icon above the page title and the icons of the small fact cards';TI_SECS[p+'-details']='The round icon above the title of each card';TI_SECS[p+'-contact']='The icons of the links to the other services'});
+  const tiPos=o=>o&&(o.pos==='beside'||o.pos==='above')?o.pos:(o&&o.inline===true?'beside':'');
   function icons(T){
-    const S=(T||{}).icons||{};
+    const A=(T||{}).iconsAll||{},S=(T||{}).icons||{};
     secEls().forEach(el=>{
-      const s=S[el.dataset.sec]||{},st=el.style,n=parseFloat(s.size),sz=isFinite(n)&&Math.round(n)!==100?Math.min(150,Math.max(50,n)):0,fg=col(s.color,T),bg=col(s.bg,T);
+      const s=S[el.dataset.sec]||{},pick=k=>s[k]!==undefined&&s[k]!==''&&s[k]!==null?s[k]:A[k],st=el.style;
+      const size=pick('size'),fit=size==='fit',n=parseFloat(size),sz=!fit&&isFinite(n)&&Math.round(n)!==100?Math.min(150,Math.max(50,n)):0;
+      const fg=col(pick('color'),T),bg=col(pick('bg'),T),pos=tiPos(s)||tiPos(A);
       if(sz){st.setProperty('--ti-s',(sz/100).toFixed(2));el.setAttribute('data-ti-s','')}else{st.removeProperty('--ti-s');el.removeAttribute('data-ti-s')}
+      if(fit)el.setAttribute('data-ti-fit','');else{el.removeAttribute('data-ti-fit');el.querySelectorAll('[data-ti]').forEach(i=>i.style.removeProperty('--ti-z'))}
       if(fg){st.setProperty('--ti-fg',fg);el.setAttribute('data-ti-c','')}else{st.removeProperty('--ti-fg');el.removeAttribute('data-ti-c')}
       if(bg){st.setProperty('--ti-bg',bg);el.setAttribute('data-ti-b','')}else{st.removeProperty('--ti-bg');el.removeAttribute('data-ti-b')}
-      if(s.inline===true)el.setAttribute('data-ti-in','');else el.removeAttribute('data-ti-in');
+      if(pos==='beside')el.setAttribute('data-ti-in','');else el.removeAttribute('data-ti-in');
     });
+    fitSoon();
+  }
+  // "fit": each icon takes the height of one line of its title. Measured again when the page changes size, fonts arrive or cards are redrawn.
+  let fitQ=0;const fitSeen=new WeakSet();
+  function fitIcons(){
+    fitQ=0;
+    document.querySelectorAll('[data-ti-fit]').forEach(sec=>{
+      if(!fitSeen.has(sec)&&window.MutationObserver){fitSeen.add(sec);new MutationObserver(rs=>{if(rs.some(r=>r.type==='childList'))fitSoon()}).observe(sec,{childList:true,subtree:true})}
+      sec.querySelectorAll('[data-ti-row]').forEach(row=>{
+        const ic=[...row.children].find(c=>c.hasAttribute('data-ti')),h=[...row.children].find(c=>c!==ic&&/^(H[1-6]|P)$/.test(c.tagName));
+        if(!ic||!h)return;
+        ic.style.removeProperty('--ti-z');
+        const ih=ic.getBoundingClientRect().height;if(!ih)return;
+        const cs=getComputedStyle(h),lh=parseFloat(cs.lineHeight)||parseFloat(cs.fontSize)*1.2;
+        ic.style.setProperty('--ti-z',Math.min(1.5,Math.max(.25,lh*1.05/ih)).toFixed(3));
+      });
+    });
+  }
+  function fitSoon(){if(!fitQ&&typeof requestAnimationFrame==='function')fitQ=requestAnimationFrame(fitIcons)}
+  if(typeof addEventListener==='function'){
+    let rt=0;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(fitSoon,150)});
+    addEventListener('load',fitSoon);
+    if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fitSoon);
   }
   // Apply the per-section settings to some sections only (a copy of a section that layout.js has just made)
   function paintSec(els,T){
@@ -436,7 +465,7 @@
     paintBtns(T,els);
   }
   function apply(D){const T=(D&&D.theme)||{};vars(T);paint(T);paintLook(T);secHead(T);cols(T);icons(T);fontsSec(T);align(T);logos(T);images(T);paintCards(T);paintBtns(T);window.KTHEME.current=T;document.dispatchEvent(new CustomEvent('khip-theme',{detail:T}))}
-  window.KTHEME={DEFAULTS,ROLES,SECTIONS,HEX,HERO,ALIGN,LOGOS,FXG,fxVals,AXE,AXDIST,AXEASE,AXHOVER,axCfg,axVars,LGE,LGIDLE,LGHOVER,MAPE,MAPIDLE,MAPHOVER,MAPPULSE,lgCfg,mapCfg,colsOf,cb:cbAttr,paintCards,paintSec,sb:sbAttr,paintBtns,TI_SECS,FONTS,fontOk,fontStack,fontVars,fontUrl,fontLink,resolve,lum,palette,apply,lookMap,cardMap,cardsOf};
+  window.KTHEME={DEFAULTS,ROLES,SECTIONS,HEX,HERO,ALIGN,LOGOS,FXG,fxVals,AXE,AXDIST,AXEASE,AXHOVER,axCfg,axVars,LGE,LGIDLE,LGHOVER,MAPE,MAPIDLE,MAPHOVER,MAPPULSE,lgCfg,mapCfg,colsOf,cb:cbAttr,paintCards,paintSec,sb:sbAttr,paintBtns,TI_SECS,fitIcons,FONTS,fontOk,fontStack,fontVars,fontUrl,fontLink,resolve,lum,palette,apply,lookMap,cardMap,cardsOf};
   // The admin page uses the definitions only; it must not recolour itself.
   if(/admin\.html$/.test(location.pathname))return;
   let cached=null;try{cached=JSON.parse(localStorage.getItem(CACHE))}catch{}

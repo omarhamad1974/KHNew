@@ -488,6 +488,7 @@ html [data-ax] .ax.ax-go{opacity:1;transform:none;filter:none;transition:opacity
 
 /* ---------- Icons before titles (theme.icons, theme.js icons()): size, colour, circle colour, beside the title ---------- */
 [data-ti-s] [data-ti]{zoom:var(--ti-s,1)}
+[data-ti-fit] [data-ti]{zoom:var(--ti-z,1)}                 /* fit: set per icon by theme.js fitIcons() */
 [data-ti-c] [data-ti],[data-ti-c] [data-ti] i{color:var(--ti-fg)!important}
 [data-ti-b] [data-ti="c"]{background-color:var(--ti-bg)!important}
 [data-ti-in] [data-ti-row]{display:flex;align-items:center;gap:.9rem;justify-content:var(--ti-j,flex-start)}
