@@ -66,7 +66,7 @@ const ASEC=(()=>{
     keys.forEach((k,i)=>{if(out.includes(k))return;const prev=keys.slice(0,i).reverse().find(x=>out.includes(x));out.splice(prev?out.indexOf(prev)+1:0,0,k)});
     return out;
   }
-  const PER=[['sections'],['secCards'],['secHead'],['parts'],['cols'],['align','sec'],['imgfx','sec'],['anim','sec'],['fonts','sec']];
+  const PER=[['sections'],['secCards'],['secHead'],['parts'],['secBtns'],['icons'],['cols'],['align','sec'],['imgfx','sec'],['anim','sec'],['fonts','sec']];
   function perSettings(fn){const t=theme();PER.forEach(([a,b])=>{if(b){t[a]=t[a]||{};t[a][b]=t[a][b]||{};fn(t[a][b])}else{t[a]=t[a]||{};fn(t[a])}})}
   function lyAct(a,k){
     const e=entry(k);if(!e)return;

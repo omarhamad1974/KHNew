@@ -1,5 +1,10 @@
 # Change log
 
+## IP service buttons and icons before titles
+- **Button colors** on each IP service (Patents, Trademarks, ...): button, text, border, and the colors when pointed at or tapped, with a preview. **IP service buttons** in Look of this section (Home, Services) sets them all at once. IP services no longer show the Card background block, which had no effect on them.
+- **Icons before titles** in Look of this section: size, icon color, circle color, beside the title.
+- Saved as `btn*` on the service, `theme.secBtns`, `theme.icons`; checked by `scripts/validate.js`. Details: CONTROL-PLAN.md, phase 6.
+
 ## Page layout: show, hide, order and duplicate sections
 - **Sections of this page** (admin, Sections, under the section buttons) and a bar on every section: show or hide a section, move it up or down the page, duplicate it, delete a copy, back to the original order.
 - **Parts of this section** (Look of this section): hide single parts of a section (logo, text, buttons, map, slider controls, single cards, contact tiles, ...).

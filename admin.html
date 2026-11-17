@@ -232,8 +232,23 @@ function cardBgBlock(base,what){
   const o=get(D,base.slice(0,-1))||{},on=!!(o.cardBg||o.cardImage);
   return `<details class="bg-gray-50 rounded-xl border border-gray-200"><summary class="flex items-center gap-2 p-3 cursor-pointer text-xs font-bold"><i class="fas fa-chevron-right chev text-[10px] text-gray-400"></i><span class="flex-1">Card background: ${what}</span><span class="text-[11px] px-2 py-1 rounded-lg ${on?'bg-brand-50 text-brand-700':'bg-gray-100 text-gray-500'}">${on?'Set':'As designed'}</span></summary><div class="p-3 pt-1 space-y-3 border-t border-gray-200">${CBF.map(f=>fld(base,f)).join('')}<p class="text-[11px] text-gray-500">A color, a picture or both (the picture is on top). With a dark color or picture choose a light <b>Text color</b>. Empty = the card looks as designed. The same card in Arabic follows.</p><button type="button" data-cbreset="${base}" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl"><i class="fas fa-rotate-left"></i> As designed</button></div></details>`;
 }
+// The colours of ONE IP service button (Patents, Trademarks, ...: the buttons inside the IP Services card). base is "services.0."
+const BTF=[['btnBg','Button color','cref'],['btnText','Text and icon color (empty: white or dark, whichever reads on the button color)','cref'],['btnBorder','Border color','cref'],['btnHoverBg','Color when pointed at or tapped','cref'],['btnHoverText','Text color when pointed at or tapped','cref']];
+const isIpSvc=x=>!!x&&!(/translation\.html$/i.test(x.page||'')||/transl/i.test(x.title||''));   // the same split as the site (lang.js svcSplit)
+function btnPrev(o){
+  const t=theme(),sb=(t.secBtns||{})['home-services']||{},c=(k,f)=>TH.resolve(o[f]||sb[k]||'',t),pal=TH.palette(t);
+  let bg=c('bg','btnBg'),fg=c('text','btnText'),bd=c('border','btnBorder'),hb=c('hbg','btnHoverBg'),hf=c('htext','btnHoverText');
+  if(bg&&!fg)fg=TH.lum(bg)<.4?'#ffffff':pal.ink;if(hb&&!hf)hf=TH.lum(hb)<.4?'#ffffff':pal.ink;
+  const one=(b,f,d,l)=>`<span class="flex-1 min-w-0 flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold" style="background:${b||'transparent'};color:${f||pal.title};border:1px solid ${d||'rgba(27,36,51,.18)'}"><i class="fas fa-certificate text-xs"></i><span class="truncate">${esc(o.title||'Service')}</span><span class="ms-auto text-[10px] font-normal opacity-70">${l}</span></span>`;
+  return `<div class="flex gap-2 flex-wrap p-3 rounded-xl bg-white border border-gray-200">${one(bg,fg,bd,'normal')}${one(hb||pal.ink,hf||'#ffffff',hb||pal.ink,'pointed at')}</div>`;
+}
+function btnBlock(base){
+  const o=get(D,base.slice(0,-1))||{},on=BTF.some(([k])=>o[k]);
+  return `<details class="bg-gray-50 rounded-xl border border-gray-200"><summary class="flex items-center gap-2 p-3 cursor-pointer text-xs font-bold"><i class="fas fa-chevron-right chev text-[10px] text-gray-400"></i><span class="flex-1">Button colors: this service's button inside the IP Services card (home page)</span><span class="text-[11px] px-2 py-1 rounded-lg ${on?'bg-brand-50 text-brand-700':'bg-gray-100 text-gray-500'}">${on?'Own colors':'As the section'}</span></summary><div class="p-3 pt-1 space-y-3 border-t border-gray-200"><div class="grid sm:grid-cols-2 gap-3">${BTF.map(f=>fld(base,f)).join('')}</div><div><span class="text-xs font-bold text-gray-700">Preview</span>${btnPrev(o)}</div><p class="text-[11px] text-gray-500">Empty = the colors set for all the IP service buttons (Sections, Home, Services, Look of this section, IP service buttons), or as designed. The same button in Arabic follows.</p><button type="button" data-sbreset="${base}" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl"><i class="fas fa-rotate-left"></i> As the section</button></div></details>`;
+}
 const CBWHAT={services:'the Translation card on the home page (the IP Services card is set in Home, Services)',news:'this news card',employees:'this team card'};
-const itemFields=(sec,i)=>SC[sec].f.map(f=>isTr(sec,f)?bi(`${sec}.${i}.`,f,SC[sec].req):fld(`${sec}.${i}.`,f,SC[sec].req)).join('')+(CBWHAT[sec]?cardBgBlock(`${sec}.${i}.`,CBWHAT[sec]):'');
+const itemFields=(sec,i)=>SC[sec].f.map(f=>isTr(sec,f)?bi(`${sec}.${i}.`,f,SC[sec].req):fld(`${sec}.${i}.`,f,SC[sec].req)).join('')
+  +(sec==='services'&&isIpSvc(D.services[i])?btnBlock(`${sec}.${i}.`):CBWHAT[sec]?cardBgBlock(`${sec}.${i}.`,CBWHAT[sec]):'');   // an IP service is a button, Translation is a card
 
 /* ---------- Import articles from Word (.docx) or Markdown (.md) files (parser: news-import.js) ---------- */
 const IM={arts:[],warn:[],on:new Set(),busy:false,seq:0,mode:'news'};   // mode: 'news' (articles) or 'slides' (hero slider); both use the same window
@@ -699,6 +714,10 @@ document.addEventListener('click',e=>{                       // card background:
   const o=get(D,b.dataset.cbreset.slice(0,-1));if(o){['cardBg','cardImage','cardPos','cardShade','cardText'].forEach(k=>delete o[k]);mark();view()}
 });
 document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-sbreset]');if(!b||!D)return;
+  const o=get(D,b.dataset.sbreset.slice(0,-1));if(o){BTF.forEach(([k])=>delete o[k]);mark();view()}
+});
+document.addEventListener('click',e=>{
   const t=e.target.closest('[data-imp]');if(!t)return;const a=t.dataset.imp;
   if(a==='close'){if(!IM.busy)impClose()}
   else if(a==='back')IM.mode==='slides'?slPick():IM.mode==='service'?svPick():IM.mode==='jur'?jrPick():IM.mode==='faq'?frPick():impPick();
@@ -1130,10 +1149,10 @@ if(tk&&$('f-o').value){$('f-t').value=tk;$('f-s').checked=true;connect({o:$('f-o
 
 
 </script>
-<script src="admin-look.js?v=14"></script>
+<script src="admin-look.js?v=15"></script>
 <script src="sections-map.js?v=13"></script>
 <script src="video.js?v=4"></script>
-<script src="admin-sections.js?v=14"></script>
+<script src="admin-sections.js?v=15"></script>
 <script src="admin-general.js?v=10"></script>
 <script src="admin-preview.js?v=2"></script>
 </body>

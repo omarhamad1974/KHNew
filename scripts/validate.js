@@ -313,6 +313,35 @@ if(d.faq!==undefined){
   for(const k of ['news','services','employees'])(Array.isArray(d[k])?d[k]:[]).forEach((x,i)=>one(`${k}[${i}]`,x));
   if(d.ipCard!==undefined)one('ipCard',d.ipCard);
 }
+// ---- IP service buttons and icons before titles: btnBg, btnText, btnBorder, btnHoverBg, btnHoverText on services items;
+//      theme.secBtns = {<section>: {bg, text, border, hbg, htext}}; theme.icons = {<section>: {size 50..150, color, bg, inline}} ----
+{
+  const ROLES=['title','ink','gold','accent','accentDark','accentSoft','sand','page','surface','text'],own=new Set(((d.theme||{}).custom||[]).map(c=>String(c.id)));
+  const isObj=o=>typeof o==='object'&&o!==null&&!Array.isArray(o),SK=/^[a-z]+-[a-z-]+(-c[0-9]{1,3})?$/;
+  const color=(path,v)=>{
+    if(v===undefined||v==='')return;
+    if(typeof v!=='string'||!/^(role:[A-Za-z]+|custom:[\w-]+|#[0-9a-fA-F]{6})$/.test(v))errs.push(`${path}: not a valid color (${v})`);
+    else if(v.startsWith('role:')&&!ROLES.includes(v.slice(5)))errs.push(`${path}: unknown palette color "${v.slice(5)}"`);
+    else if(v.startsWith('custom:')&&!own.has(v.slice(7)))errs.push(`${path}: your own color "${v.slice(7)}" does not exist`);
+  };
+  (Array.isArray(d.services)?d.services:[]).forEach((x,i)=>{if(isObj(x))['btnBg','btnText','btnBorder','btnHoverBg','btnHoverText'].forEach(k=>color(`services[${i}].${k}`,x[k]))});
+  const per=(name,check)=>{
+    const S=(d.theme||{})[name];if(S===undefined)return;
+    if(!isObj(S)){errs.push(`theme.${name}: must be an object`);return}
+    for(const [k,o] of Object.entries(S)){
+      if(!SK.test(k)){errs.push(`theme.${name}.${k}: not a section name`);continue}
+      if(!isObj(o)){errs.push(`theme.${name}.${k}: must be an object`);continue}
+      check(`theme.${name}.${k}`,o);
+    }
+  };
+  per('secBtns',(p,o)=>{for(const [k,v] of Object.entries(o)){if(!['bg','text','border','hbg','htext'].includes(k))errs.push(`${p}.${k}: unknown setting (use bg, text, border, hbg, htext)`);else color(`${p}.${k}`,v)}});
+  per('icons',(p,o)=>{for(const [k,v] of Object.entries(o)){
+    if(k==='color'||k==='bg')color(`${p}.${k}`,v);
+    else if(k==='inline'){if(typeof v!=='boolean')errs.push(`${p}.inline: must be true or false`)}
+    else if(k==='size'){const n=Number(v);if(v!==''&&!(n>=50&&n<=150))errs.push(`${p}.size: must be between 50 and 150 (is "${v}")`)}
+    else errs.push(`${p}.${k}: unknown setting (use size, color, bg, inline)`);
+  }});
+}
 // ---- Picture sizes: imgSizes = {"<file>": {w: width of the file, v: [widths of the smaller copies name-w480.ext ...]}} ----
 {
   const M=d.imgSizes;
