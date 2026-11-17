@@ -46,6 +46,9 @@ Saving in the admin writes a commit to the repository. The host republishes the 
 - Videos: Sections, **Home** (or **About**), **Video**. Paste the YouTube address, add a title and text if you like, and choose the position from the list. Leave the English link empty or tick *Hide this video section* to remove it from the site.
 - Fonts: General, **Fonts** (whole site) or Sections, **Look of this section**, **Fonts** (one section). Headings and text, English and Arabic.
 
+- Services section (home page cards and pop-ups): Sections, **Home**, **Services**, **Import services**. One file can hold several services and both languages; each text starts with a Heading 1 and may have `Service:`, `Language:`, `Brief:`, `Icon:`, `Page file:`, `Hidden:` lines. The text is the pop-up; a `## Page content` line starts the dedicated page. A title that matches no service adds a new one. Template: `services-section-template.md`. Review, then Save.
+- Service pages (Patents, Trademarks, Translation): Sections, open the page, **Page content**, **Import from Word / Markdown**. One file can hold several services and both languages; each text starts with a Heading 1 and a `Service:` line (and `Language:`). Review, then Save.
+
 ## 4. Troubleshooting
 | Problem | Fix |
 |---|---|
@@ -65,7 +68,7 @@ Saving in the admin writes a commit to the repository. The host republishes the 
 ## 6. File map
 - `index.html`, `about.html`, `patents.html`, `trademarks.html`, `translation.html`: the pages.
 - `app-data.json`, `app-data.ar.json`: all editable content. `app-data.sample.json` is a minimal example.
-- `admin.html`: the admin page. `admin-look.js`: the look controls (fonts, header & bar, cards, text alignment, logos, picture effects, animation, map & logo motion), drawn in General (site-wide) and in Sections ("Look of this section"); `admin-general.js`, `admin-sections.js`, `sections-map.js`: the General and Sections pages. `news-import.js`, `slider-import.js`: Word / Markdown / spreadsheet import readers used by the admin.
+- `admin.html`: the admin page. `admin-look.js`: the look controls (fonts, header & bar, cards, text alignment, logos, picture effects, animation, map & logo motion), drawn in General (site-wide) and in Sections ("Look of this section"); `admin-general.js`, `admin-sections.js`, `sections-map.js`: the General and Sections pages. `news-import.js`, `slider-import.js`, `service-import.js` (service pages and the Services section), `services-section-template.md`: Word / Markdown / spreadsheet import readers used by the admin.
 - `theme.js` (colors, fonts, backgrounds, hero height, header / bar / card colours, text alignment, logo sizes), `lang.js` (English / Arabic engine), `pages-i18n.js` (fixed page texts, English and Arabic), `rich.js` (text formatting), `look.js` (menu behaviour), `faq.js`, `service-page.js`, `footer.js` (bottom bar and WhatsApp box), `tailwind-config.js`, `styles.css`.
 - `preview.js` (public pages, inert for visitors) and `admin-preview.js` (admin): the live preview. Plan of the Control phases: `CONTROL-PLAN.md`.
 - `video.js`: the YouTube video sections of the home and About pages.

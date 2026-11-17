@@ -15,11 +15,16 @@ window.KImport=(function(){
   const MONTHS={january:1,jan:1,february:2,feb:2,march:3,mar:3,april:4,apr:4,may:5,june:6,jun:6,july:7,jul:7,august:8,aug:8,september:9,sep:9,sept:9,october:10,oct:10,november:11,nov:11,december:12,dec:12,
     'يناير':1,'فبراير':2,'مارس':3,'أبريل':4,'ابريل':4,'مايو':5,'يونيو':6,'يوليو':7,'أغسطس':8,'اغسطس':8,'سبتمبر':9,'أكتوبر':10,'اكتوبر':10,'نوفمبر':11,'ديسمبر':12};
   const META=[
-    ['subtitle',/^(sub[\s-]?title|sub[\s-]?heading|العنوان الفرعي)$/i],
+    ['subtitle',/^(sub[\s-]?title|sub[\s-]?heading|brief|short text|العنوان الفرعي|الملخص القصير)$/i],
+    ['icon',/^(icon|الأيقونة|ايقونة)$/i],
+    ['pagefile',/^(page file|page url|html file|ملف الصفحة)$/i],
+    ['hidden',/^(hidden|hide|hide service|مخفي|إخفاء)$/i],
     ['date',/^(date|published|publish date|التاريخ)$/i],
     ['category',/^(category|tag|label|section|التصنيف|الفئة|القسم)$/i],
     ['excerpt',/^(excerpt|summary|short summary|intro|الملخص|مقتطف|نبذة)$/i],
     ['image',/^(image|cover|cover image|photo|الصورة)$/i],
+    ['service',/^(service|page|الخدمة|الصفحة)$/i],
+    ['lang',/^(lang|language|اللغة)$/i],
     ['title',/^(title|العنوان)$/i]
   ];
   const MIME={png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',gif:'image/gif',webp:'image/webp'};
@@ -298,7 +303,7 @@ window.KImport=(function(){
           break;
         }
       }
-      const a={title:c.title,subtitle:inline(hdr.subtitle||''),date:'',category:inline(hdr.category||''),excerpt:inline(hdr.excerpt||''),text:'',cover,imgs:[],notes:[],source:fname};
+      const a={title:c.title,subtitle:inline(hdr.subtitle||''),date:'',category:inline(hdr.category||''),excerpt:inline(hdr.excerpt||''),service:inline(hdr.service||''),lang:inline(hdr.lang||''),icon:inline(hdr.icon||''),pagefile:inline(hdr.pagefile||''),hidden:inline(hdr.hidden||''),text:'',cover,imgs:[],notes:[],source:fname};
       if(hdr.date){a.date=normDate(hdr.date);if(!a.date)a.notes.push(`Date not understood: "${hdr.date}"`)}
       if(hdr.image&&!cover){
         const r=imgFromSrc(hdr.image.replace(/^!\[[^\]]*\]\(|\)$/g,''),'',ctx,warn,fname);if(r)a.cover=r;

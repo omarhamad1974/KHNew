@@ -140,7 +140,7 @@ const ASEC=(()=>{
     return box(`Page content: ${esc(sv.title||'')}`,'Text before the first <b>## </b> line is the introduction at the top of the page; each <b>## Heading</b> becomes a card. The title, brief and pop-up of this service are edited in <b>Home, Services</b>.',
       fld(`services.${i}.`,['hidden','Hide this service on the website (home page, About page and its links; this page sends visitors to the home page)','check'])
       +bi(`services.${i}.`,['pageContent','Page content','area'],[],{rows:16})
-      +`<button type="button" data-sj="home-services" class="text-xs bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold px-3 py-2 rounded-xl">Edit the title, brief and pop-up of this service</button>`);
+      +`<div class="flex flex-wrap gap-2"><button type="button" data-imp="svc-open" class="text-xs bg-brand-600 hover:bg-brand-700 text-white font-bold px-3 py-2 rounded-xl"><i class="fas fa-file-import"></i> Import from Word / Markdown</button><button type="button" data-sj="home-services" class="text-xs bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold px-3 py-2 rounded-xl">Edit the title, brief and pop-up of this service</button></div>`);
   }
   const jump=(k,label,icon)=>`<button type="button" data-gj="${k}" class="text-xs bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold px-3 py-2 rounded-xl"><i class="fas ${icon}"></i> ${label}</button>`;
   function body(s){

@@ -1,5 +1,13 @@
 # Change log
 
+## Services section import
+- **Import services (admin, Sections, Home, Services, button next to Add service)**: add new services or update the existing ones from a **Word (.docx)** or **Markdown (.md/.txt)** file, English and Arabic, several services per file. Each text is one service: `# Title`, then `Service:`, `Language:`, `Brief:` (the card text), `Icon:`, `Page file:` and `Hidden:` lines (all optional), then the **pop-up** text; a `## Page content` line ends the pop-up and what follows is the dedicated page. A title that matches no service creates a **new service**; Arabic texts attach to a service by `Service:` (also to one created in the same file). You review everything first and can choose to replace existing text or only fill empty boxes. Nothing is published until Save.
+- New `services-section-template.md` (also downloadable inside the import window). `service-import.js` has a second reader, `parseServices`; `news-import.js` reads four more labels (`Brief:`, `Icon:`, `Page file:`, `Hidden:`). The existing *Page content* import of each service page is unchanged.
+- No change to the public pages: the imported data is the same fields the Services tab already writes (`title`, `description`, `details`, `page`, `icon`, `pageContent`, `hidden`), so the site shows them as before.
+
+## Service page import
+- **Import service page text** from Word / Markdown (English and Arabic, several services per file): Sections, service page, Page content, *Import from Word / Markdown*. New `service-import.js`; `news-import.js` reads two more labels (`Service:`, `Language:`).
+
 ## Batch 1: sliders, logo, services, Bahrain
 - **Slider controls and indicators** everywhere a slider exists: home hero (previous/next, dots, pause button, swipe), Latest news (previous/next + dots, mobile and desktop; hidden when everything fits on screen), Client endorsements (previous/next + dots), related news in the article pop-up, and the About page team slider (dots added to the existing buttons). Labels are translated (Interface text tab in Arabic mode).
 - **Header logo**: the new Khaled Hamada Intellectual Property logo (`assets/khaled-hamada-ip-logo.png`) replaces the "KHIP | Intellectual Properties" text on every page. Replace that file to change the logo.
