@@ -6,8 +6,12 @@
   const PG=()=>window.KLang&&KLang.page?KLang.page():(location.pathname.split('/').pop()||'index.html');   // file name, English form (about-ar.html -> about.html)
   const U=f=>window.KLang&&KLang.url?KLang.url(f):f;                                                       // address in the language shown
   let prompts=window.KLang?KLang.t('prompts'):["Hello KHIP, I'd like to register a trademark in Egypt","How long does a patent filing take in the UAE?","How can I check if my trademark is available in Saudi Arabia?","What documents do I need for a PCT national phase entry?"];
-  const wa=t=>window.open(`https://wa.me/${PHONE}?text=${encodeURIComponent(t)}`,'_blank','noopener');
-  window.KHIP={wa,setPrompts:a=>{if(a&&a.length)prompts=a},setPhone:n=>{n=String(n||"").replace(/\D/g,"");if(n)PHONE=n}};
+  // Every message ends with a short line saying where it came from, so the team can see the page, language and button: "— KHIP website · Patents page · EN · chat box".
+  // The visitor sees it in WhatsApp before pressing send, and can delete it.
+  const PAGES={'index.html':'Home','about.html':'About','patents.html':'Patents','trademarks.html':'Trademarks','translation.html':'Translation'};
+  const tag=via=>`— KHIP website · ${PAGES[PG()]||PG()} page · ${window.KLang&&KLang.rtl?'AR':'EN'}${via?' · '+via:''}`;
+  const wa=(t,via)=>window.open(`https://wa.me/${PHONE}?text=${encodeURIComponent(t+'\n\n'+tag(via))}`,'_blank','noopener');
+  window.KHIP={wa,tag,setPrompts:a=>{if(a&&a.length)prompts=a},setPhone:n=>{n=String(n||"").replace(/\D/g,"");if(n)PHONE=n}};
   if(!document.querySelector('link[href*="phosphor"]')){const l=document.createElement('link');l.rel='stylesheet';l.href='https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/light/style.css';document.head.appendChild(l)}
   if(!document.querySelector('link[href*="styles.css"]')){const l=document.createElement('link');l.rel='stylesheet';l.href='styles.css';document.head.appendChild(l)}
   const nav=[['top','ph-house',T('bar_home','Home')],['services','ph-seal-check',T('bar_services','Services')],['news','ph-newspaper',T('bar_news','News')],['jurisdictions','ph-globe-hemisphere-west',T('bar_jur','Jurisdiction')],['about','ph-info',T('bar_about','About')]];
@@ -24,7 +28,7 @@
   const sync=()=>document.documentElement.style.setProperty('--khip-h',bar.offsetHeight+'px');
   sync();addEventListener('resize',sync);if(window.ResizeObserver)new ResizeObserver(sync).observe(bar);
   const inp=bar.querySelector('input');
-  bar.querySelector('form').addEventListener('submit',e=>{e.preventDefault();const v=inp.value.trim();if(v){wa(v);inp.value=''}});
+  bar.querySelector('form').addEventListener('submit',e=>{e.preventDefault();const v=inp.value.trim();if(v){wa(v,'chat box');inp.value=''}});
   bar.addEventListener('click',e=>{
     const b=e.target.closest('[data-go]');if(!b)return;const k=b.dataset.go,el=document.getElementById(k);
     if(k==='about'){PG()==='about.html'?page.scrollTo({top:0,behavior:'smooth'}):location.href=U('about.html');return}
@@ -32,8 +36,9 @@
     else el&&el.offsetParent!==null?el.scrollIntoView({behavior:'smooth'}):location.href=U('index.html#'+k);
   });
   let pi=0,ci=0,del=false;
+  const still=window.matchMedia?matchMedia('(prefers-reduced-motion: reduce)'):null;   // reduced motion: no typing animation, a steady hint instead (checked every tick, so a changed setting applies at once)
   (function tick(){
-    if(document.activeElement===inp||inp.value){inp.placeholder=T('msg_wa','Message KHIP on WhatsApp');return setTimeout(tick,1000)}
+    if(document.activeElement===inp||inp.value||(still&&still.matches)){inp.placeholder=T('msg_wa','Message KHIP on WhatsApp');return setTimeout(tick,1000)}
     const m=prompts[pi%prompts.length];ci+=del?-1:1;inp.placeholder=m.slice(0,ci)||' ';
     let d=del?18:42;
     if(!del&&ci>=m.length){del=true;d=2200}else if(del&&ci<=0){del=false;pi++;d=500}

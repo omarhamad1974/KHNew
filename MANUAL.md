@@ -55,6 +55,7 @@ Saving in the admin writes a commit to the repository. The host republishes the 
 | "The file changed on GitHub" | Someone saved in between. Press the undo arrow to reload, then redo your edit. |
 | Saved but the site looks the same | Wait a minute or two, then hard-refresh (Ctrl+F5). Visitors' browsers keep a copy and refresh it on their next visit. |
 | An image is too large | Images over 3 MB after resizing are refused; compress it first. |
+| The site looks unstyled or different after a push | Run `node scripts/build-tailwind.js --cdn` (or restore the five pages from the previous commit) to go back to the Tailwind CDN, then tell whoever maintains the site; check the Action log for "Tailwind build failed". |
 
 ## 5. Security and care
 - The token is the only secret. Never paste it into the site files or share it. Use a fine-grained token limited to this one repository, with an expiry date.
@@ -70,3 +71,4 @@ Saving in the admin writes a commit to the repository. The host republishes the 
 - `video.js`: the YouTube video sections of the home and About pages.
 - `assets/`: logos, team photos and uploaded pictures.
 - `scripts/validate.js`, `.github/workflows/validate.yml`: content check run by GitHub.
+- `scripts/build-tailwind.js`, `scripts/tailwind.config.cjs`, `scripts/tailwind-input.css`, `tailwind.css` (generated): the compiled Tailwind stylesheet; run by the same Action as the SEO build.
