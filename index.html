@@ -109,8 +109,8 @@
 <script src="rich.js?v=9"></script>
 <script src="video.js?v=4"></script>
 <script src="faq.js?v=9"></script>
-<script src="footer.js?v=11"></script>
-<script src="look.js?v=1"></script>
+<script src="footer.js?v=12"></script>
+<script src="look.js?v=2"></script>
 <script src="contact.js?v=10"></script>
 <script>
 const SHOW_PRODUCTS=false; // products / search reports hidden for now
@@ -165,7 +165,7 @@ function render(){
   observeFu();
   const h=location.hash.slice(1);
   if(h.startsWith('news-'))openNews(h.slice(5));
-  else if(h&&!render.done&&$(h))setTimeout(()=>$(h).scrollIntoView(),80);
+  else if(h&&!render.done&&$(h))setTimeout(()=>window.KHIP&&KHIP.goTo?KHIP.goTo($(h),false):$(h).scrollIntoView(),80);
   render.done=1;
 }
 function list(id,items,fn){items=items||[];show(id,items.length);$(id+'-list').innerHTML=items.map(fn).join('')}
