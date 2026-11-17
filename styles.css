@@ -17,7 +17,7 @@ html[dir=rtl],html[dir=rtl] [data-sec]{--fh:var(--fh-ar,var(--fh-d-ar));--fb:var
 /* ---------- Base ---------- */
 html{height:100%}
 body{background:rgb(var(--c-page-rgb));color:rgb(var(--c-text-rgb))}
-:focus-visible{outline:2px solid rgb(var(--c-accent-rgb));outline-offset:2px}
+:focus-visible{outline:3px solid rgb(var(--c-accent-rgb));outline-offset:3px}
 .no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{scrollbar-width:none}
 .khip{font-family:Jost,system-ui,sans-serif;font-weight:500;color:rgb(var(--c-title-rgb));letter-spacing:.03em}
 /* Header brand line: KHIP larger, the rest of the line in the same dark blue */
@@ -424,3 +424,61 @@ html [data-ax] .ax.ax-go{opacity:1;transform:none;filter:none;transition:opacity
 #mena-map.mx-pc .pulse{fill:var(--mx-pc)}
 @keyframes mxpl{to{transform:scale(var(--mx-ps,3.4));opacity:0}}
 @media(prefers-reduced-motion:reduce){.lx-i,#mena-map.mx-pulse .pulse,#mena-map[class*=mx-i-] .c.on{animation:none}.lx-h{transition:none}}
+
+/* ---------- Control phase 2: section header parts (admin: Look of this section, Section header) ----------
+   theme.secHead.<section> = {title, icon, rule, wa: true}; theme.js writes them as data-hide="title icon rule wa" on the section.
+   A hidden title stays in the page for screen readers and search engines (visually hidden, not removed). */
+[data-hide~="title"] :is(h1,h2){position:absolute!important;width:1px!important;height:1px!important;margin:-1px!important;padding:0!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;clip-path:inset(50%)!important;white-space:nowrap!important;border:0!important}
+[data-hide~="icon"] [data-sh="icon"],[data-hide~="rule"] .rule,[data-hide~="wa"] [data-sh="wa"]{display:none!important}
+[data-sec="about-value"][data-hide~="title"]>.wrap{grid-template-columns:minmax(0,1fr)}
+[data-sec="about-value"][data-hide~="title"][data-hide~="rule"]>.wrap>.fu:first-child{display:none}
+
+/* ---------- Control phase 3: columns per row (admin: Look of this section, Columns per row) ----------
+   theme.cols.<section> = {t, d}: 1 to 4 across on tablet (768 to 1023 px) and desktop (1024 px and up). theme.js sets data-cols-t / data-cols-d and --cols-t / --cols-d on the section.
+   Phones are not affected. Only containers marked data-cols follow it. The team slider reads the number in the page script (KTHEME.colsOf). */
+@media(min-width:768px) and (max-width:1023px){
+  [data-cols-t] .grid[data-cols]{grid-template-columns:repeat(var(--cols-t),minmax(0,1fr))}
+  [data-cols-t] .svc-main[data-cols]>*{flex:0 1 calc((100% - (var(--cols-t) - 1) * 1.25rem) / var(--cols-t))}
+  [data-cols-t] .slider[data-cols]>*{width:calc((100% - (var(--cols-t) - 1) * 1rem) / var(--cols-t))}
+}
+@media(min-width:1024px){
+  [data-cols-d] .grid[data-cols]{grid-template-columns:repeat(var(--cols-d),minmax(0,1fr))}
+  [data-cols-d] .svc-main[data-cols]>*{flex:0 1 calc((100% - (var(--cols-d) - 1) * 1.25rem) / var(--cols-d))}
+  [data-cols-d] .slider[data-cols]>*{width:calc((100% - (var(--cols-d) - 1) * 1rem) / var(--cols-d))}
+}
+
+/* Control phase 4: the background of one card (data-cb is written by KTHEME.cb, the variables by KTHEME.paintCards) */
+.card[data-cbp]{background-image:var(--cb-img);background-size:cover;background-position:var(--cb-pos,center);background-repeat:no-repeat}
+.card[data-cbc]{color:var(--card-fg)}
+.card[data-cbc] :is(.text-stone-500,.text-stone-600,.text-stone-700,.text-ink,.text-title,.cat-tag){color:inherit}
+.card[data-cbc] h3,.card[data-cbc] h4{color:rgb(var(--card-title-rgb))}
+
+/* Focus ring for cards and buttons (keyboard only: :focus-visible). Cards that can be opened get the ring INSIDE their edge, so a slider
+   or a scrolling row can never cut it off; it is an outline, so it also shows in Windows high-contrast mode. */
+:is(button,a,[role=button],[tabindex="0"]).card:focus-visible,.ncard:focus-visible,.ct-tile:focus-visible{outline:3px solid rgb(var(--c-accent-rgb,29 78 216));outline-offset:-3px;box-shadow:0 0 0 2px #fff,0 10px 24px -8px rgba(0,0,0,.25)}
+.card[data-cbp]:focus-visible,.card[data-cbc]:focus-visible{outline-color:#fff;box-shadow:0 0 0 3px rgb(var(--c-accent-rgb,29 78 216))}   /* a card with its own dark colour or picture: white ring */
+.svc-sub:focus-visible{outline:3px solid rgb(var(--c-gold-rgb,217 200 164));outline-offset:2px}   /* its background turns dark on focus */
+:is(.sl-dot,.jur-arrow,.mn-btn,.khip-burger):focus-visible{outline:3px solid rgb(var(--c-accent-rgb,29 78 216));outline-offset:3px}
+
+/* ---------- Video sections (video.js): home page and About page ----------
+   A poster with a play button; the YouTube player replaces it when it is pressed. */
+.kv-frame{position:relative;width:100%;aspect-ratio:16/9;border-radius:1.25rem;overflow:hidden;background:rgb(var(--c-ink-rgb));box-shadow:0 18px 50px -22px rgb(var(--c-ink-rgb) / .55)}
+.kv-frame iframe,.kv-play,.kv-thumb{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+.kv-thumb{object-fit:cover;transition:transform .8s cubic-bezier(.16,1,.3,1),opacity .4s}
+.kv-play{padding:0;margin:0;background:none;cursor:pointer;color:rgb(var(--c-title-rgb))}
+.kv-play::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgb(var(--c-ink-rgb) / .05),rgb(var(--c-ink-rgb) / .38));transition:opacity .4s}
+.kv-btn{position:absolute;z-index:1;left:50%;top:50%;translate:-50% -50%;width:4.75rem;height:4.75rem;border-radius:999px;background:rgb(255 255 255 / .94);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px -8px rgb(0 0 0 / .5);transition:scale .35s cubic-bezier(.16,1,.3,1)}
+.kv-btn svg{margin-inline-start:.2rem}
+.kv-play:hover .kv-thumb,.kv-play:focus-visible .kv-thumb{transform:scale(1.04)}
+.kv-play:hover .kv-btn,.kv-play:focus-visible .kv-btn{scale:1.1}
+.kv-play:focus-visible{outline:3px solid rgb(var(--c-gold-rgb));outline-offset:-3px}
+.kv-wide{max-width:60rem;margin-inline:auto}
+.kv-copy .rule{margin-bottom:1.25rem}
+.kv-text p+p{margin-top:1rem}
+.kv-inline{margin:1.75rem 0 1.5rem;max-width:36rem}
+.kv-inline .kv-frame{border-radius:1rem}
+@media(max-width:639px){.kv-btn{width:3.75rem;height:3.75rem}}
+@media(prefers-reduced-motion:reduce){.kv-thumb,.kv-btn{transition:none}}
+.kv-auto .kv-btn{display:none}
+.kv-auto .kv-play::after{opacity:.5}
+.kv-cta a{text-decoration:none}

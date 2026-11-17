@@ -221,8 +221,3 @@
 ## Video sections, visitor features
 - **Search engines**: VideoObject structured data and a no-script copy of the video title and text (English and Arabic pages) written by `scripts/build-seo.js`; new optional *Date the video was published* field.
 - **Cover picture** for the video (admin: Video, Cover picture). **Start by itself** (silent loop, pauses out of view, respects reduced motion and data saver). **Button** under the text (WhatsApp, web address, phone, e-mail or a page of the site), with Arabic wording.
-
-## Speed: compiled Tailwind
-- **New `scripts/build-tailwind.js`** (with `scripts/tailwind.config.cjs`, `scripts/tailwind-input.css`): builds `tailwind.css` (minified, only the classes the site uses, Tailwind 3.4.17 like the CDN) and switches the five public pages from the Tailwind CDN to it. The GitHub Action `build-seo.yml` runs it after the SEO build and now also runs when a script changes. The theme is read from `tailwind-config.js`, so colours and fonts still come from one place.
-- **Safe by design**: the pages keep the CDN tags between `KHIP-TW-JS` markers and an empty `KHIP-TW-CSS` marker after `styles.css`. A successful build empties the first and puts the stylesheet link in the second; a failed build (or `--cdn`) puts the CDN back and deletes `tailwind.css`. `admin.html` is not changed.
-- Pages: `index.html`, `about.html`, `patents.html`, `trademarks.html`, `translation.html` (markers only; they still use the CDN until the Action has run once).

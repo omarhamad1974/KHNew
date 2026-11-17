@@ -331,11 +331,32 @@ const ALOOK=(()=>{
       fontFields(fontBase(key),true)+`<div><span class="text-xs font-bold text-gray-700">Preview</span><div class="mt-1 rounded-xl overflow-hidden border border-gray-200" data-fprev="${esc(key)}">${fontPrev(key)}</div></div>`
       +`<div><button type="button" data-lk="reset-fonts-sec" data-k="${key}" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl"><i class="fas fa-rotate-left"></i> Same as the whole site</button></div>`);
   }
+  /* ---------- Section header (control phase 2): hide or show the title, icon, thin line and WhatsApp button of one section ---------- */
+  const HEADLBL={title:['Title','Hide the title. It stays in the page for search engines and screen readers; only the look disappears.'],icon:['Icon','Hide the icon above or beside the title.'],rule:['Thin line','Hide the thin gold line under the title.'],wa:['WhatsApp button','Hide the "WhatsApp us" button at the end of the page.']};
+  function secHead(key){
+    const parts=(((window.KSEC||{}).parts)||{})[key]||[];
+    if(!parts.length)return '';
+    const s=((T().secHead||{})[key])||{},hid=parts.filter(k=>s[k]===true);
+    const one=k=>`<label class="flex items-start gap-2 text-xs font-bold text-gray-700 bg-gray-50 border border-gray-200 rounded-lg p-3 cursor-pointer"><input type="checkbox" data-p="theme.secHead.${key}.${k}" data-bool="1" data-lkv="1" ${s[k]===true?'checked':''} class="mt-0.5"><span>${esc(HEADLBL[k][0])}: <span class="font-normal text-gray-600">${esc(HEADLBL[k][1])}</span></span></label>`;
+    return det('h:'+key,'Section header',hid.length>0,hid.length+' hidden','All shown',`<div class="grid sm:grid-cols-2 gap-3">${parts.map(one).join('')}</div><p class="text-[11px] text-gray-500">Tick a box to hide that part on the website, in English and Arabic. Untick it to show it again. Only the parts this section has are listed.</p><div><button type="button" data-lk="reset-sec-head" data-k="${key}" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl"><i class="fas fa-rotate-left"></i> Show everything</button></div>`);
+  }
+  /* ---------- Columns per row (control phase 3): how many cards across on tablet and desktop ---------- */
+  function secCols(key){
+    const def=((window.KSEC||{}).cols||{})[key];
+    if(!def)return '';
+    const s=((T().cols||{})[key])||{},base=`theme.cols.${key}.`,on=!!(s.t||s.d);
+    const built=(n,l)=>l||(n?String(n):'cards of a fixed width');
+    const sel=(k,label,sub,n,l)=>{const v=val(base+k);return `<label class="block text-xs font-bold">${esc(label)} <span class="font-normal text-gray-500">(${esc(sub)})</span><select data-p="${base+k}" data-lkv="1" class="${inp} mt-1"><option value="" ${v===''?'selected':''}>As designed (${esc(built(n,l))})</option>${[1,2,3,4].map(n=>`<option value="${n}" ${v===String(n)?'selected':''}>${n} across</option>`).join('')}</select></label>`};
+    return det('n:'+key,'Columns per row',on,'Own columns','As designed',
+      grid(sel('t','Tablet','768 to 1023 px',def.t)+sel('d','Desktop','1024 px and up',def.d,def.dl))
+      +`<p class="text-[11px] text-gray-500">How many ${key==='about-team'?'team members':key==='home-news'?'news cards':'cards'} sit side by side. Phones keep one at a time or one above the other. The columns share the section width, so 4 across is narrow when the section width is small (General, Colors, Section width).${key==='home-news'||key==='about-team'?' If there are more than fit, the row slides.':''}</p>`
+      +`<div><button type="button" data-lk="reset-sec-cols" data-k="${key}" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl"><i class="fas fa-rotate-left"></i> As designed</button></div>`);
+  }
   const SECKEYS=()=>TH().SECTIONS.map(x=>x[0]);
   function hasLook(key){
-    const t=T(),has=o=>!!o&&Object.values(o).some(v=>v&&typeof v==='object'?has(v):v!==''&&v!=null);
+    const t=T(),has=o=>!!o&&Object.values(o).some(v=>v&&typeof v==='object'?has(v):v!==''&&v!=null&&v!==false);
     if(key==='home-hero')return has((t.imgfx||{}).hero);
-    return ['color','image'].includes(((t.sections||{})[key]||{}).mode)||has((t.secCards||{})[key])||has(((t.align||{}).sec||{})[key])||has(((t.imgfx||{}).sec||{})[key])||has(((t.anim||{}).sec||{})[key])||has(((t.fonts||{}).sec||{})[key]);
+    return ['color','image'].includes(((t.sections||{})[key]||{}).mode)||has((t.secCards||{})[key])||has((t.secHead||{})[key])||has((t.cols||{})[key])||has(((t.align||{}).sec||{})[key])||has(((t.imgfx||{}).sec||{})[key])||has(((t.anim||{}).sec||{})[key])||has(((t.fonts||{}).sec||{})[key]);
   }
   function secLook(key){
     const wrap=(intro,body,extra='')=>`<div class="bg-white p-4 rounded-2xl border border-gray-200 space-y-3"><div class="flex items-start justify-between gap-3"><div><h3 class="font-extrabold text-base">Look of this section</h3><p class="text-xs text-gray-600 mt-0.5">${intro}</p></div>${extra}</div>${body}</div>`;
@@ -346,9 +367,9 @@ const ALOOK=(()=>{
     }
     if(!SECKEYS().includes(key))return '';
     const bg=bgInfo(key);
-    return wrap('Background, cards, fonts, text alignment, photo effect and animation of this section only. Whatever you leave on its default follows the site-wide settings in <b>General</b> (Colors, Cards, Fonts, Text alignment, Picture effects, Animation). Cards settings only matter where the section has cards.',
+    return wrap('Background, header parts, columns, cards, fonts, text alignment, photo effect and animation of this section only. Whatever you leave on its default follows the site-wide settings in <b>General</b> (Colors, Cards, Fonts, Text alignment, Picture effects, Animation). Cards settings only matter where the section has cards.',
       det('b:'+key,'Background',bg.mode!=='default',bg.badge,'Default',bg.body)
-      +secCards(key)+secFonts(key)+secAlign(key)+secFx(key)+secAx(key),
+      +secHead(key)+secCols(key)+secCards(key)+secFonts(key)+secAlign(key)+secFx(key)+secAx(key),
       hasLook(key)?`<button type="button" data-lk="reset-sec-look" data-k="${key}" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl flex-shrink-0" title="Remove every look setting of this section"><i class="fas fa-rotate-left"></i> Reset this section</button>`:'');
   }
 
@@ -368,7 +389,8 @@ const ALOOK=(()=>{
         if(v===''||v==null||(v&&typeof v==='object'&&!Array.isArray(v)&&!Object.keys(v).length))delete o[k];
       }
     };
-    ['header','bar','wa','cards','secCards','align','logos','menu','imgfx','anim','motion','fonts'].forEach(k=>{if(t[k]){prune(t[k]);if(!Object.keys(t[k]).length)delete t[k]}});
+    if(t.secHead){Object.keys(t.secHead).forEach(k=>{const s=t.secHead[k]||{};Object.keys(s).forEach(p=>{if(s[p]!==true)delete s[p]})})}      // only "hide" is saved
+    ['header','bar','wa','cards','secCards','secHead','cols','align','logos','menu','imgfx','anim','motion','fonts'].forEach(k=>{if(t[k]){prune(t[k]);if(!Object.keys(t[k]).length)delete t[k]}});
     // a font name that is not allowed is dropped rather than saved
     const okF=o=>{if(!o||typeof o!=='object')return;['head','body'].forEach(r=>['en','ar'].forEach(l=>{if(o[r]&&o[r][l]&&!TH().fontOk(o[r][l]))delete o[r][l]}))};
     if(t.fonts){okF(t.fonts.all);Object.values(t.fonts.sec||{}).forEach(okF);[t.fonts].concat([t.fonts.all],Object.values(t.fonts.sec||{})).forEach(o=>{if(o)prune(o)});if(!Object.keys(t.fonts).length)delete t.fonts}
@@ -427,10 +449,12 @@ const ALOOK=(()=>{
     else if(a==='ax-play')axRun(b);
     else if(a==='reset-menu')wipe(['menu'],'Set the menu back to the original (links in the header, bottom bar)?');
     else if(a==='reset-sec'){if(t.secCards)delete t.secCards[b.dataset.k];mark();view()}
-    else if(a==='reset-sec-look'){const k=b.dataset.k;if(confirm('Remove the background, cards colors, fonts, text alignment, photo effect and animation set for this section? It will follow the site-wide settings.')){if(t.sections)delete t.sections[k];[['secCards'],['align','sec'],['imgfx','sec'],['anim','sec'],['fonts','sec']].forEach(([a1,a2])=>{const o=a2?(t[a1]||{})[a2]:t[a1];if(o)delete o[k]});mark();view()}}
+    else if(a==='reset-sec-cols'){if(t.cols)delete t.cols[b.dataset.k];mark();view()}
+    else if(a==='reset-sec-head'){if(t.secHead)delete t.secHead[b.dataset.k];mark();view()}
+    else if(a==='reset-sec-look'){const k=b.dataset.k;if(confirm('Remove the background, hidden header parts, columns, cards colors, fonts, text alignment, photo effect and animation set for this section? It will follow the site-wide settings.')){if(t.sections)delete t.sections[k];[['secCards'],['secHead'],['cols'],['align','sec'],['imgfx','sec'],['anim','sec'],['fonts','sec']].forEach(([a1,a2])=>{const o=a2?(t[a1]||{})[a2]:t[a1];if(o)delete o[k]});mark();view()}}
   });
 
-  return {tabs,clean,previews,secLook,hasLook};
+  return {tabs,clean,previews,secLook,hasLook,cref};
 })();
 
 window.ALOOK=ALOOK;

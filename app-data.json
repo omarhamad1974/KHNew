@@ -6,21 +6,21 @@
     {
       "id": "1",
       "title": "Using Legal Skills with Technical Knowledge",
-      "subtitle": "",
+      "subtitle": "Discover legal and IP services.",
       "tag": "Featured",
       "image": "mwiioilp-1000097178.jpg"
     },
     {
       "id": "2",
       "title": "Protecting Innovation",
-      "subtitle": "",
+      "subtitle": "Discover legal and IP services.",
       "tag": "Featured",
       "image": "./assets/slider2.jpg"
     },
     {
       "id": "3",
       "title": "Making a difference ",
-      "subtitle": "",
+      "subtitle": "To people lives and people business ",
       "tag": "",
       "image": "mwiip53o-1000097174.jpg"
     }
@@ -381,11 +381,6 @@
       "home-jurisdictions": {
         "mode": "color",
         "color": "role:accent"
-      },
-      "patents-details": {
-        "mode": "color",
-        "color": "role:accent",
-        "tone": "auto"
       }
     },
     "sectionWidthTablet": "86",
@@ -424,67 +419,6 @@
       "mobile": 120,
       "tablet": 160,
       "desktop": 200
-    },
-    "fonts": {
-      "all": {
-        "head": {
-          "en": "Montserrat"
-        },
-        "body": {
-          "en": "Lato"
-        }
-      }
-    },
-    "motion": {
-      "map": {
-        "entrance": "rise"
-      },
-      "logos": {
-        "home": {
-          "effect": "fade",
-          "speed": "1.4"
-        }
-      }
-    },
-    "imgfx": {
-      "all": {
-        "color": "role:accent",
-        "intensity": "30"
-      },
-      "news": {
-        "opacity": "75"
-      },
-      "hero": {
-        "opacity": "100"
-      }
-    },
-    "secCards": {
-      "home-services": {
-        "bg": "role:sand"
-      },
-      "patents-intro": {
-        "bg": "role:gold",
-        "opacity": "25"
-      }
-    },
-    "wa": {
-      "bg": "role:page",
-      "btn": "role:sand",
-      "opacity": "100"
-    },
-    "menu": {
-      "mode": "both",
-      "bg": "role:accentDark"
-    },
-    "logos": {
-      "home": {
-        "m": "80",
-        "t": "90",
-        "d": "100"
-      }
-    },
-    "bar": {
-      "bg": "role:accentDark"
     }
   },
   "newsCategories": [

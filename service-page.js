@@ -4,7 +4,7 @@
    If the field is empty, or the data can't load, the text already written in the HTML stays.
    In Arabic the same field comes from app-data.ar.json (empty there: the English text is shown). */
 (function(){
-  const file=location.pathname.split('/').pop()||'';
+  const file=window.KLang&&KLang.page?KLang.page():(location.pathname.split('/').pop()||'');   // English file name, also on the Arabic address
   const FALL=['ph-shield-check','ph-users-three','ph-flask','ph-compass','ph-lock-key','ph-magnifying-glass'];
   const E=s=>window.KRich.esc(s);
   function apply(D){
@@ -12,7 +12,7 @@
     // links to a service are shown only while that service is not switched off in admin
     document.querySelectorAll('[data-svc-page]').forEach(a=>{const x=(D.services||[]).find(s=>s.page===a.dataset.svcPage);a.hidden=!x||!!x.hidden});
     const sv=(D.services||[]).find(s=>s.page===file);
-    if(sv&&sv.hidden){location.replace('index.html');return}
+    if(sv&&sv.hidden){location.replace(KLang.url?KLang.url('index.html'):'index.html');return}
     if(!sv||!String(sv.pageContent||'').trim())return;
     const intro=[],secs=[];let cur=null;
     for(const l of String(sv.pageContent).replace(/\r/g,'').split('\n')){

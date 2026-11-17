@@ -1,4 +1,6 @@
-/* Generated from the pages: which fixed text (data-tx key) sits in which section. Used by the admin Sections page. */
+/* Generated from the pages: which fixed text (data-tx key) sits in which section, and which header parts (title, icon, rule = the thin line, wa = WhatsApp button)
+   each section has (parts), and which sections have a row of cards whose columns can be set (cols: the built-in columns on tablet t and
+   desktop d, 0 = cards of a fixed width). Used by the admin Sections page. */
 window.KSEC={
  "sections": {
   "home-about": {
@@ -316,5 +318,44 @@ window.KSEC={
    "trademarks-contact",
    "translation-contact"
   ]
+ },
+ "parts": {
+  "home-about": ["rule"],
+  "home-video": ["title", "rule"],
+  "about-video": ["title"],
+  "home-jurisdictions": ["title", "rule"],
+  "home-services": ["title", "rule"],
+  "home-news": ["title", "rule"],
+  "home-testimonials": ["title", "icon", "rule"],
+  "home-faq": ["title", "rule"],
+  "about-intro": ["title", "rule"],
+  "about-map": ["title", "rule"],
+  "about-value": ["title", "rule"],
+  "about-quote": ["icon"],
+  "about-advantages": ["title", "rule"],
+  "about-team": ["title", "rule"],
+  "about-faq": ["title", "rule"],
+  "about-contact": ["title", "rule"],
+  "patents-intro": ["title", "icon", "rule"],
+  "patents-details": ["title", "rule"],
+  "patents-faq": ["title", "rule"],
+  "patents-contact": ["title", "wa"],
+  "trademarks-intro": ["title", "icon", "rule"],
+  "trademarks-details": ["title", "rule"],
+  "trademarks-faq": ["title", "rule"],
+  "trademarks-contact": ["title", "wa"],
+  "translation-intro": ["title", "icon", "rule"],
+  "translation-details": ["title", "rule"],
+  "translation-faq": ["title", "rule"],
+  "translation-contact": ["title", "wa"]
+ },
+ "cols": {
+  "home-services": {"t": 2, "d": 2},
+  "home-news": {"t": 0, "d": 0},
+  "about-advantages": {"t": 2, "d": 3},
+  "about-team": {"t": 4, "d": 4},
+  "patents-details": {"t": 1, "d": 2},
+  "trademarks-details": {"t": 1, "d": 2},
+  "translation-details": {"t": 1, "d": 3, "dl": "2, or 3 from 1280 px"}
  }
 };

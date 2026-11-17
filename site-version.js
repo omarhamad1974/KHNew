@@ -12,7 +12,7 @@
         - to remove it for good, set STAMP=false below. */
 (function(){
   'use strict';
-  const BUILD='Admin phase 5 · 16-11-2026', IMG_V='2', STAMP=true;
+  const BUILD='Control phase 4 · 16-11-2026', IMG_V='2', STAMP=true;
 
   const LOCAL=u=>typeof u==='string'&&u&&!/^([a-z][a-z0-9+.-]*:|\/\/)/i.test(u);   // not http:, https:, data:, blob:, //host
   const img=u=>{
@@ -21,9 +21,18 @@
     if(/[?&]v=/.test(base))return u;
     return base+(base.includes('?')?'&':'?')+'v='+IMG_V+hash;
   };
-  window.KVER={build:BUILD,imgV:IMG_V,img};
+  /* KVER.set(file, D.imgSizes, sizes): ` srcset="..." sizes="..."` for a picture uploaded with smaller copies (name-w480.jpg ...), else ''.
+     D.imgSizes = { "<file>": { "w": <width of the file>, "v": [480, 960] } } is written by the admin when it uploads a picture. Older pictures have no entry and load as before. */
+  const set=(u,map,sizes)=>{
+    const e=map&&typeof u==='string'?map[u.replace(/^\.\/assets\//,'')]:null;
+    if(!e||!Array.isArray(e.v)||!e.v.length||!(e.w>0)||!LOCAL(u)||/^(\.\/|\/)/.test(u)&&!/^\.\/assets\//.test(u))return '';
+    const f=u.replace(/^\.\/assets\//,''),at=w=>img('./assets/'+f.replace(/(\.\w+)$/,`-w${w}$1`)),q=s=>String(s).replace(/"/g,'&quot;');
+    const list=e.v.filter(w=>w>0&&w<e.w).sort((a,b)=>a-b).map(w=>`${at(w).replace(/ /g,'%20')} ${w}w`).concat(`${img('./assets/'+f).replace(/ /g,'%20')} ${e.w}w`);
+    return list.length>1?` srcset="${q(list.join(', '))}" sizes="${q(sizes||'100vw')}"`:'';
+  };
+  window.KVER={build:BUILD,imgV:IMG_V,img,set};
 
-  if(!STAMP||/admin\.html$/.test(location.pathname))return;
+  if(!STAMP||/admin\.html$/.test(location.pathname)||window.__khipPreview)return;
 
   // ---- debug switch -------------------------------------------------------------------------------
   const LSK='khip-stamp',LSV='khip-stamp-view';

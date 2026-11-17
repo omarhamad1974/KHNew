@@ -21,6 +21,7 @@
   ];
   // Sections that can get their own background. [key, label]
   const SECTIONS=[
+    ['home-video','Home page: Video'],
     ['home-about','Home page: logo and About text'],
     ['home-jurisdictions','Home page: Regional coverage map'],
     ['home-services','Home page: IP Services'],
@@ -28,6 +29,7 @@
     ['home-testimonials','Home page: Client endorsements'],
     ['home-faq','Home page: FAQ'],
     ['about-intro','About page: About KHIP'],
+    ['about-video','About page: Video'],
     ['about-map','About page: Jurisdictions'],
     ['about-value','About page: KHIP Value'],
     ['about-quote','About page: Quote'],
@@ -338,8 +340,56 @@
       for(const k in v)put(el.style,'--'+k,v[k]);
     });
   }
-  function apply(D){const T=(D&&D.theme)||{};vars(T);paint(T);paintLook(T);fontsSec(T);align(T);logos(T);images(T);window.KTHEME.current=T;document.dispatchEvent(new CustomEvent('khip-theme',{detail:T}))}
-  window.KTHEME={DEFAULTS,ROLES,SECTIONS,HEX,HERO,ALIGN,LOGOS,FXG,fxVals,AXE,AXDIST,AXEASE,AXHOVER,axCfg,axVars,LGE,LGIDLE,LGHOVER,MAPE,MAPIDLE,MAPHOVER,MAPPULSE,lgCfg,mapCfg,FONTS,fontOk,fontStack,fontVars,fontUrl,fontLink,resolve,lum,palette,apply,lookMap,cardMap,cardsOf};
+  /* ---------- Control phase 2: section header parts ----------
+     theme.secHead {<section>: {title, icon, rule, wa: true}}   true = hide it. styles.css does the hiding (data-hide on the section). */
+  const HEADPARTS=['title','icon','rule','wa'];
+  function secHead(T){
+    const S=(T||{}).secHead||{};
+    document.querySelectorAll('[data-sec]').forEach(el=>{
+      const s=S[el.dataset.sec]||{},h=HEADPARTS.filter(k=>s[k]===true);
+      if(h.length)el.setAttribute('data-hide',h.join(' '));else el.removeAttribute('data-hide');
+    });
+  }
+  /* ---------- Control phase 3: columns per row ----------
+     theme.cols {<section>: {t, d}}   1 to 4 across on tablet (768 to 1023 px) and desktop (1024 px and up); empty = as designed. Phones are not affected. */
+  const colN=v=>{const n=parseInt(v,10);return n>=1&&n<=4?n:0};
+  function cols(T){
+    const S=(T||{}).cols||{};
+    document.querySelectorAll('[data-sec]').forEach(el=>{
+      const s=S[el.dataset.sec]||{};
+      [['t',colN(s.t)],['d',colN(s.d)]].forEach(([k,n])=>{if(n){el.setAttribute('data-cols-'+k,n);el.style.setProperty('--cols-'+k,n)}else{el.removeAttribute('data-cols-'+k);el.style.removeProperty('--cols-'+k)}});
+    });
+  }
+  // The columns set for a section at the width of this screen: 0 = as designed (also on phones)
+  function colsOf(key){
+    const T=(window.KTHEME&&window.KTHEME.current)||{},s=((T.cols||{})[key])||{},w=window.innerWidth;
+    return w>=1024?colN(s.d):w>=768?colN(s.t):0;
+  }
+  /* ---------- Control phase 4: the background of one card ----------
+     On an item (news, team, a service) or on D.ipCard: cardBg (colour), cardImage (picture), cardShade (0 to 80, darkens the picture), cardText (colour).
+     A page writes KTHEME.cb(item) into the card's tag (data-cb ...); paintCards() turns it into inline variables, styles.css (last block) draws it. */
+  const cbAttr=x=>{
+    if(!x||!(x.cardBg||x.cardImage))return '';
+    const q=v=>String(v==null?'':v).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+    return ` data-cb data-cbg="${q(x.cardBg)}" data-cbi="${q(x.cardImage)}" data-cbs="${q(x.cardShade)}" data-cbt="${q(x.cardText)}" data-cbo="${q(x.cardPos)}"`;
+  };
+  function paintCards(T){
+    T=T||window.KTHEME.current||{};
+    document.querySelectorAll('[data-cb]').forEach(el=>{
+      const d=el.dataset,bg=col(d.cbg,T),fg=col(d.cbt,T),img=String(d.cbi||'').trim(),sh=num(d.cbs,0,0,80)/100,st=el.style;
+      if(bg)st.setProperty('--card-bg',`rgb(${rgb(bg)} / 1)`);else st.removeProperty('--card-bg');
+      if(img){
+        const u=`url("${imgUrl(img).replace(/"/g,'%22')}")`;
+        st.setProperty('--cb-img',sh?`linear-gradient(rgb(0 0 0 / ${sh}),rgb(0 0 0 / ${sh})),${u}`:u);
+        st.setProperty('--cb-pos',d.cbo==='top'?'center top':d.cbo==='bottom'?'center bottom':'center');
+        el.setAttribute('data-cbp','1');
+      }else{st.removeProperty('--cb-img');st.removeProperty('--cb-pos');el.removeAttribute('data-cbp')}
+      if(fg){st.setProperty('--card-fg',fg);st.setProperty('--card-title-rgb',rgb(fg));el.setAttribute('data-cbc','1')}
+      else{st.removeProperty('--card-fg');st.removeProperty('--card-title-rgb');el.removeAttribute('data-cbc')}
+    });
+  }
+  function apply(D){const T=(D&&D.theme)||{};vars(T);paint(T);paintLook(T);secHead(T);cols(T);fontsSec(T);align(T);logos(T);images(T);paintCards(T);window.KTHEME.current=T;document.dispatchEvent(new CustomEvent('khip-theme',{detail:T}))}
+  window.KTHEME={DEFAULTS,ROLES,SECTIONS,HEX,HERO,ALIGN,LOGOS,FXG,fxVals,AXE,AXDIST,AXEASE,AXHOVER,axCfg,axVars,LGE,LGIDLE,LGHOVER,MAPE,MAPIDLE,MAPHOVER,MAPPULSE,lgCfg,mapCfg,colsOf,cb:cbAttr,paintCards,FONTS,fontOk,fontStack,fontVars,fontUrl,fontLink,resolve,lum,palette,apply,lookMap,cardMap,cardsOf};
   // The admin page uses the definitions only; it must not recolour itself.
   if(/admin\.html$/.test(location.pathname))return;
   let cached=null;try{cached=JSON.parse(localStorage.getItem(CACHE))}catch{}

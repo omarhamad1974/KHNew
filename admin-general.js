@@ -40,13 +40,13 @@ const AGEN=(()=>{
   /* ---------- Languages & words ---------- */
   const WORDS=()=>Object.keys(KLang.DICT.en).filter(k=>typeof KLang.DICT.en[k]==='string'&&k!=='switch_to'&&!(window.AGEN_SKIP&&AGEN_SKIP.has(k)));
   const wordRow=k=>`<div data-w="${esc((KLang.DICT.en[k]+' '+KLang.DICT.ar[k]+' '+k).toLowerCase())}" class="grid md:grid-cols-2 gap-3 py-2 border-b border-gray-100 last:border-0">
-    <label class="block min-w-0"><span class="block text-[10px] text-gray-400 font-mono">${esc(k)}</span><input data-p="ui.${k}" value="${esc((D.ui||{})[k]||'')}" placeholder="${esc(KLang.DICT.en[k])}" aria-label="${esc(k)} (English)" class="${inp}"></label>
-    <label class="block min-w-0"><span class="block text-[10px] text-transparent select-none">.</span><input data-p="ar:ui.${k}" dir="rtl" value="${esc((A.ui||{})[k]||'')}" placeholder="${esc(KLang.DICT.ar[k])}" aria-label="${esc(k)} (Arabic)" class="${inp}"></label></div>`;
+    <label class="block min-w-0" data-pane="en"><span class="block text-[10px] text-gray-400 font-mono">${esc(k)}</span><input data-p="ui.${k}" value="${esc((D.ui||{})[k]||'')}" placeholder="${esc(KLang.DICT.en[k])}" aria-label="${esc(k)} (English)" class="${inp}"></label>
+    <label class="block min-w-0" data-pane="ar"><span class="block text-[10px] text-transparent select-none">.</span><input data-p="ar:ui.${k}" dir="rtl" value="${esc((A.ui||{})[k]||'')}" placeholder="${esc(KLang.DICT.ar[k])}" aria-label="${esc(k)} (Arabic)" class="${inp}"></label></div>`;
   function catRows(){
     const en=D.newsCategories||[],ar=A.newsCategories||[];
     return `<div><div class="flex items-center justify-between"><span class="text-xs font-bold text-gray-700">News categories (labels)</span><button type="button" data-gs-act="cat-add" class="text-xs bg-[#d9c8a4] hover:bg-[#cdb98f] text-[#1b2433] font-bold px-3 py-1.5 rounded-xl"><i class="fas fa-plus"></i> Add category</button></div>
-      <div class="grid md:grid-cols-2 gap-3 mt-1"><span class="text-[10px] font-extrabold tracking-wider text-brand-700">EN</span><span lang="ar" class="text-[10px] font-extrabold tracking-wider text-amber-800 hidden md:block">عربي</span></div>
-      <div class="space-y-1.5 mt-1">${en.length?en.map((c,i)=>`<div class="flex items-center gap-2"><div class="grid md:grid-cols-2 gap-2 flex-1 min-w-0"><input data-p="newsCategories.${i}" value="${esc(c)}" aria-label="Category ${i+1} (English)" class="${inp}"><input data-p="ar:newsCategories.${i}" dir="rtl" value="${esc(ar[i]||'')}" placeholder="Empty: the English label is shown" aria-label="Category ${i+1} (Arabic)" class="${inp}"></div><button type="button" data-gs-act="cat-del" data-i="${i}" aria-label="Delete category" class="w-9 h-9 rounded-lg bg-red-50 text-red-600 flex-shrink-0"><i class="fas fa-trash text-xs"></i></button></div>`).join(''):'<p class="text-xs text-gray-500">No categories yet.</p>'}</div>
+      <div class="grid md:grid-cols-2 gap-3 mt-1"><span data-pane="en" class="text-[10px] font-extrabold tracking-wider text-brand-700">EN</span><span data-pane="ar" lang="ar" class="text-[10px] font-extrabold tracking-wider text-amber-800 hidden md:block">عربي</span></div>
+      <div class="space-y-1.5 mt-1">${en.length?en.map((c,i)=>`<div class="flex items-center gap-2"><div class="grid md:grid-cols-2 gap-2 flex-1 min-w-0"><input data-pane="en" data-p="newsCategories.${i}" value="${esc(c)}" aria-label="Category ${i+1} (English)" class="${inp}"><input data-pane="ar" data-p="ar:newsCategories.${i}" dir="rtl" value="${esc(ar[i]||'')}" placeholder="Empty: the English label is shown" aria-label="Category ${i+1} (Arabic)" class="${inp}"></div><button type="button" data-gs-act="cat-del" data-i="${i}" aria-label="Delete category" class="w-9 h-9 rounded-lg bg-red-50 text-red-600 flex-shrink-0"><i class="fas fa-trash text-xs"></i></button></div>`).join(''):'<p class="text-xs text-gray-500">No categories yet.</p>'}</div>
       <p class="text-[11px] text-gray-500 mt-1">Each article picks one of these labels (News tab). Renaming a label does not rename it on articles that already use it.</p></div>`;
   }
   function words(){
@@ -78,6 +78,7 @@ const AGEN=(()=>{
   function render(){
     if(!RENDER[gsub])gsub='brand';
     nav();RENDER[gsub]();
+    if(window.KPV)KPV.sync();
   }
   const add=(k,n,i,fn)=>{PAGES.push([k,n,i]);RENDER[k]=fn};
 

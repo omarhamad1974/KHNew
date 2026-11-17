@@ -12,7 +12,7 @@
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const L=(k,d)=>{try{const v=window.KLang&&KLang.t(k);return v&&v!==k?v:d}catch{return d}};
   const num=(v,d,lo,hi)=>{const n=parseFloat(v);return isFinite(n)?Math.min(hi,Math.max(lo,n)):d};
-  const cur=location.pathname.split('/').pop()||'index.html';
+  const cur=window.KLang&&KLang.page?KLang.page():(location.pathname.split('/').pop()||'index.html');
   let T={},oc=null,burger=null,svc=null,lastFocus=null,built=false;
 
   /* ---------- colours and mode ---------- */
@@ -41,7 +41,7 @@
   }
 
   /* ---------- the off-canvas panel ---------- */
-  const homePage=/(^|\/)(index\.html)?$/.test(location.pathname);
+  const homePage=window.KLang&&KLang.page?KLang.page()==='index.html':/(^|\/)(index\.html)?$/.test(location.pathname);
   const item=(href,txt,cls='')=>`<a href="${esc(href)}" class="oc-a ${cls}${href===cur?' on':''}" ${href===cur?'aria-current="page"':''}>${esc(txt)}</a>`;
   const sec=k=>`<a href="${homePage?'':'index.html'}#${k}" data-sec-go="${k}" class="oc-a">`;
   function links(){

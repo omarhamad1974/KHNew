@@ -102,7 +102,7 @@ window.KVIDEO=(function(){
     const label=txt(v.ctaText)?v.ctaText.trim():'',l=String(v.ctaLink||'').trim(),k=ctaKind(l);
     if(!label||!k)return '';
     let href=l;
-    if(k==='wa'){const n=String(((D||{}).contact||{}).whatsapp||'').replace(/\D/g,'');if(!n)return '';href='https://wa.me/'+n+'?text='+encodeURIComponent(L('wa_hello','Hello KHIP!')+(window.KHIP&&KHIP.tag?'\n\n'+KHIP.tag('video button'):''))}
+    if(k==='wa'){const n=String(((D||{}).contact||{}).whatsapp||'').replace(/\D/g,'');if(!n)return '';href='https://wa.me/'+n}
     const out=k==='wa'||(k==='ext'&&/^https?:/i.test(l)),ic=k==='wa'?'ph-whatsapp-logo':'ph-arrow-right rtl:-scale-x-100';
     return `<div class="kv-cta mt-7"><a href="${esc(href)}"${out?' target="_blank" rel="noopener"':''} class="inline-flex items-center gap-2 text-sm border border-ink/30 hover:bg-ink hover:text-white px-9 py-2.5 rounded-full transition">${esc(label)} <i class="ph-light ${ic}"></i></a></div>`;
   }
