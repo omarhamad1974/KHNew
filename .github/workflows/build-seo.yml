@@ -1,6 +1,6 @@
 name: Build SEO pages
 # Runs when the content or a page changes. Writes the SEO tags, the crawlable text, the Arabic pages
-# (index-ar.html ...), sitemap.xml and robots.txt, builds the compiled Tailwind stylesheet (tailwind.css), and commits them back to the same branch.
+# (index-ar.html ...), sitemap.xml and robots.txt, and commits them back to the same branch.
 # Needs: Settings > Actions > General > Workflow permissions > "Read and write permissions".
 on:
   push:
@@ -12,8 +12,9 @@ on:
       - 'patents.html'
       - 'trademarks.html'
       - 'translation.html'
-      - '*.js'
-      - 'scripts/**'
+      - 'lang.js'
+      - 'pages-i18n.js'
+      - 'scripts/build-seo.js'
   workflow_dispatch:
 permissions:
   contents: write
@@ -30,8 +31,6 @@ jobs:
         with: { node-version: 20 }
       - run: node scripts/validate.js
       - run: node scripts/build-seo.js
-      - name: Build Tailwind stylesheet (falls back to the CDN if it fails)
-        run: node scripts/build-tailwind.js
       - name: Commit generated files
         run: |
           git config user.name "khip-seo-build"
