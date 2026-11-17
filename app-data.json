@@ -1,7 +1,7 @@
 {
   "languages": "en",
   "about": "",
-  "aboutMainText": "**KHIP** provides comprehensive intellectual property protection services tailored to a diverse client portfolio, ranging from individual entrepreneurs and independent inventors to multinational corporations. Grounded in a deep, strategic understanding of global IP frameworks, our firm acts as a trusted partner throughout the innovation lifecycle, safeguarding original concepts, nurturing early-stage discoveries, and facilitating successful market entry to secure maximum commercial value and strategic advantage.",
+  "aboutMainText": "**KHIP** provides strategic intellectual property protection for independent inventors and multinational corporations alike, safeguarding innovations from concept to market entry to maximize commercial value.",
   "carousel": [
     {
       "id": "1",
@@ -453,6 +453,32 @@
       "home-video": {
         "rule": true,
         "title": true
+      },
+      "home-services": {
+        "title": true,
+        "rule": true
+      },
+      "home-about": {
+        "rule": true
+      }
+    },
+    "imgfx": {
+      "all": {
+        "color": "role:accent",
+        "intensity": "40"
+      }
+    },
+    "secCards": {
+      "home-services": {
+        "bg": "role:gold",
+        "opacity": "65"
+      }
+    },
+    "align": {
+      "sec": {
+        "home-about": {
+          "m": "start"
+        }
       }
     }
   },
@@ -482,5 +508,6 @@
       "ctaLink": "index.html",
       "after": "home-about"
     }
-  }
+  },
+  "ipCard": {}
 }
