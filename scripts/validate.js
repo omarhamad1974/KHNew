@@ -1,6 +1,9 @@
 // Validates app-data.json and app-data.ar.json. Run from the project root: node scripts/validate.js
 const fs=require('fs'),path=require('path');
 const read=f=>JSON.parse(fs.readFileSync(f,'utf8')),errs=[],warn=[];
+// The "light" zip has no assets/ folder (the pictures are already in the repository): then missing pictures cannot be checked here.
+const HAS_ASSETS=fs.existsSync('assets');let skipped=0;
+const noPic=msg=>{if(HAS_ASSETS)errs.push(msg);else skipped++};
 const d=read('app-data.json');
 const need={carousel:['id','title'],jurisdictions:['id','country'],news:['id','title','excerpt'],services:['id','title','description'],products:['id','title'],testimonials:['id','name','text'],employees:['id','name','position']};
 // Same rule as the site: a bare file name lives in ./assets/
@@ -11,7 +14,7 @@ for(const [k,fields] of Object.entries(need)){
   arr.forEach((x,i)=>{
     fields.forEach(f=>{if(!String(x[f]??'').trim())errs.push(`${k}[${i}]: missing "${f}"`)});
     if(ids.has(x.id))errs.push(`${k}[${i}]: duplicate id "${x.id}"`);ids.add(x.id);
-    if(typeof x.image==='string'&&x.image){const f=resolve(x.image);if(f&&!fs.existsSync(path.join('.',f)))errs.push(`${k}[${i}]: image not found ${x.image}`)}
+    if(typeof x.image==='string'&&x.image){const f=resolve(x.image);if(f&&!fs.existsSync(path.join('.',f)))noPic(`${k}[${i}]: image not found ${x.image}`)}
     if(k==='jurisdictions'&&x.code&&!/^[a-z]{2}$/i.test(x.code))errs.push(`${k}[${i}]: code must be 2 letters`);
     if(k==='services'&&x.page&&!/^[\w-]+\.html$/.test(x.page))errs.push(`${k}[${i}]: page must look like patents.html`);
   });
@@ -71,7 +74,7 @@ if(H!==undefined){
     else for(const [k,o] of Object.entries(T.logos)){
       if(!LIM[k]){errs.push(`theme.logos.${k}: unknown logo (use header, home or about)`);continue}
       for(const x of ['m','t','d']){if(o[x]===undefined||o[x]==='')continue;const n=Number(o[x]);if(!(n>=LIM[k][0]&&n<=LIM[k][1]))errs.push(`theme.logos.${k}.${x}: must be between ${LIM[k][0]} and ${LIM[k][1]}`)}
-      if(typeof o.image==='string'&&o.image){const f=resolve(o.image);if(f&&!fs.existsSync(path.join('.',f)))errs.push(`theme.logos.${k}.image: image not found ${o.image}`)}
+      if(typeof o.image==='string'&&o.image){const f=resolve(o.image);if(f&&!fs.existsSync(path.join('.',f)))noPic(`theme.logos.${k}.image: image not found ${o.image}`)}
     }
   }
 }
@@ -174,6 +177,65 @@ if(H!==undefined){
     }
   }
 }
+// ---- Fonts (admin restructure phase 4): theme.fonts = {all:{head:{en,ar}, body:{en,ar}}, sec:{<section>: same}} ----
+{
+  const F=(d.theme||{}).fonts;
+  if(F!==undefined){
+    const isObj=o=>typeof o==='object'&&o!==null&&!Array.isArray(o);
+    const level=(path,L)=>{
+      if(!isObj(L)){errs.push(`theme.fonts.${path}: must be an object`);return}
+      for(const [r,o] of Object.entries(L)){
+        if(!['head','body'].includes(r)){errs.push(`theme.fonts.${path}.${r}: unknown setting (use head or body)`);continue}
+        if(!isObj(o)){errs.push(`theme.fonts.${path}.${r}: must be an object`);continue}
+        for(const [l,v] of Object.entries(o)){
+          if(!['en','ar'].includes(l))errs.push(`theme.fonts.${path}.${r}.${l}: unknown language (use en or ar)`);
+          else if(typeof v!=='string'||!(v==='system'||/^[A-Za-z0-9][A-Za-z0-9 ]{1,39}$/.test(v)))errs.push(`theme.fonts.${path}.${r}.${l}: not a valid font name (${v})`);
+        }
+      }
+    };
+    if(!isObj(F))errs.push('theme.fonts: must be an object');
+    else for(const [k,o] of Object.entries(F)){
+      if(k==='all')level('all',o);
+      else if(k==='sec'){
+        if(!isObj(o))errs.push('theme.fonts.sec: must be an object');
+        else for(const [s,x] of Object.entries(o)){if(!/^[a-z]+-[a-z-]+$/.test(s))errs.push(`theme.fonts.sec.${s}: not a section name`);level('sec.'+s,x)}
+      }else errs.push(`theme.fonts.${k}: unknown group (use all or sec)`);
+    }
+  }
+}
+// ---- Control phase 2: theme.secHead = {<section>: {title, icon, rule, wa: true}} (true = hide that part of the section) ----
+{
+  const H=(d.theme||{}).secHead;
+  if(H!==undefined){
+    const isObj=o=>typeof o==='object'&&o!==null&&!Array.isArray(o);
+    if(!isObj(H))errs.push('theme.secHead: must be an object');
+    else for(const [s,o] of Object.entries(H)){
+      if(!/^[a-z]+-[a-z-]+$/.test(s)){errs.push(`theme.secHead.${s}: not a section name`);continue}
+      if(!isObj(o)){errs.push(`theme.secHead.${s}: must be an object`);continue}
+      for(const [k,v] of Object.entries(o)){
+        if(!['title','icon','rule','wa'].includes(k))errs.push(`theme.secHead.${s}.${k}: unknown part (use title, icon, rule or wa)`);
+        else if(typeof v!=='boolean')errs.push(`theme.secHead.${s}.${k}: must be true or false`);
+      }
+    }
+  }
+}
+// ---- Control phase 3: theme.cols = {<section>: {t, d}}, 1 to 4 columns on tablet (t) and desktop (d) ----
+{
+  const C=(d.theme||{}).cols;
+  if(C!==undefined){
+    const isObj=o=>typeof o==='object'&&o!==null&&!Array.isArray(o);
+    if(!isObj(C))errs.push('theme.cols: must be an object');
+    else for(const [s,o] of Object.entries(C)){
+      if(!/^[a-z]+-[a-z-]+$/.test(s)){errs.push(`theme.cols.${s}: not a section name`);continue}
+      if(!isObj(o)){errs.push(`theme.cols.${s}: must be an object`);continue}
+      for(const [k,v] of Object.entries(o)){
+        if(!['t','d'].includes(k)){errs.push(`theme.cols.${s}.${k}: use t (tablet) or d (desktop)`);continue}
+        if(v===''||v===undefined)continue;
+        if(!(Number.isInteger(Number(v))&&Number(v)>=1&&Number(v)<=4))errs.push(`theme.cols.${s}.${k}: must be a whole number from 1 to 4 (is "${v}")`);
+      }
+    }
+  }
+}
 if(d.faq!==undefined){
   const P=['home','about','patents','trademarks','translation'],pg=(d.faq||{}).pages||{};
   for(const k of Object.keys(pg)){
@@ -183,6 +245,35 @@ if(d.faq!==undefined){
   }
 }
 
+// ---- Control phase 4: the background of one card: cardBg, cardImage, cardShade, cardText on news, services, employees items and on ipCard ----
+{
+  const ROLES=['title','ink','gold','accent','accentDark','accentSoft','sand','page','surface','text'],own=new Set(((d.theme||{}).custom||[]).map(c=>String(c.id)));
+  const one=(path,o)=>{
+    if(typeof o!=='object'||o===null||Array.isArray(o)){errs.push(`${path}: must be an object`);return}
+    for(const k of ['cardBg','cardText']){
+      const v=o[k];if(v===undefined||v==='')continue;
+      if(typeof v!=='string'||!/^(role:[A-Za-z]+|custom:[\w-]+|#[0-9a-fA-F]{6})$/.test(v))errs.push(`${path}.${k}: not a valid color (${v})`);
+      else if(v.startsWith('role:')&&!ROLES.includes(v.slice(5)))errs.push(`${path}.${k}: unknown palette color "${v.slice(5)}"`);
+      else if(v.startsWith('custom:')&&!own.has(v.slice(7)))errs.push(`${path}.${k}: your own color "${v.slice(7)}" does not exist`);
+    }
+    if(o.cardPos!==undefined&&o.cardPos!==''&&!['top','center','bottom'].includes(o.cardPos))errs.push(`${path}.cardPos: use top, center or bottom`);
+    if(o.cardImage!==undefined&&typeof o.cardImage!=='string')errs.push(`${path}.cardImage: must be a file name or web address`);
+    if(o.cardShade!==undefined&&o.cardShade!==''){const n=Number(o.cardShade);if(!(n>=0&&n<=80))errs.push(`${path}.cardShade: must be between 0 and 80`)}
+  };
+  for(const k of ['news','services','employees'])(Array.isArray(d[k])?d[k]:[]).forEach((x,i)=>one(`${k}[${i}]`,x));
+  if(d.ipCard!==undefined)one('ipCard',d.ipCard);
+}
+// ---- Picture sizes: imgSizes = {"<file>": {w: width of the file, v: [widths of the smaller copies name-w480.ext ...]}} ----
+{
+  const M=d.imgSizes;
+  if(M!==undefined){
+    if(typeof M!=='object'||M===null||Array.isArray(M))errs.push('imgSizes: must be an object');
+    else for(const [f,e] of Object.entries(M)){
+      if(typeof e!=='object'||e===null||!(Number.isInteger(e.w)&&e.w>0)||!Array.isArray(e.v)||!e.v.every(n=>Number.isInteger(n)&&n>0&&n<e.w)){errs.push(`imgSizes.${f}: use {"w": width, "v": [smaller widths]}`);continue}
+      if(HAS_ASSETS)for(const w of e.v){const p='assets/'+f.replace(/(\.\w+)$/,`-w${w}$1`);if(!fs.existsSync(p))errs.push(`imgSizes.${f}: the copy ${p} is missing`)}
+    }
+  }
+}
 // ---- Arabic file: every item must belong to an item of the English file (matched by id) ----
 const FAQP=['home','about','patents','trademarks','translation'];
 if(fs.existsSync('app-data.ar.json')){
@@ -210,5 +301,49 @@ if(d.ui!==undefined){
   if(typeof d.ui!=='object'||d.ui===null||Array.isArray(d.ui))errs.push('ui: must be an object');
   else for(const [k,v] of Object.entries(d.ui))if(typeof v!=='string')errs.push(`ui.${k}: must be text`);
 }
+// ---- seo (read by scripts/build-seo.js): { siteUrl, name, ogImage, pages: { home|about|patents|trademarks|translation: { title: {en,ar}, description: {en,ar} } } } ----
+if(d.seo!==undefined){
+  const S=d.seo;
+  if(typeof S!=='object'||S===null||Array.isArray(S))errs.push('seo: must be an object');
+  else{
+    if(S.siteUrl!==undefined&&S.siteUrl!==''&&!/^https:\/\/[^\s/]+(\/\S*)?$/.test(S.siteUrl))errs.push('seo.siteUrl: must start with https:// (for example https://www.example.com/)');
+    for(const k of ['name','ogImage'])if(S[k]!==undefined&&typeof S[k]!=='string')errs.push(`seo.${k}: must be text`);
+    for(const [pk,pv] of Object.entries(S.pages||{})){
+      if(!['home','about','patents','trademarks','translation'].includes(pk)){errs.push(`seo.pages.${pk}: unknown page (use home, about, patents, trademarks, translation)`);continue}
+      for(const f of ['title','description'])for(const [lg,v] of Object.entries((pv||{})[f]||{})){
+        if(!['en','ar'].includes(lg))errs.push(`seo.pages.${pk}.${f}.${lg}: use en or ar`);
+        else if(typeof v!=='string')errs.push(`seo.pages.${pk}.${f}.${lg}: must be text`);
+        else if(f==='description'&&v.length>320)warn.push(`seo.pages.${pk}.description.${lg}: ${v.length} characters; search engines show about 155`);
+      }
+    }
+  }
+}
+// ---- Video sections (video.js): videos = { home|about: { hidden, url, title, text, layout, after } }; Arabic: title, text, url ----
+{
+  const isObj=o=>typeof o==='object'&&o!==null&&!Array.isArray(o);
+  let parse=()=>({});try{global.window=global.window||{};require(path.resolve(__dirname,'..','video.js'));parse=window.KVIDEO.parse;var KV=window.KVIDEO}catch(e){warn.push('videos: video.js could not be loaded to check the links ('+e.message+')')}
+  const check=(file,V)=>{
+    if(V===undefined)return;
+    if(!isObj(V)){errs.push(`${file} videos: must be an object`);return}
+    for(const [pg,v] of Object.entries(V)){
+      if(!['home','about'].includes(pg)){errs.push(`${file} videos.${pg}: unknown page (use home or about)`);continue}
+      if(!isObj(v)){errs.push(`${file} videos.${pg}: must be an object`);continue}
+      for(const k of ['url','title','text'])if(v[k]!==undefined&&typeof v[k]!=='string')errs.push(`${file} videos.${pg}.${k}: must be text`);
+      if(typeof v.url==='string'&&v.url.trim()&&!parse(v.url))errs.push(`${file} videos.${pg}.url: not the address of a YouTube video (${v.url})`);
+      if(v.hidden!==undefined&&typeof v.hidden!=='boolean')errs.push(`${file} videos.${pg}.hidden: must be true or false`);
+      for(const k of ['ctaText','ctaLink','poster','date'])if(v[k]!==undefined&&typeof v[k]!=='string')errs.push(`${file} videos.${pg}.${k}: must be text`);
+      if(v.autoplay!==undefined&&typeof v.autoplay!=='boolean')errs.push(`${file} videos.${pg}.autoplay: must be true or false`);
+      if(typeof v.date==='string'&&v.date&&!/^\d{4}-\d{2}-\d{2}$/.test(v.date))errs.push(`${file} videos.${pg}.date: use YYYY-MM-DD`);
+      if(typeof v.ctaLink==='string'&&v.ctaLink.trim()&&KV&&!KV.ctaKind(v.ctaLink))errs.push(`${file} videos.${pg}.ctaLink: use whatsapp, https://..., tel:, mailto:, or a page such as about.html (${v.ctaLink})`);
+      if(typeof v.ctaText==='string'&&v.ctaText.trim()&&!(typeof v.ctaLink==='string'&&v.ctaLink.trim())&&file==='app-data.json')warn.push(`${file} videos.${pg}: the button has words but no link, so it is not shown`);
+      if(typeof v.poster==='string'&&v.poster){const f=resolve(v.poster);if(f&&!fs.existsSync(path.join('.',f)))noPic(`${file} videos.${pg}.poster: image not found ${v.poster}`)}
+      if(v.layout!==undefined&&!['side','top','bottom'].includes(v.layout))errs.push(`${file} videos.${pg}.layout: use side, top or bottom`);
+      if(v.after!==undefined&&KV&&!(pg==='home'?KV.HOME:KV.ABOUT).some(o=>o[0]===v.after))errs.push(`${file} videos.${pg}.after: unknown position "${v.after}"`);
+    }
+  };
+  check('app-data.json',d.videos);
+  if(fs.existsSync('app-data.ar.json')){const a=read('app-data.ar.json');check('app-data.ar.json',a.videos);if(a.videos)for(const [pg,v] of Object.entries(a.videos))if(v&&['layout','after','hidden','autoplay','poster','date','ctaLink'].some(k=>v[k]!==undefined))warn.push(`app-data.ar.json videos.${pg}: only url, title, text and ctaText are read here; layout, after, hidden, autoplay, poster, date and ctaLink are set in app-data.json`)}
+}
+warn.forEach(w=>console.log('warning: '+w));
 if(errs.length){console.error(errs.join('\n'));process.exit(1)}
-console.log('app-data.json'+(fs.existsSync('app-data.ar.json')?' and app-data.ar.json':'')+' OK');
+console.log('app-data.json'+(fs.existsSync('app-data.ar.json')?' and app-data.ar.json':'')+' OK'+(skipped?` (no assets/ folder here: ${skipped} picture reference${skipped>1?'s':''} not checked)`:''));
