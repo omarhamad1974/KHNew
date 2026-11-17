@@ -5,7 +5,7 @@
    - Every article starts with a title: Heading 1 (or Title style) in Word, "# Title" in Markdown,
      or a "---" front-matter block that has a "title:" line.
    - Right under the title, short "Label: value" lines set the details:
-       Subtitle:  Date:  Category:  Excerpt:  Image:
+       Subtitle:  Date:  Category:  Excerpt:  Image:  (service pages also: Service:  Language:  Card title:  Icon:  Hidden:  Part:; country texts also: Country:  Code:; Arabic news also: Language:  English title:)
      (Arabic labels work too). Everything after them is the article text.
    - Pictures: the first picture of an article is its cover; further pictures stay in the text.
      Markdown pictures can be listed by file name and picked together with the .md file (or put in a .zip).
@@ -15,16 +15,20 @@ window.KImport=(function(){
   const MONTHS={january:1,jan:1,february:2,feb:2,march:3,mar:3,april:4,apr:4,may:5,june:6,jun:6,july:7,jul:7,august:8,aug:8,september:9,sep:9,sept:9,october:10,oct:10,november:11,nov:11,december:12,dec:12,
     'يناير':1,'فبراير':2,'مارس':3,'أبريل':4,'ابريل':4,'مايو':5,'يونيو':6,'يوليو':7,'أغسطس':8,'اغسطس':8,'سبتمبر':9,'أكتوبر':10,'اكتوبر':10,'نوفمبر':11,'ديسمبر':12};
   const META=[
-    ['subtitle',/^(sub[\s-]?title|sub[\s-]?heading|brief|short text|العنوان الفرعي|الملخص القصير)$/i],
-    ['icon',/^(icon|الأيقونة|ايقونة)$/i],
-    ['pagefile',/^(page file|page url|html file|ملف الصفحة)$/i],
-    ['hidden',/^(hidden|hide|hide service|مخفي|إخفاء)$/i],
+    ['subtitle',/^(sub[\s-]?title|sub[\s-]?heading|العنوان الفرعي)$/i],
     ['date',/^(date|published|publish date|التاريخ)$/i],
     ['category',/^(category|tag|label|section|التصنيف|الفئة|القسم)$/i],
     ['excerpt',/^(excerpt|summary|short summary|intro|الملخص|مقتطف|نبذة)$/i],
     ['image',/^(image|cover|cover image|photo|الصورة)$/i],
     ['service',/^(service|page|الخدمة|الصفحة)$/i],
     ['lang',/^(lang|language|اللغة)$/i],
+    ['cardtitle',/^(card[\s-]?title|service[\s-]?title|service[\s-]?name|عنوان البطاقة|اسم الخدمة)$/i],
+    ['icon',/^(icon|الأيقونة|أيقونة)$/i],
+    ['hidden',/^(hidden|hide|مخفي|إخفاء)$/i],
+    ['part',/^(part|field|target|الجزء)$/i],
+    ['code',/^(code|country[\s-]?code|iso|رمز الدولة|الرمز)$/i],
+    ['entitle',/^(english[\s-]?title|english[\s-]?version|translation[\s-]?of|translates|العنوان الإنجليزي|الأصل الإنجليزي)$/i],
+    ['country',/^(country|الدولة|البلد)$/i],
     ['title',/^(title|العنوان)$/i]
   ];
   const MIME={png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',gif:'image/gif',webp:'image/webp'};
@@ -95,7 +99,7 @@ window.KImport=(function(){
     let out='',prev='';
     for(const it of body){
       let line,type;
-      if(it.k==='h'){line='## '+it.text.trim();type='h'}
+      if(it.k==='h'){line=(KEEP&&it.lvl>L+1?'### ':'## ')+it.text.trim();type='h'}
       else if(it.k==='li'){line='- '+it.text.trim();type='li'}
       else if(it.k==='img'){a.imgs.push(it.img);line=`![${(it.img.alt||'').replace(/[\[\]]/g,'')}](img:${a.imgs.length-1})`;type='img'}
       else{if(!it.text.trim())continue;line=it.text.trim();type='p'}
@@ -303,7 +307,7 @@ window.KImport=(function(){
           break;
         }
       }
-      const a={title:c.title,subtitle:inline(hdr.subtitle||''),date:'',category:inline(hdr.category||''),excerpt:inline(hdr.excerpt||''),service:inline(hdr.service||''),lang:inline(hdr.lang||''),icon:inline(hdr.icon||''),pagefile:inline(hdr.pagefile||''),hidden:inline(hdr.hidden||''),text:'',cover,imgs:[],notes:[],source:fname};
+      const a={title:c.title,subtitle:inline(hdr.subtitle||''),date:'',category:inline(hdr.category||''),excerpt:inline(hdr.excerpt||''),service:inline(hdr.service||''),lang:inline(hdr.lang||''),cardtitle:inline(hdr.cardtitle||''),icon:inline(hdr.icon||''),hidden:inline(hdr.hidden||''),part:inline(hdr.part||''),code:inline(hdr.code||''),country:inline(hdr.country||''),entitle:inline(hdr.entitle||''),text:'',cover,imgs:[],notes:[],source:fname};
       if(hdr.date){a.date=normDate(hdr.date);if(!a.date)a.notes.push(`Date not understood: "${hdr.date}"`)}
       if(hdr.image&&!cover){
         const r=imgFromSrc(hdr.image.replace(/^!\[[^\]]*\]\(|\)$/g,''),'',ctx,warn,fname);if(r)a.cover=r;
@@ -326,7 +330,7 @@ window.KImport=(function(){
         if(!l.trim()){endPara();continue}
         if(/^\s*([-*_]\s*){3,}$/.test(l)){endPara();continue}
         let m;
-        if((m=l.match(/^\s*#{1,6}\s+(.+?)\s*#*\s*$/))){endPara();const t=inline(m[1]);if(t&&!(!blocks.length&&lc(t)===lc(a.title)))blocks.push({type:'h',text:t});continue}
+        if((m=l.match(/^\s*(#{1,6})\s+(.+?)\s*#*\s*$/))){endPara();const t=inline(m[2]);if(t&&!(!blocks.length&&lc(t)===lc(a.title)))blocks.push({type:'h',text:t,lvl:m[1].length});continue}
         if((m=l.match(/^\s*(?:[-*+]|\d+[.)])\s+(.*)$/))){endPara();pushText(m[1],'li');continue}
         para.push(l.replace(/^\s*>\s?/,'').trim());
       }
@@ -335,7 +339,7 @@ window.KImport=(function(){
       let out='',prev='';
       for(const b of blocks){
         let line;
-        if(b.type==='h')line='## '+b.text;
+        if(b.type==='h')line=(KEEP&&b.lvl>=3?'### ':'## ')+b.text;
         else if(b.type==='li')line='- '+b.text;
         else if(b.type==='img'){a.imgs.push(b.img);line=`![${(b.img.alt||'').replace(/[\[\]]/g,'')}](img:${a.imgs.length-1})`}
         else line=b.text;
@@ -352,7 +356,9 @@ window.KImport=(function(){
 
   /* ---------------------------------------------------------------- entry point */
   const isText=n=>/\.(md|markdown|txt)$/i.test(n);
+  let KEEP=false;                                     // opts.keepLevels: keep "###" for Heading 3 and deeper (FAQ answers)
   async function parseFiles(fileList,opts={}){
+    KEEP=!!opts.keepLevels;
     const warnings=[],warn=m=>warnings.push(m),articles=[];
     const ctx={files:new Map(),assets:opts.assets||null,n:0};
     const docs=[];                                    // {name,kind:'docx'|'text',read:()=>Promise}
@@ -423,6 +429,14 @@ Category: General
 Excerpt: Another short summary.
 
 Text of the second article.
+
+# عنوان المقال الأول
+Language: Arabic
+English title: First article title
+Subtitle: العنوان الفرعي بالعربية
+Excerpt: ملخص قصير بالعربية.
+
+نص المقال بالعربية. الصور والتاريخ والتصنيف تؤخذ من المقال الإنجليزي.
 `;
   return {parseFiles,TEMPLATE,normDate};
 })();

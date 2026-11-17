@@ -16,6 +16,13 @@ Text of the first card. Use **bold** for emphasis.
 
 Text of the second card.
 
+# Patents pop-up
+Service: Patents
+Language: English
+Part: Pop-up
+
+The text shown when the Patents card on the home page is opened.
+
 # براءات الاختراع
 Service: Patents
 Language: Arabic

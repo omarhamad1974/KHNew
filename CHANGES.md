@@ -1,9 +1,25 @@
 # Change log
 
-## Services section import
-- **Import services (admin, Sections, Home, Services, button next to Add service)**: add new services or update the existing ones from a **Word (.docx)** or **Markdown (.md/.txt)** file, English and Arabic, several services per file. Each text is one service: `# Title`, then `Service:`, `Language:`, `Brief:` (the card text), `Icon:`, `Page file:` and `Hidden:` lines (all optional), then the **pop-up** text; a `## Page content` line ends the pop-up and what follows is the dedicated page. A title that matches no service creates a **new service**; Arabic texts attach to a service by `Service:` (also to one created in the same file). You review everything first and can choose to replace existing text or only fill empty boxes. Nothing is published until Save.
-- New `services-section-template.md` (also downloadable inside the import window). `service-import.js` has a second reader, `parseServices`; `news-import.js` reads four more labels (`Brief:`, `Icon:`, `Page file:`, `Hidden:`). The existing *Page content* import of each service page is unchanged.
-- No change to the public pages: the imported data is the same fields the Services tab already writes (`title`, `description`, `details`, `page`, `icon`, `pageContent`, `hidden`), so the site shows them as before.
+## Import: Arabic for news and slides
+- **News import**: Arabic articles (`Language: Arabic`) are saved as the Arabic version of their English article, found by the `English title:` line (in the file or on the site) or by position among the English articles of the file. Title, subtitle, summary, text and pictures inside the text are imported; date, category and cover stay with the English article. Before, a `Language:` line was ignored and every article was added as English. New label `English title` in `news-import.js`; the article template has an Arabic example.
+- **Slides import**: a file written in Arabic is set to fill the Arabic title, subtitle and tag of the slides already in the slider, by position (with a *First slide number* box); the other options (add at the end / top, replace) are unchanged. `slider-import.js` is not touched.
+
+## Import FAQ
+- **Import FAQ (admin, Sections, the FAQ section of any page, button next to Add question)**: fill the questions and answers of Home, About, Patents, Trademarks and Translation from Word (.docx) or Markdown / text, English and Arabic, all pages in one file. New file `faq-import.js`.
+- Format: Heading 1 = page, optional `Language:`, Heading 2 = question, text below = answer, Heading 3 inside an answer = subtitle of the answer; text before the first question = optional introduction of the page's FAQ. Arabic questions are matched to the English ones by position.
+- Review window with *Replace them* / *Add the new ones after them*. Markdown template: `faq-template.md`.
+- `news-import.js`: new option `keepLevels` (used only by the FAQ import) keeps Heading 3 and deeper as `###`; the article, slide and service imports are unchanged.
+
+## Import countries (jurisdictions)
+- **Import countries (admin, Sections, Jurisdictions list, button next to Add country)**: fill the **Overview** and **Filing details** of the countries, the tag and the 2-letter code, from Word (.docx) or Markdown / text files, English and Arabic, many countries per file. New file `jurisdiction-import.js`; `news-import.js` reads two more labels (`Country:`, `Code:`).
+- Countries are found by code, `Country:` line or name (English or Arabic); a country not on the site is added; an Arabic text pairs with the English one on the site or in the same file and sets the Arabic country name. `## Filing details` starts the pop-up text, `## Overview` (or the text before the first `##`) is the card text.
+- Review window with *Replace* / *Add after the existing text*; empty parts never blank existing text. Markdown template: `jurisdictions-template.md`.
+
+## Service import: more fields
+- The service importer now also fills the **pop-up content** (`Part: Pop-up`), renames a service (`Card title:`), sets its **icon** (`Icon:`) and shows or hides it (`Hidden: yes / no`), besides the page content and the home card brief (`Subtitle:`). English and Arabic; `Icon:` and `Hidden:` are read from the English text only.
+- One service can have several texts in a file (per language and per part). A text with no body only changes its details; an empty body never blanks existing content.
+- The review window shows what each text will change (page / pop-up, new title, icon, hidden). The Markdown template includes a pop-up example.
+- Files: `news-import.js` (new labels `Card title`, `Icon`, `Hidden`, `Part`), `service-import.js`, `admin.html`, README, MANUAL, `service-pages-template.md`.
 
 ## Service page import
 - **Import service page text** from Word / Markdown (English and Arabic, several services per file): Sections, service page, Page content, *Import from Word / Markdown*. New `service-import.js`; `news-import.js` reads two more labels (`Service:`, `Language:`).

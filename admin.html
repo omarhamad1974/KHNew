@@ -94,6 +94,8 @@ body.pv-side #pv{position:fixed;right:1rem;width:var(--pvw);top:var(--pv-top,9re
 <script src="news-import.js"></script>
 <script src="slider-import.js"></script>
 <script src="service-import.js"></script>
+<script src="jurisdiction-import.js"></script>
+<script src="faq-import.js"></script>
 <script src="lang.js" data-passive></script>
 <script src="pages-i18n.js"></script>
 <script>
@@ -206,7 +208,7 @@ function view(){
 // A list of items (slides, countries, articles, services, quotes, team members): header, search box and the items.
 function listHtml(c){
   const s=SC[c],arr=D[c]=D[c]||[];listKey=c;
-  return `<div class="flex items-center justify-between"><div class="min-w-0 pr-2"><h3 class="font-extrabold text-base">${s.label} (${arr.length})</h3>${s.where?`<p class="text-[11px] text-gray-500">${s.where} <a href="${s.page}" target="_blank" rel="noopener" class="text-brand-700 underline whitespace-nowrap">View on the site</a></p>`:''}</div><div class="flex items-center gap-2 flex-shrink-0">${c==='news'?`<button data-act="import" class="text-xs bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold px-3.5 py-2 rounded-xl" title="Add many articles from Word or Markdown files"><i class="fas fa-file-import"></i> Import</button>`:''}${c==='services'?`<button data-act="svlimport" class="text-xs bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold px-3.5 py-2 rounded-xl" title="Add or update services from a Word or Markdown file"><i class="fas fa-file-import"></i> Import services</button>`:''}${c==='carousel'?`<button data-act="simport" class="text-xs bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold px-3.5 py-2 rounded-xl" title="Add slides from a Word, Markdown or spreadsheet file"><i class="fas fa-file-import"></i> Import slides</button>`:''}<button data-act="add" class="text-xs bg-[#d9c8a4] hover:bg-[#cdb98f] text-[#1b2433] font-bold px-3.5 py-2 rounded-xl"><i class="fas fa-plus"></i> Add ${s.one}</button></div></div>`
+  return `<div class="flex items-center justify-between"><div class="min-w-0 pr-2"><h3 class="font-extrabold text-base">${s.label} (${arr.length})</h3>${s.where?`<p class="text-[11px] text-gray-500">${s.where} <a href="${s.page}" target="_blank" rel="noopener" class="text-brand-700 underline whitespace-nowrap">View on the site</a></p>`:''}</div><div class="flex items-center gap-2 flex-shrink-0">${c==='news'?`<button data-act="import" class="text-xs bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold px-3.5 py-2 rounded-xl" title="Add many articles from Word or Markdown files"><i class="fas fa-file-import"></i> Import</button>`:''}${c==='carousel'?`<button data-act="simport" class="text-xs bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold px-3.5 py-2 rounded-xl" title="Add slides from a Word, Markdown or spreadsheet file"><i class="fas fa-file-import"></i> Import slides</button>`:''}${c==='jurisdictions'?`<button data-act="jimport" class="text-xs bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold px-3.5 py-2 rounded-xl" title="Fill the countries from Word or Markdown files, English and Arabic"><i class="fas fa-file-import"></i> Import countries</button>`:''}<button data-act="add" class="text-xs bg-[#d9c8a4] hover:bg-[#cdb98f] text-[#1b2433] font-bold px-3.5 py-2 rounded-xl"><i class="fas fa-plus"></i> Add ${s.one}</button></div></div>`
   +(arr.length>5?`<input id="filter" type="search" placeholder="Search ${s.label.toLowerCase()}" aria-label="Search ${s.label.toLowerCase()}" value="${esc(q)}" class="${inp}">`:'')
   +'<div id="items" class="space-y-3"></div>';
 }
@@ -257,8 +259,8 @@ function impOpen(){
   if(lang==='ar')return;
   IM.mode='news';IM.warn=[];impPick();
 }
-const impLoadAny=f=>IM.mode==='slides'?slLoad(f):IM.mode==='service'?svLoad(f):IM.mode==='svl'?svlLoad(f):impLoad(f);
-const impRev=()=>IM.mode==='slides'?slReview():IM.mode==='service'?svReview():IM.mode==='svl'?svlReview():impReview();
+const impLoadAny=f=>IM.mode==='slides'?slLoad(f):IM.mode==='service'?svLoad(f):IM.mode==='jur'?jrLoad(f):IM.mode==='faq'?frLoad(f):impLoad(f);
+const impRev=()=>IM.mode==='slides'?slReview():IM.mode==='service'?svReview():IM.mode==='jur'?jrReview():IM.mode==='faq'?frReview():impReview();
 function impPick(err){
   impModal(`${impHead('Import articles','Add many articles at once from Word or Markdown files, with their pictures.')}
   <label id="imp-drop" class="mt-4 flex flex-col items-center justify-center gap-1 text-center border-2 border-dashed border-gray-300 hover:border-brand-600 rounded-2xl p-8 cursor-pointer bg-gray-50">
@@ -280,8 +282,21 @@ async function impLoad(files){
   IM.arts=r.articles;IM.warn=r.warnings;
   if(!IM.arts.length)return impPick(`<p class="font-bold">No articles were found.</p>${IM.warn.map(w=>`<p>${esc(w)}</p>`).join('')||'<p>Start each article with a Heading 1 title (Word) or a # Title line (Markdown).</p>'}`);
   const have=new Set((D.news||[]).map(x=>lcs(x.title)));
-  IM.arts.forEach(a=>a.dup=have.has(lcs(a.title)));
-  IM.on=new Set(IM.arts.map((a,i)=>a.dup?-1:i).filter(i=>i>=0));
+  const isAr=a=>/^(ar|arabic|عربي|عربى|العربية)$/.test(lcs(a.lang));
+  IM.arts.forEach(a=>{a.lang=isAr(a)?'ar':'en';a.dup=a.lang==='en'&&have.has(lcs(a.title))});
+  // an Arabic article is the translation of an English one: by its "English title:" line, or by position among the English ones of the file
+  const enFile=IM.arts.filter(a=>a.lang==='en');let ai=0;
+  IM.arts.forEach(a=>{
+    if(a.lang==='ar'){
+      a.notes=a.notes.filter(x=>!/^(No date|Excerpt created)/.test(x));
+      const key=lcs(a.entitle),n=ai++;
+      if(key){const m=enFile.find(x=>lcs(x.title)===key)||(D.news||[]).find(x=>lcs(x.title)===key);
+        if(m)a.pairTitle=m.title;else a.notes.push(`No English article called "${a.entitle}" in the files or on the site`)}
+      else if(enFile[n]){a.pairTitle=enFile[n].title;a.notes.push(`No "English title:" line: matched by position with "${enFile[n].title}"`)}
+      else a.notes.push('No English article to match. Add an "English title:" line.');
+    }else if(/[\u0600-\u06FF]/.test(a.title)&&(a.title.match(/[\u0600-\u06FF]/g)||[]).length>(a.title.match(/[A-Za-z]/g)||[]).length)a.notes.push('The title is Arabic: add "Language: Arabic" and an "English title:" line to import it as a translation');
+  });
+  IM.on=new Set(IM.arts.map((a,i)=>(a.dup||(a.lang==='ar'&&!a.pairTitle))?-1:i).filter(i=>i>=0));
   impReview();
 }
 function impReview(){
@@ -292,10 +307,10 @@ function impReview(){
     <label class="ml-auto flex items-center gap-2 font-bold">Add them <select id="imp-pos" class="border border-gray-300 rounded-lg px-2 py-1 font-normal"><option value="top">at the top</option><option value="end">at the end</option></select></label></div>
   <div class="mt-3 space-y-2">${IM.arts.map((a,i)=>{
     const c=impCat(a),th=impThumb(a),np=a.imgs.length+(a.cover?1:0);
-    return `<label class="flex gap-3 p-3 rounded-xl border ${IM.on.has(i)?'border-brand-600 bg-brand-50/40':'border-gray-200'} cursor-pointer"><input type="checkbox" data-imp-on="${i}" ${IM.on.has(i)?'checked':''} class="mt-1 flex-shrink-0">
-      ${th?`<img src="${esc(th)}" alt="" class="w-20 h-12 rounded-md object-cover bg-gray-200 flex-shrink-0">`:`<div class="w-20 h-12 rounded-md bg-gray-100 text-gray-400 flex items-center justify-center flex-shrink-0 text-[10px] text-center leading-tight">no cover</div>`}
-      <div class="min-w-0 flex-1"><div class="font-bold text-sm">${esc(a.title)}</div>${a.subtitle?`<div class="text-xs text-gray-600">${esc(a.subtitle)}</div>`:''}
-      <div class="flex flex-wrap gap-1 mt-1 text-[11px]">${chip(a.date?esc(a.date):'No date',a.date?'bg-gray-100 text-gray-700':'bg-amber-100 text-amber-900')}${chip(esc(c.name),c.isNew?'bg-amber-100 text-amber-900':'bg-brand-50 text-brand-700')}${c.isNew?chip('new category','bg-amber-100 text-amber-900'):''}${np?chip(`${np} picture${np>1?'s':''}`):''}${a.dup?chip('already on the site','bg-red-100 text-red-700'):''}${chip(esc(a.source))}</div>
+    return `<label class="flex gap-3 p-3 rounded-xl border ${IM.on.has(i)?'border-brand-600 bg-brand-50/40':'border-gray-200'} cursor-pointer"><input type="checkbox" data-imp-on="${i}" ${IM.on.has(i)?'checked':''} ${a.lang==='ar'&&!a.pairTitle?'disabled':''} class="mt-1 flex-shrink-0">
+      ${th&&a.lang!=='ar'?`<img src="${esc(th)}" alt="" class="w-20 h-12 rounded-md object-cover bg-gray-200 flex-shrink-0">`:`<div class="w-20 h-12 rounded-md bg-gray-100 text-gray-400 flex items-center justify-center flex-shrink-0 text-[10px] text-center leading-tight">${a.lang==='ar'?'Arabic':'no cover'}</div>`}
+      <div class="min-w-0 flex-1"><div class="font-bold text-sm" ${a.lang==='ar'?'dir="rtl"':''}>${esc(a.title)}</div>${a.subtitle?`<div class="text-xs text-gray-600">${esc(a.subtitle)}</div>`:''}
+      <div class="flex flex-wrap gap-1 mt-1 text-[11px]">${a.lang==='ar'?chip('Arabic','bg-amber-100 text-amber-800')+(a.pairTitle?chip('translation of: '+esc(a.pairTitle),'bg-indigo-50 text-indigo-700'):chip('no English article','bg-red-100 text-red-700')):chip(a.date?esc(a.date):'No date',a.date?'bg-gray-100 text-gray-700':'bg-amber-100 text-amber-900')+chip(esc(c.name),c.isNew?'bg-amber-100 text-amber-900':'bg-brand-50 text-brand-700')+(c.isNew?chip('new category','bg-amber-100 text-amber-900'):'')}${np&&a.lang!=='ar'?chip(`${np} picture${np>1?'s':''}`):''}${a.dup?chip('already on the site','bg-red-100 text-red-700'):''}${chip(esc(a.source))}</div>
       ${a.excerpt?`<p class="text-xs text-gray-500 line-clamp-2 mt-1">${esc(a.excerpt)}</p>`:''}
       ${a.notes.filter(x=>x!=='No date').length?`<p class="text-[11px] text-amber-800 mt-1">${a.notes.filter(x=>x!=='No date').map(esc).join(' · ')}</p>`:''}</div></label>`}).join('')}</div>
   <div class="mt-4 flex items-center justify-between gap-2 sticky bottom-0 bg-white pt-2"><button type="button" data-imp="back" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-4 py-2.5 rounded-xl">Back</button>
@@ -312,9 +327,10 @@ async function impUpload(img,cover,ratio=2,W=1600){
   return img.done=name;
 }
 async function impRun(){
-  const pos=$('imp-pos')?.value||'top',chosen=IM.arts.filter((a,i)=>IM.on.has(i));if(!chosen.length)return;
+  const pos=$('imp-pos')?.value||'top',all=IM.arts.filter((a,i)=>IM.on.has(i));if(!all.length)return;
+  const chosen=all.filter(a=>a.lang!=='ar'),arch=all.filter(a=>a.lang==='ar');
   IM.busy=true;
-  const total=chosen.reduce((s,a)=>s+(a.cover&&a.cover.kind==='bytes'?1:0)+a.imgs.filter(i=>i&&i.kind==='bytes').length,0);let done=0;
+  const total=all.reduce((s,a)=>s+(a.lang!=='ar'&&a.cover&&a.cover.kind==='bytes'?1:0)+a.imgs.filter(i=>i&&i.kind==='bytes').length,0);let done=0;
   const fails=[],show=t=>impModal(`${impHead('Importing...','Please keep this window open.')}<div class="mt-6 text-center space-y-3"><p class="text-sm"><i class="fas fa-spinner fa-spin"></i> ${t}</p>${total?`<div class="h-2 bg-gray-100 rounded-full overflow-hidden"><div class="h-full bg-brand-600" style="width:${Math.round(done/total*100)}%"></div></div>`:''}</div>`);
   let id=Math.max(0,...(D.news||[]).map(x=>+x.id||0));const out=[];
   if(!(D.newsCategories||[]).filter(Boolean).length)D.newsCategories=DEFCATS.slice();
@@ -330,8 +346,28 @@ async function impRun(){
     out.push({id:String(++id),title:a.title,subtitle:a.subtitle||'',date:a.date||'',category:c.name,image:cover,excerpt:a.excerpt||autoEx(text),text});
   }
   if(pos==='top')D.news.unshift(...out);else D.news.push(...out);
+  // Arabic texts: attached to their English article (new from this import, or already on the site)
+  let nAr=0,skAr=0;
+  if(arch.length){
+    A.news=A.news||[];const made=new Map(out.map(o=>[lcs(o.title),o.id]));
+    for(const a of arch){
+      show(`Arabic ${nAr+skAr+1} of ${arch.length}: ${esc(a.title)}`);
+      const key=lcs(a.pairTitle),tid=made.has(key)?made.get(key):((D.news||[]).find(x=>lcs(x.title)===key)||{}).id;
+      if(tid==null){skAr++;continue}
+      const refs=[];
+      for(const im of a.imgs){
+        if(!im){refs.push('');continue}
+        if(im.kind==='url')refs.push(im.url);else if(im.kind==='asset')refs.push(im.name);
+        else{try{refs.push(await impUpload(im,false))}catch(e){fails.push(`${a.title}: ${e.message||e}`);refs.push('')}done++}
+      }
+      const text=a.text.replace(/!\[([^\]]*)\]\(img:(\d+)\)/g,(m,alt,k)=>refs[+k]?`![${alt}](${refs[+k]})`:'').replace(/\n{3,}/g,'\n\n').trim();
+      let r=A.news.find(y=>y&&String(y.id)===String(tid));if(!r){r={id:String(tid),title:'',subtitle:'',excerpt:'',text:''};A.news.push(r)}
+      r.title=a.title;r.subtitle=a.subtitle||'';r.excerpt=a.excerpt||autoEx(text);r.text=text;nAr++;
+    }
+  }
   IM.busy=false;mark();ASEC.goList('news');openItem=null;q='';tabs();view();
-  impModal(`${impHead('Import finished',`${out.length} article${out.length>1?'s were':' was'} added.`)}
+  impModal(`${impHead('Import finished',`${[out.length?`${out.length} article${out.length>1?'s were':' was'} added`:'',nAr?`${nAr} Arabic text${nAr>1?'s':''} set`:''].filter(Boolean).join(', ')}.`)}
+   ${skAr?`<div class="mt-3 text-xs rounded-lg p-3 border text-amber-900 bg-amber-50 border-amber-200">${skAr} Arabic text${skAr>1?'s were':' was'} skipped: the English article was not found.</div>`:''}
    <div class="mt-4 text-sm bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-xl p-3"><i class="fas fa-circle-check"></i> Press <b>Save</b> at the top to publish them on the website.</div>
    ${fails.length?`<div class="mt-3 text-xs rounded-lg p-3 border text-red-700 bg-red-50 border-red-200 space-y-1"><p class="font-bold">Some pictures could not be added:</p>${fails.map(f=>`<p>${esc(f)}</p>`).join('')}</div>`:''}
    <div class="mt-4 text-right"><button type="button" data-imp="close" class="text-xs bg-brand-600 hover:bg-brand-700 text-white font-bold px-5 py-2.5 rounded-xl">Done</button></div>`);
@@ -366,6 +402,9 @@ async function slLoad(files){
   const have=new Set((D.carousel||[]).map(x=>lcs(x.title)));
   IM.arts.forEach(a=>a.dup=have.has(lcs(a.title)));
   IM.on=new Set(IM.arts.map((a,i)=>i));
+  // a file written in Arabic holds the Arabic texts of the slides that are already in the slider
+  const arN=IM.arts.filter(a=>{const t=a.title+' '+(a.subtitle||'');return (t.match(/[\u0600-\u06FF]/g)||[]).length>(t.match(/[A-Za-z]/g)||[]).length}).length;
+  IM.slAr=arN>=IM.arts.length/2;
   slReview();
 }
 function slReview(){
@@ -373,7 +412,9 @@ function slReview(){
   impModal(`${impHead('Review the slides',`${IM.arts.length} slide${IM.arts.length>1?'s':''} found. Untick any you do not want.`)}
   ${IM.warn.length?`<div class="mt-3 text-xs rounded-lg p-3 border text-amber-900 bg-amber-50 border-amber-200 space-y-1">${IM.warn.map(w=>`<p>${esc(w)}</p>`).join('')}</div>`:''}
   <div class="mt-3 flex flex-wrap items-center gap-3 text-xs"><button type="button" data-imp="all" class="font-bold text-brand-700 underline">Select all</button><button type="button" data-imp="none" class="font-bold text-brand-700 underline">Select none</button>
-    <label class="ml-auto flex items-center gap-2 font-bold">The slider has ${cur} slide${cur===1?'':'s'}. <select id="imp-mode" class="border border-gray-300 rounded-lg px-2 py-1 font-normal"><option value="end">Add the new ones at the end</option><option value="top">Add the new ones at the top</option><option value="replace">Replace all the current slides</option></select></label></div>
+    <label class="ml-auto flex items-center gap-2 font-bold">The slider has ${cur} slide${cur===1?'':'s'}. <select id="imp-mode" class="border border-gray-300 rounded-lg px-2 py-1 font-normal"><option value="end">Add the new ones at the end</option><option value="top">Add the new ones at the top</option><option value="replace">Replace all the current slides</option><option value="ar" ${IM.slAr?'selected':''}>Arabic texts for the slides already in the slider</option></select></label></div>
+  <p class="mt-2 text-[11px] text-gray-600"><b>Arabic texts:</b> the 1st Arabic slide is the translation of the slider's slide number <input id="imp-start" type="number" min="1" value="1" aria-label="First slide number" class="w-14 border border-gray-300 rounded-lg px-1.5 py-0.5 text-xs"> , the 2nd of the next one, and so on (same order as the English slides). Pictures are not changed.</p>
+  ${IM.slAr?'<p class="mt-2 text-xs rounded-lg p-3 border text-indigo-900 bg-indigo-50 border-indigo-200">This file looks Arabic, so it is set to fill the Arabic texts of the current slides. Choose another option above to add the slides as new ones instead.</p>':''}
   <div class="mt-3 space-y-2">${IM.arts.map((a,i)=>{
     const th=impThumb(a);
     return `<label class="flex gap-3 p-3 rounded-xl border ${IM.on.has(i)?'border-brand-600 bg-brand-50/40':'border-gray-200'} cursor-pointer"><input type="checkbox" data-imp-on="${i}" ${IM.on.has(i)?'checked':''} class="mt-1 flex-shrink-0">
@@ -387,6 +428,7 @@ function slReview(){
 }
 async function slRun(){
   const how=$('imp-mode')?.value||'end',chosen=IM.arts.filter((a,i)=>IM.on.has(i));if(!chosen.length)return;
+  if(how==='ar')return slRunAr();
   const cur=(D.carousel||[]).length;
   if(how==='replace'&&cur&&!confirm(`Replace the ${cur} current slide${cur===1?'':'s'} with ${chosen.length} new one${chosen.length===1?'':'s'}? You can still undo it before saving (undo arrow at the top).`))return;
   IM.busy=true;
@@ -409,10 +451,25 @@ async function slRun(){
    ${fails.length?`<div class="mt-3 text-xs rounded-lg p-3 border text-red-700 bg-red-50 border-red-200 space-y-1"><p class="font-bold">Some pictures could not be added:</p>${fails.map(f=>`<p>${esc(f)}</p>`).join('')}</div>`:''}
    <div class="mt-4 text-right"><button type="button" data-imp="close" class="text-xs bg-brand-600 hover:bg-brand-700 text-white font-bold px-5 py-2.5 rounded-xl">Done</button></div>`);
 }
+function slRunAr(){
+  const start=Math.max(1,Math.floor(+$('imp-start')?.value||1))-1,sl=D.carousel||[];
+  A.carousel=A.carousel||[];let n=0,skipped=0;
+  IM.arts.forEach((a,i)=>{
+    if(!IM.on.has(i))return;
+    const t=sl[start+i];if(!t){skipped++;return}
+    let r=A.carousel.find(y=>y&&String(y.id)===String(t.id));if(!r){r={id:String(t.id),title:'',subtitle:'',tag:''};A.carousel.push(r)}
+    r.title=a.title;r.subtitle=a.subtitle||'';r.tag=a.tag||'';n++;
+  });
+  mark();tabs();view();
+  impModal(`${impHead('Import finished',`${n} Arabic slide text${n===1?'':'s'} set.`)}
+   ${skipped?`<div class="mt-3 text-xs rounded-lg p-3 border text-amber-900 bg-amber-50 border-amber-200">${skipped} text${skipped===1?' was':'s were'} skipped: the slider has no slide at that position.</div>`:''}
+   <div class="mt-4 text-sm bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-xl p-3"><i class="fas fa-circle-check"></i> Press <b>Save</b> at the top to publish them on the website.</div>
+   <div class="mt-4 text-right"><button type="button" data-imp="close" class="text-xs bg-brand-600 hover:bg-brand-700 text-white font-bold px-5 py-2.5 rounded-xl">Done</button></div>`);
+}
 /* ---------- Import service page texts from Word (.docx) or Markdown (.md) files (parser: service-import.js) ---------- */
 function svOpen(){IM.mode='service';IM.warn=[];svPick()}
 function svPick(err){
-  impModal(`${impHead('Import service page text','Fill the page content of Patents, Trademarks, Translation (or any service) in English and Arabic.')}
+  impModal(`${impHead('Import service page text','Fill the page content, pop-up, brief, title, icon and visibility of Patents, Trademarks, Translation (or any service) in English and Arabic.')}
   <label id="imp-drop" class="mt-4 flex flex-col items-center justify-center gap-1 text-center border-2 border-dashed border-gray-300 hover:border-brand-600 rounded-2xl p-8 cursor-pointer bg-gray-50">
     <i class="fas fa-file-import text-2xl text-brand-600"></i><span class="text-sm font-bold">Choose your file, or drop it here</span>
     <span class="text-xs text-gray-500">Word (.docx), Markdown (.md) or text. One file can hold several services and both languages.</span>
@@ -420,7 +477,7 @@ function svPick(err){
   ${err?`<div class="mt-3 text-xs rounded-lg p-3 border text-red-700 bg-red-50 border-red-200 space-y-1" role="alert">${err}</div>`:''}
   <details class="mt-4 text-xs text-gray-700 bg-gray-50 border border-gray-200 rounded-xl p-3"><summary class="font-bold cursor-pointer">How to prepare the file</summary>
     <div class="mt-2 space-y-2 leading-relaxed">
-      <p><b>Word:</b> give every service text a title in the <b>Heading 1</b> style. Right under it type, one per line: <code>Service:</code> (the service name, e.g. Patents, or its page file, e.g. patents.html), <code>Language:</code> (English or Arabic) and, if you like, <code>Subtitle:</code> (the short brief on the home page card). Then the page text.</p>
+      <p><b>Word:</b> give every service text a title in the <b>Heading 1</b> style. Right under it type, one per line: <code>Service:</code> (the service name, e.g. Patents, or its page file, e.g. patents.html), <code>Language:</code> (English or Arabic) and, if you like, <code>Subtitle:</code> (the short brief on the home page card), <code>Card title:</code> (renames the service), <code>Icon:</code>, <code>Hidden:</code> (yes / no) and <code>Part:</code> (<i>Page</i>, the default, or <i>Pop-up</i>, the text shown when the home page card is opened). Then the text.</p>
       <p><b>Markdown:</b> the same, starting each text with <code># Title</code>. In the text, the part before the first <b>Heading 2</b> (<code>## </code>) is the introduction; each <b>Heading 2</b> becomes a card. Bold, bullet lists and numbered lists are kept.</p>
       <p>Without a <code>Service:</code> line the title must be the service name. Without <code>Language:</code> the language is detected from the text. Pictures are ignored. You see everything before it is added, and nothing is published until you press Save.</p>
       <button type="button" data-imp="template" class="font-bold text-brand-700 underline">Download a Markdown template</button>
@@ -434,7 +491,8 @@ async function svLoad(files){
   IM.on=new Set(IM.arts.map((a,i)=>a.sid?i:-1).filter(i=>i>=0));
   svReview();
 }
-const svCur=a=>{const o=a.lang==='ar'?((A.services||[]).find(x=>String(x.id)===a.sid)||{}):((D.services||[]).find(x=>String(x.id)===a.sid)||{});return String(o.pageContent||'')};
+const svField=a=>a.part==='popup'?'details':'pageContent';
+const svCur=a=>{const o=a.lang==='ar'?((A.services||[]).find(x=>String(x.id)===a.sid)||{}):((D.services||[]).find(x=>String(x.id)===a.sid)||{});return String(o[svField(a)]||'')};
 function svReview(){
   const n=IM.on.size,chip=(t,c='bg-gray-100 text-gray-700')=>`<span class="px-2 py-0.5 rounded-full ${c}">${t}</span>`;
   impModal(`${impHead('Review the texts',`${IM.arts.length} text${IM.arts.length>1?'s':''} found. Untick any you do not want.`)}
@@ -445,8 +503,8 @@ function svReview(){
     const cur=a.sid?svCur(a).length:0,cards=(a.text.match(/^## /gm)||[]).length;
     return `<label class="flex gap-3 p-3 rounded-xl border ${IM.on.has(i)?'border-brand-600 bg-brand-50/40':'border-gray-200'} ${a.sid?'cursor-pointer':'opacity-70'}"><input type="checkbox" data-imp-on="${i}" ${IM.on.has(i)?'checked':''} ${a.sid?'':'disabled'} class="mt-1 flex-shrink-0">
       <div class="min-w-0 flex-1"><div class="font-bold text-sm">${a.sid?esc(a.svTitle):esc(a.title)} <span class="font-normal text-gray-500">${a.lang==='ar'?'Arabic':'English'}</span></div>
-      <div class="flex flex-wrap gap-1 mt-1 text-[11px]">${a.sid?chip(esc(a.page||'no page file')):chip('no matching service','bg-red-100 text-red-700')}${chip(`${a.text.length} characters`)}${cards?chip(`${cards} card${cards>1?'s':''}`):''}${a.brief?chip('brief','bg-brand-50 text-brand-700'):''}${cur?chip(`page has ${cur} characters now`,'bg-amber-100 text-amber-900'):''}${a.dup?chip('repeated','bg-amber-100 text-amber-900'):''}${chip(esc(a.source))}</div>
-      ${a.text?`<p class="text-xs text-gray-500 line-clamp-2 mt-1">${esc(a.text.replace(/^##\s+/gm,'').replace(/\s+/g,' ').slice(0,200))}</p>`:'<p class="text-[11px] text-amber-800 mt-1">No text</p>'}
+      <div class="flex flex-wrap gap-1 mt-1 text-[11px]">${a.sid?chip(esc(a.page||'no page file')):chip('no matching service','bg-red-100 text-red-700')}${chip(`${a.text.length} characters`)}${cards?chip(`${cards} card${cards>1?'s':''}`):''}${chip(a.part==='popup'?'pop-up':'page','bg-indigo-50 text-indigo-700')}${a.brief?chip('brief','bg-brand-50 text-brand-700'):''}${a.cardtitle?chip('new title','bg-brand-50 text-brand-700'):''}${a.icon?chip('icon '+esc(a.icon),'bg-brand-50 text-brand-700'):''}${a.hidden===true?chip('will be hidden','bg-red-100 text-red-700'):a.hidden===false?chip('will be shown','bg-emerald-100 text-emerald-800'):''}${cur?chip(`${a.part==='popup'?'pop-up':'page'} has ${cur} characters now`,'bg-amber-100 text-amber-900'):''}${a.dup?chip('repeated','bg-amber-100 text-amber-900'):''}${chip(esc(a.source))}</div>
+      ${a.text?`<p class="text-xs text-gray-500 line-clamp-2 mt-1">${esc(a.text.replace(/^##\s+/gm,'').replace(/\s+/g,' ').slice(0,200))}</p>`:(a.brief||a.cardtitle||a.icon||a.hidden!==null?'<p class="text-[11px] text-gray-500 mt-1">Details only, no text</p>':'<p class="text-[11px] text-amber-800 mt-1">No text</p>')}
       ${a.notes.length?`<p class="text-[11px] text-amber-800 mt-1">${a.notes.map(esc).join(' · ')}</p>`:''}</div></label>`}).join('')}</div>
   <div class="mt-4 flex items-center justify-between gap-2 sticky bottom-0 bg-white pt-2"><button type="button" data-imp="back" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-4 py-2.5 rounded-xl">Back</button>
     <button type="button" data-imp="run" ${n?'':'disabled'} class="text-xs bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white font-bold px-5 py-2.5 rounded-xl"><i class="fas fa-file-import"></i> Import ${n} text${n===1?'':'s'}</button></div>`);
@@ -461,9 +519,11 @@ function svRun(){
     if(a.lang==='ar'){o=A.services.find(x=>String(x.id)===a.sid);if(!o){o={id:a.sid};A.services.push(o)}}
     else o=(D.services||[]).find(x=>String(x.id)===a.sid);
     if(!o)continue;
-    const cur=String(o.pageContent||'').trim();
-    o.pageContent=how==='end'&&cur?cur+'\n\n'+a.text:a.text;
+    const f=svField(a);
+    if(a.text){const cur=String(o[f]||'').trim();o[f]=how==='end'&&cur?cur+'\n\n'+a.text:a.text}
     if(a.brief)o.description=a.brief;
+    if(a.cardtitle)o.title=a.cardtitle;
+    if(a.lang!=='ar'){if(a.icon)o.icon=a.icon;if(a.hidden!==null&&a.hidden!==undefined)o.hidden=a.hidden}
     n++;
   }
   mark();tabs();view();
@@ -471,71 +531,158 @@ function svRun(){
    <div class="mt-4 text-sm bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-xl p-3"><i class="fas fa-circle-check"></i> Press <b>Save</b> at the top to publish them on the website.</div>
    <div class="mt-4 text-right"><button type="button" data-imp="close" class="text-xs bg-brand-600 hover:bg-brand-700 text-white font-bold px-5 py-2.5 rounded-xl">Done</button></div>`);
 }
-/* ---------- Import the Services section (Home, Services) from Word (.docx) or Markdown (.md): title, brief, icon, page file, pop-up, page (parser: service-import.js) ---------- */
-function svlOpen(){IM.mode='svl';IM.warn=[];svlPick()}
-function svlPick(err){
-  impModal(`${impHead('Import services','Add new services, or update the ones you have, in English and Arabic.')}
+/* ---------- Import countries (overview + filing details) from Word (.docx) or Markdown (.md) files (parser: jurisdiction-import.js) ---------- */
+function jrOpen(){IM.mode='jur';IM.warn=[];jrPick()}
+function jrPick(err){
+  impModal(`${impHead('Import countries','Fill the country cards and filing details, in English and Arabic. New countries are added.')}
   <label id="imp-drop" class="mt-4 flex flex-col items-center justify-center gap-1 text-center border-2 border-dashed border-gray-300 hover:border-brand-600 rounded-2xl p-8 cursor-pointer bg-gray-50">
     <i class="fas fa-file-import text-2xl text-brand-600"></i><span class="text-sm font-bold">Choose your file, or drop it here</span>
-    <span class="text-xs text-gray-500">Word (.docx), Markdown (.md) or text. One file can hold several services and both languages.</span>
+    <span class="text-xs text-gray-500">Word (.docx), Markdown (.md) or text. One file can hold many countries and both languages.</span>
     <input id="imp-file" type="file" multiple accept=".docx,.md,.markdown,.txt,.zip" class="hidden"></label>
   ${err?`<div class="mt-3 text-xs rounded-lg p-3 border text-red-700 bg-red-50 border-red-200 space-y-1" role="alert">${err}</div>`:''}
   <details class="mt-4 text-xs text-gray-700 bg-gray-50 border border-gray-200 rounded-xl p-3"><summary class="font-bold cursor-pointer">How to prepare the file</summary>
     <div class="mt-2 space-y-2 leading-relaxed">
-      <p><b>One text = one service.</b> Word: start it with a <b>Heading 1</b> title. Markdown: start it with <code># Title</code>. Right under it, one per line, you can type: <code>Service:</code> (name or page file of an existing service to update), <code>Language:</code> (English or Arabic), <code>Brief:</code> (the short text on the home page card), <code>Icon:</code>, <code>Page file:</code> (e.g. patents.html) and <code>Hidden:</code> (yes or no). Lines you leave out keep what the service has now.</p>
-      <p><b>Text:</b> what follows is the <b>pop-up</b> text. A line <code>## Page content</code> (Heading 2 in Word) ends the pop-up; everything after it is the dedicated page (its text before the first other <code>##</code> is the introduction, each <code>##</code> heading is a card). Bold and lists are kept.</p>
-      <p><b>New or update?</b> An English text whose title (or <code>Service:</code>) matches a service updates it; one that matches nothing becomes a <b>new service</b>. Arabic texts need a <code>Service:</code> line with the English name (or the Arabic title already saved). Pictures are ignored. You see everything before it is added, and nothing is published until you press Save.</p>
+      <p><b>Word:</b> give every country text a title in the <b>Heading 1</b> style (the country name). Right under it type, one per line: <code>Language:</code> (English or Arabic), <code>Code:</code> (2 letters, e.g. ae; English text only), <code>Tag:</code> (the short label on the card) and, in an Arabic text, <code>Country:</code> (the English name, so it finds its country).</p>
+      <p><b>Markdown:</b> the same, starting each text with <code># Country</code>. The text before the first <b>Heading 2</b> (<code>## </code>), or under <code>## Overview</code>, is the <b>Overview</b> of the country card. Everything under <code>## Filing details</code> is the <b>Filing details</b> of the pop-up; other <code>##</code> headings stay inside the part they follow.</p>
+      <p>A country is found by its code, its <code>Country:</code> line or its name (English or Arabic). A country not on the site yet is added from its English text. You see everything before it is added, and nothing is published until you press Save.</p>
       <button type="button" data-imp="template" class="font-bold text-brand-700 underline">Download a Markdown template</button>
     </div></details>`);
 }
-async function svlLoad(files){
-  impModal(`${impHead('Import services','Reading the files...')}<p class="mt-6 text-sm text-gray-600 text-center"><i class="fas fa-spinner fa-spin"></i> Reading ${files.length} file${files.length>1?'s':''}</p>`);
-  let r;try{r=await KSvc.parseServices([...files],D,A,{assets:new Set(ASSETS)})}catch(e){return svlPick(esc(e.message||String(e)))}
+async function jrLoad(files){
+  impModal(`${impHead('Import countries','Reading the files...')}<p class="mt-6 text-sm text-gray-600 text-center"><i class="fas fa-spinner fa-spin"></i> Reading ${files.length} file${files.length>1?'s':''}</p>`);
+  let r;try{r=await KJur.parseFiles([...files],D,A,{assets:new Set(ASSETS)})}catch(e){return jrPick(esc(e.message||String(e)))}
   IM.arts=r.items;IM.warn=r.warnings;
-  if(!IM.arts.length)return svlPick(`<p class="font-bold">No texts were found.</p>${IM.warn.map(w=>`<p>${esc(w)}</p>`).join('')||'<p>Start each service with a Heading 1 title (Word) or a # Title line (Markdown).</p>'}`);
-  IM.on=new Set(IM.arts.map((a,i)=>a.sid?i:-1).filter(i=>i>=0));
-  svlReview();
+  if(!IM.arts.length)return jrPick(`<p class="font-bold">No texts were found.</p>${IM.warn.map(w=>`<p>${esc(w)}</p>`).join('')||'<p>Start each text with a Heading 1 title (Word) or a # Title line (Markdown).</p>'}`);
+  IM.on=new Set(IM.arts.map((a,i)=>a.ok?i:-1).filter(i=>i>=0));
+  jrReview();
 }
-function svlReview(){
+const jrArOf=(o,i)=>(A.jurisdictions||[]).find(y=>y&&o.id!=null&&String(y.id)===String(o.id))||(o.id==null?(A.jurisdictions||[])[i]:null)||null;
+const jrCur=a=>{if(a.di<0)return 0;const o=D.jurisdictions[a.di]||{},t=a.lang==='ar'?(jrArOf(o,a.di)||{}):o;return String(t.brief||'').length+String(t.details||'').length};
+function jrReview(){
   const n=IM.on.size,chip=(t,c='bg-gray-100 text-gray-700')=>`<span class="px-2 py-0.5 rounded-full ${c}">${t}</span>`;
-  impModal(`${impHead('Review the services',`${IM.arts.length} text${IM.arts.length>1?'s':''} found. Untick any you do not want.`)}
+  const nNew=IM.arts.filter((a,i)=>IM.on.has(i)&&a.isNew).length;
+  impModal(`${impHead('Review the countries',`${IM.arts.length} text${IM.arts.length>1?'s':''} found. Untick any you do not want.`)}
   ${IM.warn.length?`<div class="mt-3 text-xs rounded-lg p-3 border text-amber-900 bg-amber-50 border-amber-200 space-y-1">${IM.warn.map(w=>`<p>${esc(w)}</p>`).join('')}</div>`:''}
   <div class="mt-3 flex flex-wrap items-center gap-3 text-xs"><button type="button" data-imp="all" class="font-bold text-brand-700 underline">Select all</button><button type="button" data-imp="none" class="font-bold text-brand-700 underline">Select none</button>
-    <label class="ml-auto flex items-center gap-2 font-bold">Where a service already has text <select id="imp-mode" class="border border-gray-300 rounded-lg px-2 py-1 font-normal"><option value="replace">Replace it</option><option value="empty">Keep it, fill only empty boxes</option></select></label></div>
+    <label class="ml-auto flex items-center gap-2 font-bold">Where a country already has text <select id="imp-mode" class="border border-gray-300 rounded-lg px-2 py-1 font-normal"><option value="replace">Replace it</option><option value="end">Add the new text after it</option></select></label></div>
   <div class="mt-3 space-y-2">${IM.arts.map((a,i)=>{
-    const f=[a.brief&&'brief',a.details&&'pop-up',a.pageContent&&'page',a.icon&&'icon',a.pagefile&&'page file',a.hidden!==null&&'hidden'].filter(Boolean);
-    return `<label class="flex gap-3 p-3 rounded-xl border ${IM.on.has(i)?'border-brand-600 bg-brand-50/40':'border-gray-200'} ${a.sid?'cursor-pointer':'opacity-70'}"><input type="checkbox" data-imp-on="${i}" ${IM.on.has(i)?'checked':''} ${a.sid?'':'disabled'} class="mt-1 flex-shrink-0">
-      <div class="min-w-0 flex-1"><div class="font-bold text-sm">${esc(a.sid?a.svTitle||a.title:a.title)} <span class="font-normal text-gray-500">${a.lang==='ar'?'Arabic':'English'}</span></div>
-      <div class="flex flex-wrap gap-1 mt-1 text-[11px]">${!a.sid?chip('no matching service','bg-red-100 text-red-700'):a.isNew?chip('new service','bg-emerald-100 text-emerald-800'):chip('updates an existing service','bg-brand-50 text-brand-700')}${f.map(x=>chip(x)).join('')}${chip(esc(a.source))}</div>
-      ${(a.brief||a.details)?`<p class="text-xs text-gray-500 line-clamp-2 mt-1">${esc((a.brief||a.details).replace(/^##\s+/gm,'').replace(/\s+/g,' ').slice(0,200))}</p>`:'<p class="text-[11px] text-amber-800 mt-1">No brief and no pop-up text</p>'}
+    const cur=jrCur(a),ex=a.di>=0?D.jurisdictions[a.di]:null;
+    return `<label class="flex gap-3 p-3 rounded-xl border ${IM.on.has(i)?'border-brand-600 bg-brand-50/40':'border-gray-200'} ${a.ok?'cursor-pointer':'opacity-70'}"><input type="checkbox" data-imp-on="${i}" ${IM.on.has(i)?'checked':''} ${a.ok?'':'disabled'} class="mt-1 flex-shrink-0">
+      <div class="min-w-0 flex-1"><div class="font-bold text-sm">${esc(a.title)} <span class="font-normal text-gray-500">${a.lang==='ar'?'Arabic':'English'}</span></div>
+      <div class="flex flex-wrap gap-1 mt-1 text-[11px]">${a.isNew?chip('new country','bg-emerald-100 text-emerald-800'):a.di>=0?chip('updates '+esc(ex.country||'country')):a.pair>=0?chip('pairs with '+esc(IM.arts[a.pair].title),'bg-indigo-50 text-indigo-700'):chip('no matching country','bg-red-100 text-red-700')}${a.code?chip('code '+esc(a.code),'bg-brand-50 text-brand-700'):''}${a.tag?chip('tag '+esc(a.tag),'bg-brand-50 text-brand-700'):''}${a.brief?chip(`overview ${a.brief.length}`):''}${a.details?chip(`filing details ${a.details.length}`):''}${cur?chip(`country has ${cur} characters now`,'bg-amber-100 text-amber-900'):''}${a.dup?chip('repeated','bg-amber-100 text-amber-900'):''}${chip(esc(a.source))}</div>
+      ${a.brief||a.details?`<p class="text-xs text-gray-500 line-clamp-2 mt-1">${esc((a.brief||a.details).replace(/^##\s+/gm,'').replace(/\s+/g,' ').slice(0,200))}</p>`:'<p class="text-[11px] text-amber-800 mt-1">No text</p>'}
       ${a.notes.length?`<p class="text-[11px] text-amber-800 mt-1">${a.notes.map(esc).join(' · ')}</p>`:''}</div></label>`}).join('')}</div>
   <div class="mt-4 flex items-center justify-between gap-2 sticky bottom-0 bg-white pt-2"><button type="button" data-imp="back" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-4 py-2.5 rounded-xl">Back</button>
-    <button type="button" data-imp="run" ${n?'':'disabled'} class="text-xs bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white font-bold px-5 py-2.5 rounded-xl"><i class="fas fa-file-import"></i> Import ${n} text${n===1?'':'s'}</button></div>`);
+    <button type="button" data-imp="run" ${n?'':'disabled'} class="text-xs bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white font-bold px-5 py-2.5 rounded-xl"><i class="fas fa-file-import"></i> Import ${n} text${n===1?'':'s'}${nNew?` (${nNew} new)`:''}</button></div>`);
 }
-function svlRun(){
-  const fill=($('imp-mode')?.value||'replace')==='empty',chosen=IM.arts.filter((a,i)=>IM.on.has(i)&&a.sid);if(!chosen.length)return;
-  D.services=D.services||[];A.services=A.services||[];
-  const real={},put=(o,k,v)=>{if(v===''||v==null)return;if(fill&&String(o[k]||'').trim())return;o[k]=v};
-  let nNew=0,nUpd=0;
-  for(const a of chosen.filter(x=>x.lang==='en').concat(chosen.filter(x=>x.lang==='ar'))){       // English first: Arabic texts can then find the services made in this file
-    let id=real[a.sid]||a.sid,o=null;
-    if(String(a.sid).startsWith('new')){
-      if(a.lang==='en'){id=String(Math.max(0,...D.services.map(x=>+x.id||0),...A.services.map(x=>+x.id||0))+1);real[a.sid]=id;o={id,title:'',icon:'',description:'',details:'',page:'',pageContent:''};D.services.push(o);nNew++}
-      else id=real[a.sid]||null;
+function jrRun(){
+  const how=$('imp-mode')?.value||'replace',idx=[...IM.on].filter(i=>IM.arts[i]&&IM.arts[i].ok);if(!idx.length)return;
+  const has=idx.some(i=>how==='replace'&&jrCur(IM.arts[i])>0);
+  if(has&&!confirm('Some countries already have text. Replace it? You can still undo it before saving (undo arrow at the top).'))return;
+  D.jurisdictions=D.jurisdictions||[];A.jurisdictions=A.jurisdictions||[];
+  const made=new Map();let id=Math.max(0,...D.jurisdictions.map(x=>+x.id||0)),n=0,added=0,skipped=0;
+  const arFor=o=>{let r=jrArOf(o,D.jurisdictions.indexOf(o));if(!r){r={id:o.id,country:'',tag:'',brief:'',details:''};A.jurisdictions.push(r)}return r};
+  const put=(o,f,v)=>{if(!v)return;const c=String(o[f]||'').trim();o[f]=how==='end'&&c?c+'\n\n'+v:v};
+  const order=[...idx.filter(i=>IM.arts[i].lang!=='ar'),...idx.filter(i=>IM.arts[i].lang==='ar')];   // English first, so new countries exist for their Arabic text
+  for(const i of order){
+    const a=IM.arts[i];let di=a.di;
+    if(a.lang!=='ar'&&di<0){
+      const o={id:String(++id),country:a.title,code:a.code||'',tag:'',brief:'',details:''};
+      D.jurisdictions.push(o);di=D.jurisdictions.length-1;made.set(i,di);added++;
     }
-    if(!id)continue;
+    if(a.lang==='ar'&&di<0&&a.pair>=0)di=made.has(a.pair)?made.get(a.pair):(IM.arts[a.pair].di);
+    if(di==null||di<0){skipped++;continue}
+    const o=D.jurisdictions[di];
     if(a.lang==='ar'){
-      let ao=A.services.find(x=>String(x.id)===String(id));if(!ao){ao={id,title:'',description:'',details:'',pageContent:''};A.services.push(ao)}
-      put(ao,'title',a.title);put(ao,'description',a.brief);put(ao,'details',a.details);put(ao,'pageContent',a.pageContent);continue;
+      const r=arFor(o);
+      if(a.title)r.country=a.title;
+      if(a.tag)r.tag=a.tag;
+      put(r,'brief',a.brief);put(r,'details',a.details);
+    }else{
+      if(a.code)o.code=a.code;
+      if(a.tag)o.tag=a.tag;
+      put(o,'brief',a.brief);put(o,'details',a.details);
     }
-    o=o||D.services.find(x=>String(x.id)===String(id));if(!o)continue;
-    if(!String(a.sid).startsWith('new'))nUpd++;
-    put(o,'title',a.title);put(o,'description',a.brief);put(o,'details',a.details);put(o,'pageContent',a.pageContent);put(o,'icon',a.icon);put(o,'page',a.pagefile);
-    if(a.hidden===true)o.hidden=true;else if(a.hidden===false)delete o.hidden;
+    n++;
   }
-  mark();ASEC.goList('services');openItem=null;q='';tabs();view();
-  impModal(`${impHead('Import finished',`${nNew} new service${nNew===1?'':'s'}, ${nUpd} updated, ${chosen.filter(x=>x.lang==='ar').length} Arabic text${chosen.filter(x=>x.lang==='ar').length===1?'':'s'}.`)}
-   <div class="mt-4 text-sm bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-xl p-3"><i class="fas fa-circle-check"></i> Press <b>Save</b> at the top to publish them on the website. A new service with a page file needs that page to exist on the site.</div>
+  mark();tabs();view();
+  impModal(`${impHead('Import finished',`${n} text${n===1?' was':'s were'} imported${added?`, ${added} new countr${added===1?'y':'ies'} added`:''}.`)}
+   ${skipped?`<div class="mt-3 text-xs rounded-lg p-3 border text-amber-900 bg-amber-50 border-amber-200">${skipped} text${skipped===1?' was':'s were'} skipped: the English country was not selected.</div>`:''}
+   <div class="mt-4 text-sm bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-xl p-3"><i class="fas fa-circle-check"></i> Press <b>Save</b> at the top to publish them on the website.</div>
+   <div class="mt-4 text-right"><button type="button" data-imp="close" class="text-xs bg-brand-600 hover:bg-brand-700 text-white font-bold px-5 py-2.5 rounded-xl">Done</button></div>`);
+}
+/* ---------- Import FAQ questions and answers from Word (.docx) or Markdown (.md) files (parser: faq-import.js) ---------- */
+function frOpen(){IM.mode='faq';IM.warn=[];frPick()}
+function frPick(err){
+  impModal(`${impHead('Import FAQ','Fill the questions and answers of the Home, About, Patents, Trademarks and Translation pages, in English and Arabic.')}
+  <label id="imp-drop" class="mt-4 flex flex-col items-center justify-center gap-1 text-center border-2 border-dashed border-gray-300 hover:border-brand-600 rounded-2xl p-8 cursor-pointer bg-gray-50">
+    <i class="fas fa-file-import text-2xl text-brand-600"></i><span class="text-sm font-bold">Choose your file, or drop it here</span>
+    <span class="text-xs text-gray-500">Word (.docx), Markdown (.md) or text. One file can hold all five pages and both languages.</span>
+    <input id="imp-file" type="file" multiple accept=".docx,.md,.markdown,.txt,.zip" class="hidden"></label>
+  ${err?`<div class="mt-3 text-xs rounded-lg p-3 border text-red-700 bg-red-50 border-red-200 space-y-1" role="alert">${err}</div>`:''}
+  <details class="mt-4 text-xs text-gray-700 bg-gray-50 border border-gray-200 rounded-xl p-3"><summary class="font-bold cursor-pointer">How to prepare the file</summary>
+    <div class="mt-2 space-y-2 leading-relaxed">
+      <p><b>Word:</b> give each page's list a title in the <b>Heading 1</b> style: <i>Home</i>, <i>About</i>, <i>Patents</i>, <i>Trademarks</i> or <i>Translation</i>. Right under it you can type <code>Language:</code> English or Arabic (otherwise it is detected). Then every <b>question</b> is a <b>Heading 2</b> and the paragraphs under it are its <b>answer</b>. A <b>Heading 3</b> inside an answer becomes a subtitle of the answer.</p>
+      <p><b>Markdown:</b> the same: <code># Patents</code>, <code>Language: Arabic</code>, <code>## Question?</code>, the answer below, <code>### Subtitle</code> inside an answer. Bold, bullet lists and numbered lists are kept. Text before the first question is the optional introduction of that page's FAQ.</p>
+      <p>The Arabic list is matched to the English questions <b>by position</b> (1st with 1st), so keep the same order. You see everything before it is added, and nothing is published until you press Save.</p>
+      <button type="button" data-imp="template" class="font-bold text-brand-700 underline">Download a Markdown template</button>
+    </div></details>`);
+}
+async function frLoad(files){
+  impModal(`${impHead('Import FAQ','Reading the files...')}<p class="mt-6 text-sm text-gray-600 text-center"><i class="fas fa-spinner fa-spin"></i> Reading ${files.length} file${files.length>1?'s':''}</p>`);
+  let r;try{r=await KFaq.parseFiles([...files],D,A,{assets:new Set(ASSETS)})}catch(e){return frPick(esc(e.message||String(e)))}
+  IM.arts=r.items;IM.warn=r.warnings;
+  if(!IM.arts.length)return frPick(`<p class="font-bold">No lists were found.</p>${IM.warn.map(w=>`<p>${esc(w)}</p>`).join('')||'<p>Start each list with a Heading 1 title (Word) or a # Title line (Markdown).</p>'}`);
+  IM.on=new Set(IM.arts.map((a,i)=>a.ok?i:-1).filter(i=>i>=0));
+  frReview();
+}
+const frCur=a=>a.page?faqItems(a.page).filter(x=>String(x.q||'').trim()||String(x.a||'').trim()).length:0;
+function frReview(){
+  const n=IM.on.size,chip=(t,c='bg-gray-100 text-gray-700')=>`<span class="px-2 py-0.5 rounded-full ${c}">${t}</span>`;
+  impModal(`${impHead('Review the FAQ lists',`${IM.arts.length} list${IM.arts.length>1?'s':''} found. Untick any you do not want.`)}
+  ${IM.warn.length?`<div class="mt-3 text-xs rounded-lg p-3 border text-amber-900 bg-amber-50 border-amber-200 space-y-1">${IM.warn.map(w=>`<p>${esc(w)}</p>`).join('')}</div>`:''}
+  <div class="mt-3 flex flex-wrap items-center gap-3 text-xs"><button type="button" data-imp="all" class="font-bold text-brand-700 underline">Select all</button><button type="button" data-imp="none" class="font-bold text-brand-700 underline">Select none</button>
+    <label class="ml-auto flex items-center gap-2 font-bold">Where a page already has questions <select id="imp-mode" class="border border-gray-300 rounded-lg px-2 py-1 font-normal"><option value="replace">Replace them</option><option value="end">Add the new ones after them</option></select></label></div>
+  <div class="mt-3 space-y-2">${IM.arts.map((a,i)=>{
+    const cur=frCur(a),pv=a.qs.slice(0,3).map(x=>x.q).filter(Boolean);
+    return `<label class="flex gap-3 p-3 rounded-xl border ${IM.on.has(i)?'border-brand-600 bg-brand-50/40':'border-gray-200'} ${a.ok?'cursor-pointer':'opacity-70'}"><input type="checkbox" data-imp-on="${i}" ${IM.on.has(i)?'checked':''} ${a.ok?'':'disabled'} class="mt-1 flex-shrink-0">
+      <div class="min-w-0 flex-1"><div class="font-bold text-sm">${a.page?esc(a.pageName):esc(a.title)} <span class="font-normal text-gray-500">${a.lang==='ar'?'Arabic':'English'}</span></div>
+      <div class="flex flex-wrap gap-1 mt-1 text-[11px]">${a.page?'':chip('no matching page','bg-red-100 text-red-700')}${chip(`${a.qs.length} question${a.qs.length===1?'':'s'}`,'bg-brand-50 text-brand-700')}${a.intro?chip('introduction'):''}${cur?chip(`page has ${cur} now`,'bg-amber-100 text-amber-900'):''}${a.dup?chip('repeated','bg-amber-100 text-amber-900'):''}${chip(esc(a.source))}</div>
+      ${pv.length?`<ul class="text-xs text-gray-500 mt-1 list-disc ml-4">${pv.map(q=>`<li class="truncate">${esc(q)}</li>`).join('')}${a.qs.length>3?`<li class="list-none -ml-4 text-[11px] text-gray-400">and ${a.qs.length-3} more</li>`:''}</ul>`:''}
+      ${a.notes.length?`<p class="text-[11px] text-amber-800 mt-1">${a.notes.map(esc).join(' · ')}</p>`:''}</div></label>`}).join('')}</div>
+  <div class="mt-4 flex items-center justify-between gap-2 sticky bottom-0 bg-white pt-2"><button type="button" data-imp="back" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-4 py-2.5 rounded-xl">Back</button>
+    <button type="button" data-imp="run" ${n?'':'disabled'} class="text-xs bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white font-bold px-5 py-2.5 rounded-xl"><i class="fas fa-file-import"></i> Import ${n} list${n===1?'':'s'}</button></div>`);
+}
+function frRun(){
+  const how=$('imp-mode')?.value||'replace',chosen=IM.arts.filter((a,i)=>IM.on.has(i)&&a.ok);if(!chosen.length)return;
+  if(how==='replace'&&chosen.some(a=>a.lang!=='ar'&&frCur(a))&&!confirm('Some pages already have questions. Replace them? You can still undo it before saving (undo arrow at the top).'))return;
+  A.faq=A.faq||{};A.faq.pages=A.faq.pages||{};
+  const arP=k=>{const p=A.faq.pages[k]=A.faq.pages[k]||{};p.items=p.items||[];return p};
+  const arItem=(k,id)=>{const p=arP(k);let r=p.items.find(y=>y&&String(y.id)===String(id));if(!r){r={id:String(id),q:'',a:''};p.items.push(r)}return r};
+  const put=(o,f,v)=>{if(!v)return;const c=String(o[f]||'').trim();o[f]=how==='end'&&c?c+'\n\n'+v:v};
+  let nq=0,na=0,pages=new Set(),skipped=0;
+  for(const [k] of FAQ_PAGES){
+    // English first: it creates the questions the Arabic list is matched to
+    const en=chosen.filter(a=>a.page===k&&a.lang!=='ar').pop(),ar=chosen.filter(a=>a.page===k&&a.lang==='ar').pop();
+    if(!en&&!ar)continue;
+    const p=faqP(k);let targets=p.items;
+    if(en){
+      let id=Math.max(0,...p.items.map(x=>+x.id||0));
+      const fresh=en.qs.map(x=>({id:String(++id),q:x.q,a:x.a}));
+      if(how==='replace')p.items=fresh;else p.items.push(...fresh);
+      targets=fresh;nq+=fresh.length;
+      put(p,'intro',en.intro);
+    }
+    if(ar){
+      ar.qs.forEach((x,j)=>{const t=targets[j];if(!t){skipped++;return}const r=arItem(k,t.id);r.q=x.q;r.a=x.a;na++});
+      if(ar.intro){const a=arP(k);put(a,'intro',ar.intro)}
+    }
+    pages.add(k);
+  }
+  mark();tabs();view();
+  impModal(`${impHead('Import finished',`${nq} question${nq===1?'':'s'} added${na?`, ${na} Arabic translation${na===1?'':'s'} set`:''} on ${pages.size} page${pages.size===1?'':'s'}.`)}
+   ${skipped?`<div class="mt-3 text-xs rounded-lg p-3 border text-amber-900 bg-amber-50 border-amber-200">${skipped} Arabic question${skipped===1?' was':'s were'} skipped: there is no English question at that position.</div>`:''}
+   <div class="mt-4 text-sm bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-xl p-3"><i class="fas fa-circle-check"></i> Press <b>Save</b> at the top to publish them on the website.</div>
    <div class="mt-4 text-right"><button type="button" data-imp="close" class="text-xs bg-brand-600 hover:bg-brand-700 text-white font-bold px-5 py-2.5 rounded-xl">Done</button></div>`);
 }
 // Phone editor: show English, Arabic or both (remembered in this browser)
@@ -553,12 +700,13 @@ document.addEventListener('click',e=>{                       // card background:
 document.addEventListener('click',e=>{
   const t=e.target.closest('[data-imp]');if(!t)return;const a=t.dataset.imp;
   if(a==='close'){if(!IM.busy)impClose()}
-  else if(a==='back')IM.mode==='slides'?slPick():IM.mode==='service'?svPick():IM.mode==='svl'?svlPick():impPick();
+  else if(a==='back')IM.mode==='slides'?slPick():IM.mode==='service'?svPick():IM.mode==='jur'?jrPick():IM.mode==='faq'?frPick():impPick();
   else if(a==='svc-open')svOpen();
   else if(a==='all'){const pos=$('imp-pos')?.value,dm=$('imp-mode')?.value;IM.on=new Set(IM.arts.map((x,i)=>i));impRev();if(pos&&$('imp-pos'))$('imp-pos').value=pos;if(dm&&$('imp-mode'))$('imp-mode').value=dm}
   else if(a==='none'){const pos=$('imp-pos')?.value,dm=$('imp-mode')?.value;IM.on=new Set();impRev();if(pos&&$('imp-pos'))$('imp-pos').value=pos;if(dm&&$('imp-mode'))$('imp-mode').value=dm}
-  else if(a==='run')IM.mode==='slides'?slRun():IM.mode==='service'?svRun():IM.mode==='svl'?svlRun():impRun();
-  else if(a==='template'&&IM.mode==='svl'){const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([KSvc.TEMPLATE_LIST],{type:'text/markdown'}));l.download='services-section-template.md';l.click()}
+  else if(a==='run')IM.mode==='slides'?slRun():IM.mode==='service'?svRun():IM.mode==='jur'?jrRun():IM.mode==='faq'?frRun():impRun();
+  else if(a==='template'&&IM.mode==='faq'){const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([KFaq.TEMPLATE],{type:'text/markdown'}));l.download='faq-template.md';l.click()}
+  else if(a==='template'&&IM.mode==='jur'){const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([KJur.TEMPLATE],{type:'text/markdown'}));l.download='jurisdictions-template.md';l.click()}
   else if(a==='template'&&IM.mode==='service'){const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([KSvc.TEMPLATE],{type:'text/markdown'}));l.download='service-pages-template.md';l.click()}
   else if(a==='template'){const sl=IM.mode==='slides',l=document.createElement('a');l.href=URL.createObjectURL(new Blob([sl?KSlides.TEMPLATE_MD:KImport.TEMPLATE],{type:'text/markdown'}));l.download=sl?'slides-template.md':'articles-template.md';l.click()}
   else if(a==='template-csv'){const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([KSlides.TEMPLATE_CSV],{type:'text/csv'}));l.download='slides-template.csv';l.click()}
@@ -717,7 +865,7 @@ function faqBody(page){
   const f=D.faq||{},items=faqItems(),label=FAQ_PAGES.find(x=>x[0]===faqPage)[1],base=`faq.pages.${faqPage}.`;
   const btn=(act,i,ic,t,dis,cls='bg-gray-100')=>`<button data-act="${act}" data-i="${i}" ${dis?'disabled':''} aria-label="${t}" title="${t}" class="w-8 h-8 rounded-lg ${cls} disabled:opacity-30"><i class="fas ${ic} text-xs"></i></button>`;
   return `<div class="bg-white p-4 rounded-2xl border border-gray-200 space-y-3">
-    <div class="flex items-center justify-between gap-2"><div><h3 class="font-extrabold text-base">Questions and answers (${items.length})</h3><p class="text-xs text-gray-600">Shown as an open-and-close list. A page with no questions shows no FAQ section. An Arabic box left empty shows the English text.</p></div><button data-act="faq-add" class="text-xs bg-[#d9c8a4] hover:bg-[#cdb98f] text-[#1b2433] font-bold px-3.5 py-2 rounded-xl flex-shrink-0"><i class="fas fa-plus"></i> Add question</button></div>
+    <div class="flex items-center justify-between gap-2"><div><h3 class="font-extrabold text-base">Questions and answers (${items.length})</h3><p class="text-xs text-gray-600">Shown as an open-and-close list. A page with no questions shows no FAQ section. An Arabic box left empty shows the English text.</p></div><div class="flex items-center gap-2 flex-shrink-0"><button data-act="fimport" class="text-xs bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold px-3.5 py-2 rounded-xl" title="Fill the FAQ of all pages from Word or Markdown files, English and Arabic"><i class="fas fa-file-import"></i> Import FAQ</button><button data-act="faq-add" class="text-xs bg-[#d9c8a4] hover:bg-[#cdb98f] text-[#1b2433] font-bold px-3.5 py-2 rounded-xl flex-shrink-0"><i class="fas fa-plus"></i> Add question</button></div></div>
     ${(D.services||[]).some(x=>x.page===faqPage+'.html'&&x.hidden===true)?`<p class="text-xs rounded-lg p-3 border text-amber-900 bg-amber-50 border-amber-200"><b>The ${label} service is switched off</b> (Services section, "Hide this service"), so its page sends visitors to the home page and this FAQ is not shown. Untick that option to bring the page back.</p>`:''}
     ${fld(base,['hidden','Hide the FAQ on this page (the questions are kept)','check'])}
     <details class="bg-gray-50 rounded-xl border border-gray-200"><summary class="p-3 text-xs font-bold cursor-pointer">Heading and introduction (optional)</summary><div class="p-3 pt-0 space-y-3">
@@ -960,7 +1108,8 @@ document.addEventListener('click',e=>{
   else if(a==='cc-del'){const c=theme().custom[i];if(c&&confirm(`Delete "${c.name||c.hex}"? Sections that use it go back to their normal background.`)){theme().custom.splice(i,1);mark();view()}}
   else if(a==='import')impOpen();
   else if(a==='simport')slOpen();
-  else if(a==='svlimport')svlOpen();
+  else if(a==='jimport')jrOpen();
+  else if(a==='fimport')frOpen();
   else if(a==='fmt')fmt(t.dataset.k,t.dataset.t);
   else if(a==='save')save();
   else if(a==='discard'){if(confirm('Discard all unsaved changes and reload from GitHub?')){dirty=false;connect(S)}}
