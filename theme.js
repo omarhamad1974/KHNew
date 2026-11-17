@@ -51,6 +51,9 @@
     ['translation-contact','Translation page: Contact']
   ];
   const HEX=/^#[0-9a-f]{6}$/i;
+  // The sections the per-section settings are applied to: all of them, or only the ones paintSec() was given (a copied section, layout.js)
+  let scope=null;
+  const secEls=()=>scope||document.querySelectorAll('[data-sec]');
   const VAR={title:'title0',accentDark:'accent-dark',accentSoft:'accent-soft'};
   const vname=k=>'--c-'+(VAR[k]||k)+'-rgb';
   const parts=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
@@ -86,7 +89,7 @@
   }
   function paint(T){
     const S=(T||{}).sections||{},ink=palette(T).ink;
-    document.querySelectorAll('[data-sec]').forEach(el=>{
+    secEls().forEach(el=>{
       ['background-color','background-image','background-size','background-position','background-repeat'].forEach(p=>el.style.removeProperty(p));
       el.classList.remove('sec-light');
       const s=S[el.dataset.sec];
@@ -167,7 +170,7 @@
     if(m['--card-fg'])el.setAttribute('data-cfg','1');else el.removeAttribute('data-cfg');
   }
   function paintLook(T){
-    document.querySelectorAll('[data-sec]').forEach(el=>{
+    secEls().forEach(el=>{
       const s=(T.secCards||{})[el.dataset.sec];
       cardVars(el,s&&Object.keys(s).some(k=>s[k])?cardsOf(T,el.dataset.sec):{},T);   // nothing special: the page-wide values apply
     });
@@ -180,7 +183,7 @@
   const DEV=['m','t','d'];
   function align(T){
     const A=T.align||{},g=A.all||{},S=A.sec||{};
-    document.querySelectorAll('[data-sec]').forEach(el=>{
+    secEls().forEach(el=>{
       const s=S[el.dataset.sec]||{};
       DEV.forEach(k=>{const v=ALIGN.includes(s[k])?s[k]:(ALIGN.includes(g[k])?g[k]:'');if(v)el.setAttribute('data-ta-'+k,v);else el.removeAttribute('data-ta-'+k)});
     });
@@ -335,7 +338,7 @@
   }
   function fontsSec(T){                                  // one section's own fonts, on top of the site-wide ones
     const S=((T||{}).fonts||{}).sec||{};
-    document.querySelectorAll('[data-sec]').forEach(el=>{
+    secEls().forEach(el=>{
       const v=fontVars(S[el.dataset.sec]);
       for(const k in v)put(el.style,'--'+k,v[k]);
     });
@@ -345,7 +348,7 @@
   const HEADPARTS=['title','icon','rule','wa'];
   function secHead(T){
     const S=(T||{}).secHead||{};
-    document.querySelectorAll('[data-sec]').forEach(el=>{
+    secEls().forEach(el=>{
       const s=S[el.dataset.sec]||{},h=HEADPARTS.filter(k=>s[k]===true);
       if(h.length)el.setAttribute('data-hide',h.join(' '));else el.removeAttribute('data-hide');
     });
@@ -355,7 +358,7 @@
   const colN=v=>{const n=parseInt(v,10);return n>=1&&n<=4?n:0};
   function cols(T){
     const S=(T||{}).cols||{};
-    document.querySelectorAll('[data-sec]').forEach(el=>{
+    secEls().forEach(el=>{
       const s=S[el.dataset.sec]||{};
       [['t',colN(s.t)],['d',colN(s.d)]].forEach(([k,n])=>{if(n){el.setAttribute('data-cols-'+k,n);el.style.setProperty('--cols-'+k,n)}else{el.removeAttribute('data-cols-'+k);el.style.removeProperty('--cols-'+k)}});
     });
@@ -388,8 +391,13 @@
       else{st.removeProperty('--card-fg');st.removeProperty('--card-title-rgb');el.removeAttribute('data-cbc')}
     });
   }
+  // Apply the per-section settings to some sections only (a copy of a section that layout.js has just made)
+  function paintSec(els,T){
+    T=T||window.KTHEME.current||{};scope=[...els];
+    try{paint(T);paintLook(T);secHead(T);cols(T);fontsSec(T);align(T)}finally{scope=null}
+  }
   function apply(D){const T=(D&&D.theme)||{};vars(T);paint(T);paintLook(T);secHead(T);cols(T);fontsSec(T);align(T);logos(T);images(T);paintCards(T);window.KTHEME.current=T;document.dispatchEvent(new CustomEvent('khip-theme',{detail:T}))}
-  window.KTHEME={DEFAULTS,ROLES,SECTIONS,HEX,HERO,ALIGN,LOGOS,FXG,fxVals,AXE,AXDIST,AXEASE,AXHOVER,axCfg,axVars,LGE,LGIDLE,LGHOVER,MAPE,MAPIDLE,MAPHOVER,MAPPULSE,lgCfg,mapCfg,colsOf,cb:cbAttr,paintCards,FONTS,fontOk,fontStack,fontVars,fontUrl,fontLink,resolve,lum,palette,apply,lookMap,cardMap,cardsOf};
+  window.KTHEME={DEFAULTS,ROLES,SECTIONS,HEX,HERO,ALIGN,LOGOS,FXG,fxVals,AXE,AXDIST,AXEASE,AXHOVER,axCfg,axVars,LGE,LGIDLE,LGHOVER,MAPE,MAPIDLE,MAPHOVER,MAPPULSE,lgCfg,mapCfg,colsOf,cb:cbAttr,paintCards,paintSec,FONTS,fontOk,fontStack,fontVars,fontUrl,fontLink,resolve,lum,palette,apply,lookMap,cardMap,cardsOf};
   // The admin page uses the definitions only; it must not recolour itself.
   if(/admin\.html$/.test(location.pathname))return;
   let cached=null;try{cached=JSON.parse(localStorage.getItem(CACHE))}catch{}

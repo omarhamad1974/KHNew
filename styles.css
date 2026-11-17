@@ -57,10 +57,10 @@ header .wrap{width:100%;max-width:76rem}
 
 /* ---------- News: one wide, centred card at a time on mobile, cross-fading ---------- */
 @media(max-width:767px){
-  #news-list{display:grid;overflow:visible;scroll-snap-type:none;padding-bottom:0}
-  #news-list>.ncard{grid-area:1/1;width:100%;max-width:26rem;margin-left:auto;margin-right:auto;opacity:0;pointer-events:none;transition:opacity .9s ease}
-  #news-list>.ncard.on{opacity:1;pointer-events:auto}
-  #news-list>.ncard:hover{transform:none}
+  :is(#news-list,[data-cid="news-list"]){display:grid;overflow:visible;scroll-snap-type:none;padding-bottom:0}
+  :is(#news-list,[data-cid="news-list"])>.ncard{grid-area:1/1;width:100%;max-width:26rem;margin-left:auto;margin-right:auto;opacity:0;pointer-events:none;transition:opacity .9s ease}
+  :is(#news-list,[data-cid="news-list"])>.ncard.on{opacity:1;pointer-events:auto}
+  :is(#news-list,[data-cid="news-list"])>.ncard:hover{transform:none}
 }
 
 /* ---------- Animation ---------- */
@@ -75,14 +75,14 @@ header .wrap{width:100%;max-width:76rem}
 .c{fill:#e7e5e4;stroke:#fff;stroke-width:.6}
 .c.on{fill:rgb(var(--c-accent-rgb));stroke-width:.8;cursor:pointer;transition:fill .25s}
 .c.on:hover,.c.on:focus,.c.on.sel{fill:rgb(var(--c-accent-dark-rgb));outline:none}
-#mena-map text{font-family:var(--fb);pointer-events:none}
-#mena-map .lw{font-size:15px;font-weight:500;fill:#fff}
-#mena-map .lo{font-size:13px;font-weight:500;fill:rgb(var(--c-ink-rgb));paint-order:stroke;stroke:#fff;stroke-width:3px}
-#mena-map .ld{stroke:rgb(var(--c-ink-rgb));stroke-width:1}
+:is(#mena-map,[data-cid="mena-map"]) text{font-family:var(--fb);pointer-events:none}
+:is(#mena-map,[data-cid="mena-map"]) .lw{font-size:15px;font-weight:500;fill:#fff}
+:is(#mena-map,[data-cid="mena-map"]) .lo{font-size:13px;font-weight:500;fill:rgb(var(--c-ink-rgb));paint-order:stroke;stroke:#fff;stroke-width:3px}
+:is(#mena-map,[data-cid="mena-map"]) .ld{stroke:rgb(var(--c-ink-rgb));stroke-width:1}
 .office text{font-size:14px;font-weight:500;fill:rgb(var(--c-ink-rgb));paint-order:stroke;stroke:#fff;stroke-width:3px}
 .pulse{fill:rgb(var(--c-gold-rgb));opacity:.4;transform-box:fill-box;transform-origin:center;animation:pl 2.4s ease-out infinite}
 @keyframes pl{to{transform:scale(3.4);opacity:0}}
-@media(max-width:639px){#mena-map .lbl{display:none}}
+@media(max-width:639px){:is(#mena-map,[data-cid="mena-map"]) .lbl{display:none}}
 @media(prefers-reduced-motion:reduce){.pulse{animation:none}}
 
 /* ---------- Bottom bar (built by footer.js) ---------- */
@@ -120,7 +120,7 @@ header .wrap{width:100%;max-width:76rem}
 @media(prefers-reduced-motion:reduce){
   html,#khip-page{scroll-behavior:auto}
   .rv,.fu{opacity:1;transform:none;transition:none}
-  .slide,.slide.on img,.card,.sheet,#news-list>.ncard,.tcard,.tm-track,.ct-tile,.sl-dot{transition:none;animation:none}
+  .slide,.slide.on img,.card,.sheet,:is(#news-list,[data-cid="news-list"])>.ncard,.tcard,.tm-track,.ct-tile,.sl-dot{transition:none;animation:none}
   .card:hover{transform:none}
 }
 
@@ -405,25 +405,25 @@ html [data-ax] .ax.ax-go{opacity:1;transform:none;filter:none;transition:opacity
 .lx-h-lift:hover{translate:0 -5px;filter:drop-shadow(0 8px 8px rgba(0,0,0,.22))}
 .lx-h-glow:hover{filter:drop-shadow(0 0 10px rgb(var(--c-gold-rgb,180 150 90) / .9))}
 /* map */
-#mena-map.mx-pre .c.on{opacity:0;transform-box:fill-box;transform-origin:center;transform:var(--mx-from,none)}
-#mena-map.mx-pre.mx-base .c:not(.on){opacity:0}
-#mena-map.mx-pre :is(.lbl,.office){opacity:0}
-#mena-map.mx-pre.mx-go .c.on{opacity:1;transform:none;transition:opacity var(--mx-t,.8s) ease calc(var(--mx-d,0s) + var(--i,0)*var(--mx-st,.12s)),transform var(--mx-t,.8s) cubic-bezier(.34,1.56,.64,1) calc(var(--mx-d,0s) + var(--i,0)*var(--mx-st,.12s))}
-#mena-map.mx-pre.mx-go.mx-base .c:not(.on){opacity:1;transition:opacity var(--mx-t,.8s) ease var(--mx-d,0s)}
-#mena-map.mx-pre.mx-go :is(.lbl,.office){opacity:1;transition:opacity var(--mx-t,.8s) ease calc(var(--mx-d,0s) + var(--mx-n,11)*var(--mx-st,.12s) + var(--mx-t,.8s)*.5)}
-#mena-map.mx-i-breathe .c.on{animation:mxb 3.2s ease-in-out infinite}
-#mena-map.mx-i-wave .c.on{animation:mxb 3.2s ease-in-out calc(var(--i,0)*.28s) infinite}
+:is(#mena-map,[data-cid="mena-map"]).mx-pre .c.on{opacity:0;transform-box:fill-box;transform-origin:center;transform:var(--mx-from,none)}
+:is(#mena-map,[data-cid="mena-map"]).mx-pre.mx-base .c:not(.on){opacity:0}
+:is(#mena-map,[data-cid="mena-map"]).mx-pre :is(.lbl,.office){opacity:0}
+:is(#mena-map,[data-cid="mena-map"]).mx-pre.mx-go .c.on{opacity:1;transform:none;transition:opacity var(--mx-t,.8s) ease calc(var(--mx-d,0s) + var(--i,0)*var(--mx-st,.12s)),transform var(--mx-t,.8s) cubic-bezier(.34,1.56,.64,1) calc(var(--mx-d,0s) + var(--i,0)*var(--mx-st,.12s))}
+:is(#mena-map,[data-cid="mena-map"]).mx-pre.mx-go.mx-base .c:not(.on){opacity:1;transition:opacity var(--mx-t,.8s) ease var(--mx-d,0s)}
+:is(#mena-map,[data-cid="mena-map"]).mx-pre.mx-go :is(.lbl,.office){opacity:1;transition:opacity var(--mx-t,.8s) ease calc(var(--mx-d,0s) + var(--mx-n,11)*var(--mx-st,.12s) + var(--mx-t,.8s)*.5)}
+:is(#mena-map,[data-cid="mena-map"]).mx-i-breathe .c.on{animation:mxb 3.2s ease-in-out infinite}
+:is(#mena-map,[data-cid="mena-map"]).mx-i-wave .c.on{animation:mxb 3.2s ease-in-out calc(var(--i,0)*.28s) infinite}
 @keyframes mxb{0%,100%{opacity:1}50%{opacity:.68}}
-#mena-map.mx-h-glow .c.on{transition:fill .25s,filter .25s}
-#mena-map.mx-h-glow .c.on:is(:hover,:focus,.sel){filter:drop-shadow(0 0 5px rgb(var(--c-accent-rgb) / .85))}
-#mena-map.mx-h-pop .c.on,#mena-map.mx-h-raise .c.on{transform-box:fill-box;transform-origin:center;transition:fill .25s,transform .25s,filter .25s}
-#mena-map.mx-h-pop .c.on:is(:hover,:focus,.sel){transform:scale(1.05)}
-#mena-map.mx-h-raise .c.on:is(:hover,:focus,.sel){transform:scale(1.03) translateY(-2px);filter:drop-shadow(0 5px 4px rgba(0,0,0,.3))}
-#mena-map.mx-p-none .pulse{animation:none;opacity:0}
-#mena-map.mx-pulse .pulse{animation:mxpl var(--mx-pt,2.4s) ease-out infinite}
-#mena-map.mx-pc .pulse{fill:var(--mx-pc)}
+:is(#mena-map,[data-cid="mena-map"]).mx-h-glow .c.on{transition:fill .25s,filter .25s}
+:is(#mena-map,[data-cid="mena-map"]).mx-h-glow .c.on:is(:hover,:focus,.sel){filter:drop-shadow(0 0 5px rgb(var(--c-accent-rgb) / .85))}
+:is(#mena-map,[data-cid="mena-map"]).mx-h-pop .c.on,:is(#mena-map,[data-cid="mena-map"]).mx-h-raise .c.on{transform-box:fill-box;transform-origin:center;transition:fill .25s,transform .25s,filter .25s}
+:is(#mena-map,[data-cid="mena-map"]).mx-h-pop .c.on:is(:hover,:focus,.sel){transform:scale(1.05)}
+:is(#mena-map,[data-cid="mena-map"]).mx-h-raise .c.on:is(:hover,:focus,.sel){transform:scale(1.03) translateY(-2px);filter:drop-shadow(0 5px 4px rgba(0,0,0,.3))}
+:is(#mena-map,[data-cid="mena-map"]).mx-p-none .pulse{animation:none;opacity:0}
+:is(#mena-map,[data-cid="mena-map"]).mx-pulse .pulse{animation:mxpl var(--mx-pt,2.4s) ease-out infinite}
+:is(#mena-map,[data-cid="mena-map"]).mx-pc .pulse{fill:var(--mx-pc)}
 @keyframes mxpl{to{transform:scale(var(--mx-ps,3.4));opacity:0}}
-@media(prefers-reduced-motion:reduce){.lx-i,#mena-map.mx-pulse .pulse,#mena-map[class*=mx-i-] .c.on{animation:none}.lx-h{transition:none}}
+@media(prefers-reduced-motion:reduce){.lx-i,:is(#mena-map,[data-cid="mena-map"]).mx-pulse .pulse,:is(#mena-map,[data-cid="mena-map"])[class*=mx-i-] .c.on{animation:none}.lx-h{transition:none}}
 
 /* ---------- Control phase 2: section header parts (admin: Look of this section, Section header) ----------
    theme.secHead.<section> = {title, icon, rule, wa: true}; theme.js writes them as data-hide="title icon rule wa" on the section.
@@ -482,3 +482,6 @@ html [data-ax] .ax.ax-go{opacity:1;transform:none;filter:none;transition:opacity
 .kv-auto .kv-btn{display:none}
 .kv-auto .kv-play::after{opacity:.5}
 .kv-cta a{text-decoration:none}
+
+/* ---------- Copies of sections (layout.js): a copy shows at once, without the entrance animation of the original ---------- */
+[data-copy-of] :is(.fu,.rv,.ax){opacity:1!important;transform:none!important;filter:none!important;transition:none!important}

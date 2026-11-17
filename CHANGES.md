@@ -1,5 +1,11 @@
 # Change log
 
+## Page layout: show, hide, order and duplicate sections
+- **Sections of this page** (admin, Sections, under the section buttons) and a bar on every section: show or hide a section, move it up or down the page, duplicate it, delete a copy, back to the original order.
+- **Parts of this section** (Look of this section): hide single parts of a section (logo, text, buttons, map, slider controls, single cards, contact tiles, ...).
+- A copy shows the same content as its section, live, with its own look; clicks in it are handed to the original. The slider and videos cannot be copied.
+- New file `layout.js`; saved as `theme.layout` and `theme.parts`; checked by `scripts/validate.js`. Details: CONTROL-PLAN.md, phase 5.
+
 ## Import: Arabic for news and slides
 - **News import**: Arabic articles (`Language: Arabic`) are saved as the Arabic version of their English article, found by the `English title:` line (in the file or on the site) or by position among the English articles of the file. Title, subtitle, summary, text and pictures inside the text are imported; date, category and cover stay with the English article. Before, a `Language:` line was ignored and every article was added as English. New label `English title` in `news-import.js`; the article template has an Arabic example.
 - **Slides import**: a file written in Arabic is set to fill the Arabic title, subtitle and tag of the slides already in the slider, by position (with a *First slide number* box); the other options (add at the end / top, replace) are unchanged. `slider-import.js` is not touched.
