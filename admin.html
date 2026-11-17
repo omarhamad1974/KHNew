@@ -15,6 +15,16 @@ details[open]>summary .chev{transform:rotate(90deg)}
 .chev{transition:transform .2s}
 .bad{border-color:#dc2626!important;box-shadow:0 0 0 3px rgba(220,38,38,.15)}
 .drop{outline:2px dashed #1d4ed8;outline-offset:-6px;background:#eff6ff}
+/* live preview (admin-preview.js): beside the editor on wide screens, above it on narrow ones, or enlarged */
+#pv.pv-top{max-width:64rem;margin:.75rem auto 0;padding:0 1rem}
+#pv.pv-top #pv-stage{height:min(30rem,70vh);flex:none}
+#pv.pv-big{position:fixed;inset:.5rem;z-index:60;max-width:none;margin:0;padding:0;box-shadow:0 0 0 100vmax rgba(15,23,42,.6)}
+body.pv-side{--pvw:clamp(26rem,40vw,44rem)}
+body.pv-side #app>header>div,body.pv-side #tabs,body.pv-side #subnav,body.pv-side #view{max-width:min(60rem,calc(100vw - var(--pvw) - 3rem));margin-left:0;margin-right:0}
+body.pv-side #app>header>div,body.pv-side #tabs,body.pv-side #subnav{margin-left:0}
+body.pv-side #pv{position:fixed;right:1rem;width:var(--pvw);top:var(--pv-top,9rem);bottom:1rem;z-index:20}
+/* phone: one language at a time (the bar in the header sets body[data-pane]); from 768 px both sit side by side */
+@media(max-width:767px){body[data-pane=en] [data-pane=ar],body[data-pane=ar] [data-pane=en]{display:none}}
 </style>
 </head>
 <body class="bg-gray-100 text-gray-900 antialiased font-sans">
@@ -60,16 +70,18 @@ details[open]>summary .chev{transform:rotate(90deg)}
   <header class="sticky top-12 z-30 bg-white/95 backdrop-blur border-b shadow-sm">
     <div class="max-w-5xl mx-auto px-4 py-3 flex items-center gap-2">
       <div class="min-w-0 flex-1"><h1 class="font-extrabold truncate" id="repo-name"></h1><p id="state" class="text-[11px] text-gray-500">Loaded</p></div>
-      
+      <button type="button" id="pv-btn" aria-pressed="false" title="Show or hide the live preview" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl flex-shrink-0"><i class="fas fa-eye"></i> <span class="hidden sm:inline">Preview</span></button>
       <button data-act="discard" id="discard" disabled class="text-xs bg-gray-100 hover:bg-gray-200 disabled:opacity-40 font-bold px-3 py-2 rounded-xl" title="Discard unsaved changes" aria-label="Discard unsaved changes"><i class="fas fa-rotate-left"></i></button>
       <button data-act="backup" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl" title="Download a copy of both files" aria-label="Download a copy of both files"><i class="fas fa-download"></i></button>
       <button data-act="out" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl">Sign out</button>
       <button id="save" data-act="save" disabled class="text-xs bg-brand-600 hover:bg-brand-700 disabled:bg-gray-300 text-white font-bold px-4 py-2 rounded-xl" title="Ctrl+S">Save to GitHub</button>
     </div>
     <nav id="tabs" class="max-w-5xl mx-auto flex gap-1.5 overflow-x-auto px-4 pb-2" aria-label="Sections"></nav>
+    <div id="panebar" class="md:hidden max-w-5xl mx-auto px-4 pb-2 flex items-center gap-1.5" role="group" aria-label="Language shown in the boxes"><span class="text-[11px] font-bold text-gray-500 mr-1">Show</span><button type="button" data-pane-set="en" class="flex-1 text-xs font-bold px-3 py-2 rounded-xl">English</button><button type="button" data-pane-set="ar" lang="ar" class="flex-1 text-xs font-bold px-3 py-2 rounded-xl">عربي</button><button type="button" data-pane-set="both" class="flex-1 text-xs font-bold px-3 py-2 rounded-xl">Both</button></div>
   </header>
   <datalist id="assets"></datalist>
   <nav id="subnav" class="hidden max-w-5xl mx-auto px-4 pt-3 flex flex-wrap gap-1.5" aria-label="General settings"></nav>
+  <div id="pv" class="hidden"></div>
   <main id="view" class="max-w-5xl mx-auto p-4 space-y-3"></main>
 </section>
 </div>
@@ -118,7 +130,7 @@ const full=v=>!v?'':/^(https?:|\.\/|\/)/.test(v)?v:'./assets/'+v;
 const imgSrc=v=>!v?'':/^https?:/.test(v)?v:`https://raw.githubusercontent.com/${S.o}/${S.r}/${S.b}/${full(v).replace(/^\.?\//,'')}?v=${KVER.imgV}`;
 const b64=u8=>{let s='';for(let i=0;i<u8.length;i+=0x8000)s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000));return btoa(s)};
 const unb64=s=>new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\n/g,'')),c=>c.charCodeAt(0)));
-function mark(on=true){dirty=on;$('save').disabled=!on;$('discard').disabled=!on;$('state').textContent=on?'Unsaved changes':'All changes saved'}
+function mark(on=true){dirty=on;$('save').disabled=!on;$('discard').disabled=!on;$('state').textContent=on?'Unsaved changes':'All changes saved';if(on&&window.KPV)KPV.touch()}
 
 async function api(path,{method='GET',query='',body}={}){
   const r=await fetch(`https://api.github.com/repos/${S.o}/${S.r}/contents/${path}${query}`,{method,headers:{Authorization:'Bearer '+S.t,Accept:'application/vnd.github+json'},body:body&&JSON.stringify(body)});
@@ -143,7 +155,7 @@ async function connect(creds){
   localStorage.setItem('khip-admin',JSON.stringify({o:S.o,r:S.r,b:S.b,p:S.p}));
   if($('f-s').checked)sessionStorage.setItem('khip-admin-t',S.t);
   $('login').classList.add('hidden');$('app').classList.remove('hidden');
-  $('repo-name').textContent=`${S.o}/${S.r}`;tab='general';gsub='brand';q='';openItem=null;mark(false);tabs();view();
+  $('repo-name').textContent=`${S.o}/${S.r}`;tab='general';gsub='brand';q='';openItem=null;mark(false);tabs();view();if(window.KPV)KPV.init();
   $('assets').innerHTML=ASSETS.map(n=>`<option value="${esc(n)}">`).join('');
 }
 
@@ -163,6 +175,9 @@ function ctl(p,[k,l,t],o={}){
   if(t==='area')return `<div class="flex items-center gap-1 mb-1">${tb('b',p,'Bold','B','text-sm font-bold')}${tb('h',p,'Subtitle','H','text-xs font-bold')}${tb('l',p,'Bullet list','<i class="fas fa-list-ul text-xs"></i>')}<span class="text-[11px] text-gray-500 ml-2" dir="ltr">**bold** &nbsp; ## subtitle &nbsp; - bullet</span></div><textarea data-p="${p}" ${xa} ${ph} aria-label="${esc(l)}" rows="${o.rows||5}" class="${inp}">${esc(v)}</textarea>`;
   if(t==='lines')return `<textarea data-p="${p}" ${xa} ${ph} data-lines="1" aria-label="${esc(l)}" rows="${o.rows||4}" class="${inp}">${esc(Array.isArray(v)?v.join('\n'):v)}</textarea>`;
   if(t==='select'){const c=((D.newsCategories||[]).filter(Boolean).length?D.newsCategories.filter(Boolean):DEFCATS).slice(),cur=v||c[0];if(cur&&!c.includes(cur))c.push(cur);return `<select data-p="${p}" ${xa} aria-label="${esc(l)}" class="${inp}">${c.map(x=>`<option ${x===cur?'selected':''}>${esc(x)}</option>`).join('')}</select>`}
+  if(t==='pos')return `<select data-p="${p}" aria-label="${esc(l)}" class="${inp}">${[['','Center (as designed)'],['top','Top (keep the top: faces, titles)'],['bottom','Bottom']].map(([k,n])=>`<option value="${k}" ${(v||'')===k?'selected':''}>${n}</option>`).join('')}</select>`;
+  if(t==='cref')return ALOOK.cref(p,l,{none:'None (as designed)'});
+  if(t==='shade'){const n=parseFloat(v),sh=isFinite(n)?n:0,id='sh-'+p.replace(/\W/g,'-');return `<label class="block text-xs font-bold">${esc(l)}: <span id="${id}">${sh}</span>%<input type="range" min="0" max="80" step="5" data-p="${p}" data-out="${id}" data-pct="1" value="${sh}" class="mt-1 w-full"></label>`}
   if(t==='img')return `<div class="flex items-center gap-2"><img data-prev="${p}" src="${esc(imgSrc(v))}" alt="" onerror="this.style.visibility='hidden'" class="w-12 h-12 rounded-lg object-cover bg-gray-200 flex-shrink-0"><input data-p="${p}" ${xa} aria-label="${esc(l)}" value="${esc(v)}" list="assets" placeholder="File name in assets, or upload" class="${inp}"><label class="flex-shrink-0 text-xs bg-brand-50 text-brand-700 font-bold px-3 py-2.5 rounded-lg cursor-pointer hover:bg-brand-100" title="Upload an image"><i class="fas fa-upload"></i><input type="file" accept="image/*" data-up="${p}" class="hidden"></label></div>`;
   return `<input data-p="${p}" ${xa} ${ph} aria-label="${esc(l)}" type="${t==='date'?'date':'text'}" value="${esc(v)}" class="${inp}">`;
 }
@@ -174,7 +189,7 @@ function fld(base,f,req=[]){
 // English and Arabic side by side. o: {phEn, phAr} placeholders (the built-in wording), rows
 function bi(base,f,req=[],o={}){
   const [k,l]=f,star=req.includes(k)?'<span class="text-red-600" title="Required in English"> *</span>':'';
-  const half=(p,rtl)=>`<div class="min-w-0"><span ${rtl?'lang="ar"':''} class="inline-block text-[10px] font-extrabold tracking-wider px-1.5 py-0.5 rounded mb-1 ${rtl?'bg-amber-100 text-amber-800':'bg-brand-100 text-brand-700'}">${rtl?'عربي':'EN'}</span>${ctl(p,f,{rtl,ph:rtl?o.phAr:o.phEn,rows:o.rows})}</div>`;
+  const half=(p,rtl)=>`<div class="min-w-0" data-pane="${rtl?'ar':'en'}"><span ${rtl?'lang="ar"':''} class="inline-block text-[10px] font-extrabold tracking-wider px-1.5 py-0.5 rounded mb-1 ${rtl?'bg-amber-100 text-amber-800':'bg-brand-100 text-brand-700'}">${rtl?'عربي':'EN'}</span>${ctl(p,f,{rtl,ph:rtl?o.phAr:o.phEn,rows:o.rows})}</div>`;
   return `<div><span class="text-xs font-bold text-gray-700">${esc(l)}${star}</span><div class="grid md:grid-cols-2 gap-3 mt-0.5">${half(base+k,false)}${half('ar:'+base+k,true)}</div></div>`;
 }
 const isTr=(sec,f)=>(TRF[sec]||[]).includes(f[0])&&!['check','img','select','date'].includes(f[2]);
@@ -183,8 +198,9 @@ const LK=()=>tab==='sections'?listKey:tab;          // the list being edited (ca
 function view(){
   A=mirror(D,A);                     // the Arabic copy always has the same items, in the same order, as the English data
   $('subnav').classList.toggle('hidden',tab!=='general'&&tab!=='sections');
-  if(tab==='general')return AGEN.render();
-  if(tab==='sections')return ASEC.render();
+  if(tab==='general')AGEN.render();
+  else if(tab==='sections')ASEC.render();
+  if(window.KPV)KPV.sync();
 }
 // A list of items (slides, countries, articles, services, quotes, team members): header, search box and the items.
 function listHtml(c){
@@ -206,7 +222,14 @@ function items(){
     <div class="p-4 pt-1 space-y-3 border-t">${itemFields(tab,i)}</div></details>`).join('');
 }
 // The fields of one item: words are English | Arabic side by side, the rest (picture, date, category, tick boxes) once.
-const itemFields=(sec,i)=>SC[sec].f.map(f=>isTr(sec,f)?bi(`${sec}.${i}.`,f,SC[sec].req):fld(`${sec}.${i}.`,f,SC[sec].req)).join('');
+const CBF=[['cardBg','Card color','cref'],['cardImage','Card picture (covers the whole card)','img'],['cardPos','Which part of the picture stays in view','pos'],['cardShade','Darken the picture so the text can be read','shade'],['cardText','Text color on this card','cref']];
+// The background of ONE card (colour and/or picture). base is "news.2." or "ipCard."; what: which card it is
+function cardBgBlock(base,what){
+  const o=get(D,base.slice(0,-1))||{},on=!!(o.cardBg||o.cardImage);
+  return `<details class="bg-gray-50 rounded-xl border border-gray-200"><summary class="flex items-center gap-2 p-3 cursor-pointer text-xs font-bold"><i class="fas fa-chevron-right chev text-[10px] text-gray-400"></i><span class="flex-1">Card background: ${what}</span><span class="text-[11px] px-2 py-1 rounded-lg ${on?'bg-brand-50 text-brand-700':'bg-gray-100 text-gray-500'}">${on?'Set':'As designed'}</span></summary><div class="p-3 pt-1 space-y-3 border-t border-gray-200">${CBF.map(f=>fld(base,f)).join('')}<p class="text-[11px] text-gray-500">A color, a picture or both (the picture is on top). With a dark color or picture choose a light <b>Text color</b>. Empty = the card looks as designed. The same card in Arabic follows.</p><button type="button" data-cbreset="${base}" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl"><i class="fas fa-rotate-left"></i> As designed</button></div></details>`;
+}
+const CBWHAT={services:'the Translation card on the home page (the IP Services card is set in Home, Services)',news:'this news card',employees:'this team card'};
+const itemFields=(sec,i)=>SC[sec].f.map(f=>isTr(sec,f)?bi(`${sec}.${i}.`,f,SC[sec].req):fld(`${sec}.${i}.`,f,SC[sec].req)).join('')+(CBWHAT[sec]?cardBgBlock(`${sec}.${i}.`,CBWHAT[sec]):'');
 
 /* ---------- Import articles from Word (.docx) or Markdown (.md) files (parser: news-import.js) ---------- */
 const IM={arts:[],warn:[],on:new Set(),busy:false,seq:0,mode:'news'};   // mode: 'news' (articles) or 'slides' (hero slider); both use the same window
@@ -385,6 +408,18 @@ async function slRun(){
    ${fails.length?`<div class="mt-3 text-xs rounded-lg p-3 border text-red-700 bg-red-50 border-red-200 space-y-1"><p class="font-bold">Some pictures could not be added:</p>${fails.map(f=>`<p>${esc(f)}</p>`).join('')}</div>`:''}
    <div class="mt-4 text-right"><button type="button" data-imp="close" class="text-xs bg-brand-600 hover:bg-brand-700 text-white font-bold px-5 py-2.5 rounded-xl">Done</button></div>`);
 }
+// Phone editor: show English, Arabic or both (remembered in this browser)
+(function(){
+  let m='en';try{m=localStorage.getItem('khip-admin-pane')||'en'}catch{}
+  const set=v=>{if(!['en','ar','both'].includes(v))v='en';document.body.dataset.pane=v;try{localStorage.setItem('khip-admin-pane',v)}catch{}
+    document.querySelectorAll('[data-pane-set]').forEach(b=>{const on=b.dataset.paneSet===v;b.setAttribute('aria-pressed',on);b.classList.toggle('bg-brand-600',on);b.classList.toggle('text-white',on);b.classList.toggle('bg-gray-100',!on)})};
+  document.addEventListener('click',e=>{const b=e.target.closest('[data-pane-set]');if(b)set(b.dataset.paneSet)});
+  set(m);
+})();
+document.addEventListener('click',e=>{                       // card background: back to "as designed"
+  const b=e.target.closest('[data-cbreset]');if(!b||!D)return;
+  const o=get(D,b.dataset.cbreset.slice(0,-1));if(o){['cardBg','cardImage','cardPos','cardShade','cardText'].forEach(k=>delete o[k]);mark();view()}
+});
 document.addEventListener('click',e=>{
   const t=e.target.closest('[data-imp]');if(!t)return;const a=t.dataset.imp;
   if(a==='close'){if(!IM.busy)impClose()}
@@ -587,6 +622,7 @@ function fmt(k,p){
   ta.focus();ta.dispatchEvent(new Event('input',{bubbles:true}));
 }
 function validate(){
+  const ve=window.ASEC&&ASEC.checkVideos?ASEC.checkVideos():'';if(ve)return ve;
   for(const [k,s] of Object.entries(SC)){
     const ids=new Set();
     for(const [i,x] of (D[k]||[]).entries()){
@@ -620,7 +656,8 @@ const UIK=Object.keys(KLang.DICT.en).filter(k=>typeof KLang.DICT.en[k]==='string
 const arPath=()=>S.p.replace(/\.json$/,'')+'.ar.json';
 function mirror(en,ar){ // the Arabic form always has the same items, in the same order, as the English content
   ar=ar||{};
-  const o={aboutMainText:ar.aboutMainText||'',about:ar.about||'',ipServicesText:ar.ipServicesText||'',contact:{address:(ar.contact||{}).address||[]},chatPrompts:ar.chatPrompts||[],newsCategories:(en.newsCategories||[]).map((c,i)=>(ar.newsCategories||[])[i]||''),ui:{...(ar.ui||{})}};
+  const vid={};['home','about'].forEach(p=>{const b=((ar.videos||{})[p])||{};vid[p]={url:b.url||'',title:b.title||'',text:b.text||'',ctaText:b.ctaText||''}});
+  const o={videos:vid,aboutMainText:ar.aboutMainText||'',about:ar.about||'',ipServicesText:ar.ipServicesText||'',contact:{address:(ar.contact||{}).address||[]},chatPrompts:ar.chatPrompts||[],newsCategories:(en.newsCategories||[]).map((c,i)=>(ar.newsCategories||[])[i]||''),ui:{...(ar.ui||{})}};
   for(const [sec,fs] of Object.entries(TRF)){
     const a=ar[sec]||[];
     o[sec]=(en[sec]||[]).map((x,i)=>{const b=a.find(y=>y&&y.id!=null&&String(y.id)===String(x.id))||(x.id==null?a[i]:null)||{};const r={id:x.id};fs.forEach(f=>r[f]=b[f]||'');return r});
@@ -644,6 +681,8 @@ function compact(ar){ // only what has been written is saved
     const rows=(ar[sec]||[]).map(x=>{const r={id:x.id};let n=0;fs.forEach(f=>{if(has(x[f])){r[f]=x[f];n++}});return n?r:null}).filter(Boolean);
     if(rows.length)o[sec]=rows;
   }
+  const vo={};['home','about'].forEach(p=>{const b=((ar.videos||{})[p])||{},r={};['url','title','text','ctaText'].forEach(k=>{if(has(b[k]))r[k]=b[k]});if(Object.keys(r).length)vo[p]=r});
+  if(Object.keys(vo).length)o.videos=vo;
   const f=ar.faq||{},fo={pages:{}};
   if(has(f.title))fo.title=f.title;if(has(f.intro))fo.intro=f.intro;
   for(const [k,p] of Object.entries(f.pages||{})){
@@ -662,7 +701,7 @@ async function put(path,obj,shaOld,msg){
 }
 async function save(){
   const err=validate();if(err)return toast(err,false);
-  cleanTheme();cleanFaq();cleanUi();cleanCats();A=mirror(D,A);
+  cleanTheme();cleanFaq();cleanUi();cleanCats();ASEC.cleanVideos();A=mirror(D,A);
   const enNow=JSON.stringify(D),arOut=compact(A),arNow=JSON.stringify(arOut);
   $('save').disabled=true;$('state').textContent='Saving...';
   let step='English';
@@ -697,7 +736,7 @@ async function shrink(file){
   }catch{return file}
 }
 // Carousel, news and team photos are resized and center-cropped to fit their frame, so they always cover it
-const FIT=[[/^carousel\./,1.6,2000],[/^news\./,2,1600],[/^employees\./,1,700]];
+const FIT=[[/^videos\.(home|about)\.poster$/,16/9,1600],[/^carousel\./,1.6,2000],[/^news\./,2,1600],[/^employees\./,1,700]];
 async function fit(file,ratio,W){
   if(!/^image\/(jpeg|png|webp)$/.test(file.type)||!window.createImageBitmap)return file;
   try{
@@ -710,6 +749,22 @@ async function fit(file,ratio,W){
     return blob?new File([blob],file.name.replace(/\.\w+$/,'')+'.jpg',{type:'image/jpeg'}):file;
   }catch{return file}
 }
+// Smaller copies (name-w480.jpg, name-w960.jpg) so phones download a light picture; the page picks one with srcset (KVER.set).
+const VARW=[480,960];
+async function smaller(file){
+  try{
+    const b=await createImageBitmap(file),out=[],png=file.type==='image/png';
+    for(const w of VARW){
+      if(b.width<w*1.15)continue;
+      const c=document.createElement('canvas');c.width=w;c.height=Math.round(b.height*w/b.width);
+      const x=c.getContext('2d');if(!png){x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height)}
+      x.drawImage(b,0,0,c.width,c.height);
+      const blob=await new Promise(r=>c.toBlob(r,png?'image/png':'image/jpeg',.82));
+      if(blob&&blob.size<file.size)out.push({w,blob});
+    }
+    return {width:b.width,out};
+  }catch{return {width:0,out:[]}}
+}
 async function upload(file,p){
   toast('Preparing image...');
   const ft=FIT.find(f=>f[0].test(p));
@@ -718,6 +773,13 @@ async function upload(file,p){
   const path='assets/'+Date.now().toString(36)+'-'+file.name.replace(/[^\w.\-]/g,'-');
   try{
     await api(path,{method:'PUT',body:{message:'Upload image via admin page',content:b64(new Uint8Array(await file.arrayBuffer())),branch:S.b}});
+    if(ft){                                                    // slider, news and team pictures: also upload the smaller copies
+      const sm=await smaller(file),done=[];
+      for(const {w,blob} of sm.out){
+        try{await api(path.replace(/(\.\w+)$/,`-w${w}$1`),{method:'PUT',body:{message:'Upload smaller copy of image via admin page',content:b64(new Uint8Array(await blob.arrayBuffer())),branch:S.b}});done.push(w)}catch{}
+      }
+      if(done.length&&sm.width)(D.imgSizes=D.imgSizes&&typeof D.imgSizes==='object'?D.imgSizes:{})[path.slice(7)]={w:sm.width,v:done};
+    }
     ASSETS.push(path.slice(7));$('assets').innerHTML+=`<option value="${esc(path.slice(7))}">`;set(D,p,path.slice(7));mark();view();toast('Image uploaded.');
   }catch(e){toast(e.message,false)}
 }
@@ -736,7 +798,7 @@ document.addEventListener('input',e=>{
   if(e.target.dataset.bool){set(D,p,e.target.checked);mark();return}
   e.target.classList.remove('bad');
   set(D,p,e.target.dataset.lines?e.target.value.split('\n').map(x=>x.trim()).filter(Boolean):e.target.value);mark();
-  if(p.endsWith('image')){const im=document.querySelector(`[data-prev="${p}"]`);if(im){im.style.visibility='';im.src=imgSrc(e.target.value)}}
+  if(/image$/i.test(p)){const im=document.querySelector(`[data-prev="${p}"]`);if(im){im.style.visibility='';im.src=imgSrc(e.target.value)}}
   if(!p.startsWith('ar:')&&/\.(title|country|name)$/.test(p)){const sm=e.target.closest('details')?.querySelector('summary span');if(sm)sm.textContent=e.target.value||'Untitled'}
 });
 document.addEventListener('change',e=>{
@@ -748,7 +810,7 @@ document.addEventListener('change',e=>{
     if(e.target.value==='color'&&!s.color)s.color='role:accentSoft';
     if(e.target.value==='image'&&s.overlay==null)s.overlay=0;
     mark();view();return}
-  const p=e.target.dataset.p;if(p&&p.endsWith('image')&&e.target.value){const v=e.target.value.trim().replace(/^\.\/assets\//,'');e.target.value=v;set(D,p,v)}const f=e.target.files?.[0];if(f&&e.target.dataset.up){upload(f,e.target.dataset.up);e.target.value=''}});
+  const p=e.target.dataset.p;if(p&&/image$/i.test(p)&&e.target.value){const v=e.target.value.trim().replace(/^\.\/assets\//,'');e.target.value=v;set(D,p,v)}const f=e.target.files?.[0];if(f&&e.target.dataset.up){upload(f,e.target.dataset.up);e.target.value=''}});
 document.addEventListener('click',e=>{
   const t=e.target.closest('[data-act]');if(!t)return;
   const a=t.dataset.act,i=+t.dataset.i,lk=LK(),arr=D&&D[lk];
@@ -784,9 +846,11 @@ if(tk&&$('f-o').value){$('f-t').value=tk;$('f-s').checked=true;connect({o:$('f-o
 
 
 </script>
-<script src="admin-look.js?v=9"></script>
-<script src="sections-map.js?v=9"></script>
-<script src="admin-sections.js?v=9"></script>
-<script src="admin-general.js?v=9"></script>
+<script src="admin-look.js?v=13"></script>
+<script src="sections-map.js?v=13"></script>
+<script src="video.js?v=4"></script>
+<script src="admin-sections.js?v=13"></script>
+<script src="admin-general.js?v=10"></script>
+<script src="admin-preview.js?v=1"></script>
 </body>
 </html>

@@ -174,3 +174,55 @@
 - **Cache**: script and style addresses now end in `?v=9`, so browsers fetch the new files. Version stamp: "Admin phase 5".
 - **Two zips**: the **complete** site, and a **light** one without the `assets/` folder (about 5 MB smaller) for when the pictures are already in the repository: upload it on top and nothing is lost. 19 pictures in `assets/` are not used by any page or data file (about 3.9 MB); they are kept in the complete zip and listed in README, Notes, so you can delete the ones you do not want.
 
+
+
+## Control, phase 1 of 4: live preview
+- **Preview button (admin, top bar)**: shows the real site page with your unsaved changes, beside the editor on wide screens or above it on narrow ones. Phone / tablet / desktop width, English or Arabic, scrolls to and outlines the section being edited, updates as you type, enlarge to nearly full screen. In General it shows the page the setting changes, with a page list. New files: `preview.js` (public pages, inert for visitors), `admin-preview.js`.
+- The version stamp box is hidden inside the preview. `site-version.js` build name: "Control phase 1".
+- Plan and status of the four Control phases: [CONTROL-PLAN.md](CONTROL-PLAN.md).
+
+## Control, phase 2 of 4: section header and WhatsApp button
+- **Section header (admin, Sections, Look of this section)**: hide or show the **title**, the **icon**, the **thin line** of any section, and the **WhatsApp button** at the end of the Patents, Trademarks and Translation pages. English and Arabic follow it. A hidden title stays readable for search engines and screen readers. Nothing changes until a box is ticked.
+- Saved as `theme.secHead`; `scripts/validate.js` checks it. `sections-map.js` now also lists which parts each section has (`parts`).
+- Script and style addresses of the changed files end in `?v=11`. Version stamp: "Control phase 2".
+
+## Control, phase 3 of 4: columns per row
+- **Columns per row (admin, Sections, Look of this section)**: choose 1 to 4 cards across on **tablet** and on **desktop** for Home Services, Home Latest news, About Advantages, About Our team and the Details cards of the three service pages. Phones keep their layout. Nothing changes until a box is set.
+- The team slider shows the chosen number across (it was fixed at 4) and updates its dots and counter; the news row shows that many cards at once.
+- Saved as `theme.cols`; `scripts/validate.js` checks it. Script and style addresses of the changed files end in `?v=12`. Version stamp: "Control phase 3".
+
+
+## Control, phase 4 of 4: card backgrounds
+- **Card background (admin, Sections)**: a colour and/or a picture for one card: each news article, each team member, the Translation card and the IP Services card (box in Home, Services). Also a darkening for the picture and a text colour. Empty = as designed; the Arabic site follows.
+- Saved on the item (`cardBg`, `cardImage`, `cardShade`, `cardText`) and on `ipCard`; `scripts/validate.js` checks them. Script and style addresses of the changed files end in `?v=13` (`admin-sections.js?v=10`). Version stamp: "Control phase 4".
+
+## Admin: phone editor
+- On a phone (narrower than 768 px) the English and Arabic boxes are no longer stacked one under the other. A bar under the admin tabs, **Show: English | عربي | Both**, shows one language at a time (English first); the choice is remembered in this browser. From 768 px up both languages stay side by side and the bar is hidden. Covers the item editors, the fixed texts in Sections, and the words and news categories in General. `admin.html`, `admin-sections.js?v=11`, `admin-general.js?v=10`.
+
+## Picture sizes and card picture position
+- **Smaller copies of pictures**: when the admin uploads a slider, news or team picture it also uploads two smaller copies next to it (`name-w480.jpg`, `name-w960.jpg`, only those narrower than the picture) and records them in `imgSizes` in `app-data.json`. The home slider, the news cards and the About team then use `srcset`, so a phone downloads the small copy. Pictures uploaded before this have no entry and load exactly as before; web addresses are left alone. If a picture fails to load the fallback picture shows as before. `scripts/validate.js` checks `imgSizes` (and that the copies exist when `assets/` is present).
+- **Card picture position**: in **Card background** a new box **Which part of the picture stays in view** (Center, Top, Bottom) for the picture of one card. Saved as `cardPos`; **As designed** clears it.
+- Changed files: `site-version.js?v=12` (`KVER.set`), `theme.js?v=14`, `styles.css?v=14`, `index.html`, `about.html`, `admin.html`, `scripts/validate.js`.
+
+## Focus ring for cards and buttons
+- Keyboard focus is now easy to see: a thicker (3 px) ring on every button and link, and on cards that open (news cards, the cards of the About page, contact tiles) a ring drawn just inside the edge, so sliders and scrolling rows cannot cut it off. Cards with their own dark colour or picture get a white ring with an outer ring in the accent colour; the sub-service buttons of the IP Services card get a gold ring because their background turns dark on focus. Only for keyboard use (the ring does not appear when clicking or tapping). It is an outline, so it also shows in Windows high-contrast mode. `styles.css?v=15`.
+
+
+## SEO: crawlable pages and Arabic at its own address
+- **New `scripts/build-seo.js`** and **`.github/workflows/build-seo.yml`**: write the SEO head (description, canonical, hreflang, Open Graph, Twitter, LegalService and FAQ structured data), a hidden home-page `<h1>`, a `<noscript>` copy of each page's text, `sitemap.xml` and `robots.txt`. Safe to run repeatedly; `--check` only reports. See README, "Search engines and Arabic addresses".
+- **Arabic pages at their own addresses** (`index-ar.html`, `about-ar.html`, `patents-ar.html`, `trademarks-ar.html`, `translation-ar.html`), generated only when the site languages are *both*; removed again when they are not. The language button, the menus, the bottom bar and the service-page redirect now follow the address (`lang.js`: `KLang.page()`, `KLang.url()`, `KLang.links()`; `footer.js`, `look.js`, `service-page.js`).
+- **`scripts/validate.js`** checks the new `seo` block in `app-data.json`, and now prints warnings.
+- Until the site languages are set to *both* nothing Arabic is generated and the site behaves as before; the English pages only gain the head tags, the hidden heading and the `<noscript>` text.
+
+## Video sections (home and About)
+- **New: YouTube video sections** on the home page (starts right under the slider) and on the About page (starts after the first paragraph). Admin: Sections, Home, **Video** and Sections, About, **Video**: link (English and Arabic), optional title and text, position (a list), text beside / above / below the video, hide. See README, "Video sections". New file `video.js`; `lang.js`, `styles.css`, `theme.js`, `sections-map.js`, `admin-sections.js`, `admin.html`, `scripts/validate.js` and the two pages changed.
+- **Fixed (About page): the team slider and the Jurisdictions slider did not appear** because `team()` read a variable (`D`) that does not exist on that page; the error stopped the rest of the page script. `team()` now receives the picture sizes it needs.
+
+## Video sections, visitor features
+- **Search engines**: VideoObject structured data and a no-script copy of the video title and text (English and Arabic pages) written by `scripts/build-seo.js`; new optional *Date the video was published* field.
+- **Cover picture** for the video (admin: Video, Cover picture). **Start by itself** (silent loop, pauses out of view, respects reduced motion and data saver). **Button** under the text (WhatsApp, web address, phone, e-mail or a page of the site), with Arabic wording.
+
+## Speed: compiled Tailwind
+- **New `scripts/build-tailwind.js`** (with `scripts/tailwind.config.cjs`, `scripts/tailwind-input.css`): builds `tailwind.css` (minified, only the classes the site uses, Tailwind 3.4.17 like the CDN) and switches the five public pages from the Tailwind CDN to it. The GitHub Action `build-seo.yml` runs it after the SEO build and now also runs when a script changes. The theme is read from `tailwind-config.js`, so colours and fonts still come from one place.
+- **Safe by design**: the pages keep the CDN tags between `KHIP-TW-JS` markers and an empty `KHIP-TW-CSS` marker after `styles.css`. A successful build empties the first and puts the stylesheet link in the second; a failed build (or `--cdn`) puts the CDN back and deletes `tailwind.css`. `admin.html` is not changed.
+- Pages: `index.html`, `about.html`, `patents.html`, `trademarks.html`, `translation.html` (markers only; they still use the CDN until the Action has run once).

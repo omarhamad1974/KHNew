@@ -17,10 +17,10 @@ window.KLang=(function(){
       no_country:'No matching country. Message us and we will check for you.',ip_guidelines:'IP guidelines available upon inquiry.',
       cov_title:'Our Regional Coverage',cov_intro:'We file and manage IP rights in eleven countries across the Middle East and North Africa, with offices in Cairo, Dubai and Riyadh.',map_aria:'Map of the Middle East and North Africa showing KHIP jurisdictions',prev_c:'Previous country',next_c:'Next country',
       view_req:'View Filing Requirements',pct:'PCT Filing Guidelines',copy_link:'Copy link',link_copied:'Link copied',related:'Related news',
-      more_info:'More information',inquire_about:'Inquire about {x}',wa_service:'Hello KHIP! I would like to inquire about {x}.',
+      more_info:'More information',inquire_about:'Inquire about {x}',wa_service:'Hello KHIP! I would like to inquire about {x}.',wa_hello:'Hello KHIP!',
       wa_jur:'IP filings and legal procedures in {x}',general:'General',msg_wa:'Message KHIP on WhatsApp',send:'Send',
       switch_to:'العربية',flag_aria:'{x} flag',testimonial_n:'Testimonial {x}',news_n:'News {x}',
-      prev:'Previous',next:'Next',pause:'Pause slideshow',play:'Play slideshow',slide_n:'Slide {x}',
+      video_play:'Play video',prev:'Previous',next:'Next',pause:'Pause slideshow',play:'Play slideshow',slide_n:'Slide {x}',
       faq_title:'Frequently asked questions',team_title:'Our team',team_prev:'Previous team members',team_next:'Next team members',team_page:'Team page {x}',
       filing:'Filing guidelines',filing_none:'Filing guidelines for {x} are available on request. Message us and we will guide you through the process.',browse_c:'Browse countries',
       prompts:["Hello KHIP, I'd like to register a trademark in Egypt","How long does a patent filing take in the UAE?","How can I check if my trademark is available in Saudi Arabia?","What documents do I need for a PCT national phase entry?"]
@@ -33,20 +33,28 @@ window.KLang=(function(){
       no_country:'لا توجد دولة مطابقة. راسلنا وسنتحقق لك.',ip_guidelines:'إرشادات الملكية الفكرية متاحة عند الاستفسار.',
       cov_title:'نطاق تغطيتنا الإقليمية',cov_intro:'نقوم بتسجيل وإدارة حقوق الملكية الفكرية في أحد عشر دولة في الشرق الأوسط وشمال أفريقيا، ولدينا مكاتب في القاهرة ودبي والرياض.',map_aria:'خريطة الشرق الأوسط وشمال أفريقيا توضح الاختصاصات القضائية لـ KHIP',prev_c:'الدولة السابقة',next_c:'الدولة التالية',
       view_req:'عرض متطلبات التسجيل',pct:'إرشادات تقديم طلبات معاهدة التعاون بشأن البراءات (PCT)',copy_link:'نسخ الرابط',link_copied:'تم نسخ الرابط',related:'أخبار ذات صلة',
-      more_info:'مزيد من المعلومات',inquire_about:'استفسر عن {x}',wa_service:'مرحباً KHIP! أود الاستفسار عن {x}.',
+      more_info:'مزيد من المعلومات',inquire_about:'استفسر عن {x}',wa_service:'مرحباً KHIP! أود الاستفسار عن {x}.',wa_hello:'مرحباً KHIP!',
       wa_jur:'إجراءات تسجيل الملكية الفكرية والإجراءات القانونية في {x}',general:'عام',msg_wa:'راسل KHIP عبر واتساب',send:'إرسال',
       switch_to:'English',flag_aria:'علم {x}',testimonial_n:'الرأي {x}',news_n:'الخبر {x}',
-      prev:'السابق',next:'التالي',pause:'إيقاف العرض مؤقتاً',play:'تشغيل العرض',slide_n:'الشريحة {x}',
+      video_play:'تشغيل الفيديو',prev:'السابق',next:'التالي',pause:'إيقاف العرض مؤقتاً',play:'تشغيل العرض',slide_n:'الشريحة {x}',
       faq_title:'الأسئلة الشائعة',team_title:'فريقنا',team_prev:'أعضاء الفريق السابقون',team_next:'أعضاء الفريق التاليون',team_page:'صفحة الفريق {x}',
       filing:'إرشادات التسجيل',filing_none:'إرشادات التسجيل في {x} متاحة عند الطلب. راسلنا وسنرشدك خلال الإجراءات.',browse_c:'تصفح الدول',
       prompts:['مرحباً KHIP، أود تسجيل علامة تجارية في مصر','كم يستغرق تقديم طلب براءة اختراع في الإمارات؟','كيف أتحقق من توفر علامتي التجارية في السعودية؟','ما المستندات المطلوبة لدخول المرحلة الوطنية لمعاهدة PCT؟']
     }
   };
   if(document.currentScript&&document.currentScript.hasAttribute('data-passive'))return {DICT}; // admin page: word lists only, no language switching
+  // A page can declare its language (<html data-khip-lang="en|ar">, written by scripts/build-seo.js when the site has both languages):
+  // then the ADDRESS decides (index.html is English, index-ar.html is Arabic) and the EN | AR button goes to the other address.
+  // Inside the admin preview (?khip-preview=1) the declaration is ignored, as before.
+  const PREVIEW=/[?&]khip-preview=1/.test(location.search);
+  const DECL=(()=>{const h=document.documentElement.getAttribute('data-khip-lang');return (h==='ar'||h==='en')&&!PREVIEW?h:null})();
+  const FILE=()=>(location.pathname.split('/').pop()||'index.html').replace(/-ar(\.html)$/,'$1');   // index-ar.html -> index.html
+  const HTMLNAME=/^([\w-]+)\.html([?#].*)?$/;
   const get=k=>{try{return localStorage.getItem(k)}catch{return null}};
   const put=(k,v)=>{try{localStorage.setItem(k,v)}catch{}};
   let langs=['en','ar','both'].includes(get(CS))?get(CS):'en',ui={};
   function pick(){
+    if(DECL)return DECL;
     if(langs==='ar')return 'ar';
     if(langs==='en')return 'en';
     const q=new URLSearchParams(location.search).get('lang');
@@ -98,11 +106,30 @@ window.KLang=(function(){
   // The admin's language choice. Returns true when the language shown has just changed.
   K.settings=v=>{
     const n=['en','ar','both'].includes(v)?v:'en';
-    langs=n;put(CS,n);const old=K.lang;K.lang=pick();apply();K.mount();
+    langs=n;put(CS,n);
+    if(DECL==='ar'&&n==='en'){location.replace(K.url(FILE(),'en')+location.search+location.hash);return false}   // Arabic switched off: go to the English page
+    const old=K.lang;K.lang=pick();apply();K.mount();
     return old!==K.lang;
   };
   K.langs=()=>langs;
-  K.set=l=>{put(LS,l);const u=new URL(location.href);u.searchParams.delete('lang');location.href=u.pathname+u.search+u.hash;location.reload()};
+  K.set=l=>{
+    put(LS,l);const u=new URL(location.href);u.searchParams.delete('lang');
+    if(DECL){location.href=K.url(FILE(),l)+u.search+u.hash;return}                  // the other language lives at its own address
+    location.href=u.pathname+u.search+u.hash;location.reload();
+  };
+  // File name of this page in English form (about-ar.html -> about.html); 'index.html' for the bare folder address.
+  K.page=FILE;
+  // Address of a page in a language: K.url('about.html','ar') -> 'about-ar.html'. Other addresses (#x, https://..., files) are returned unchanged.
+  K.url=(f,l)=>{
+    l=l||K.lang;if(!DECL)return f;
+    const m=String(f).match(HTMLNAME);if(!m)return f;
+    return m[1].replace(/-ar$/,'')+(l==='ar'?'-ar':'')+'.html'+(m[2]||'');
+  };
+  // On an Arabic page every link to another page of the site points to its Arabic version (also links the scripts add later).
+  K.links=(root=document)=>{
+    if(DECL!=='ar')return;
+    root.querySelectorAll('a[href]').forEach(a=>{const h=a.getAttribute('href'),n=K.url(h,'ar');if(n!==h)a.setAttribute('href',n)});
+  };
   // The EN | AR button: any element with id="lang-switch" (only filled when both languages are on)
   K.mount=()=>{
     document.querySelectorAll('#lang-switch').forEach(e=>{
@@ -142,6 +169,10 @@ window.KLang=(function(){
         for(const [k,v] of Object.entries(x))if(!NEUTRAL.has(k)&&txt(v))it[k]=v});
     }
     (o.news||[]).forEach(n=>{if(cm[n.category])n.category=cm[n.category]});
+    for(const pg of ['home','about']){                  // video sections: Arabic title, text and YouTube link (empty = the English one)
+      const av=(ar.videos||{})[pg],ov=(o.videos||{})[pg];if(!av||!ov)continue;
+      for(const k of ['title','text','url','ctaText'])if(txt(av[k]))ov[k]=av[k];
+    }
     const af=ar.faq;                                   // FAQ: Arabic question and answer per item id; heading and intro per page
     if(af&&o.faq){
       if(txt(af.title))o.faq.title=af.title;if(txt(af.intro))o.faq.intro=af.intro;
@@ -173,7 +204,14 @@ window.KLang=(function(){
       if(JSON.stringify(d)!==JSON.stringify(cached)||ck()!==first){try{localStorage.setItem(ck(),JSON.stringify(d))}catch{}apply(d)}
     }).catch(()=>{});
   };
-  const boot=()=>{K.mount();K.tx()};
+  const boot=()=>{
+    K.mount();K.tx();K.links();
+    if(DECL==='ar'&&window.MutationObserver){let q=0;new MutationObserver(()=>{if(q)return;q=requestAnimationFrame(()=>{q=0;K.links()})}).observe(document.body,{childList:true,subtree:true})}
+  };
+  // Old shared links such as index.html?lang=ar go to the Arabic address
+  if(DECL==='en'&&new URLSearchParams(location.search).get('lang')==='ar'){
+    const u=new URL(location.href);u.searchParams.delete('lang');location.replace(K.url(FILE(),'ar')+u.search+u.hash);
+  }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
   return K;
 })();

@@ -31,11 +31,19 @@ Saving in the admin writes a commit to the repository. The host republishes the 
 - Check `app-data.json` with `node scripts/validate.js` (GitHub runs it on every push).
 - Decide the site languages (admin, General, Languages & words, **Site languages**).
 
+### 2.4 Search engines (once)
+1. Open `app-data.json` and add the live address: `"seo": { "siteUrl": "https://YOUR-DOMAIN/" }` (the admin keeps this block when it saves).
+2. GitHub, Settings, Actions, General, Workflow permissions: **Read and write permissions**. After the next push the Action "Build SEO pages" adds the generated files (check Actions for a green tick).
+3. Add the site to Google Search Console and Bing Webmaster Tools and submit `https://YOUR-DOMAIN/sitemap.xml`. A project site on `owner.github.io/repo/` cannot serve `robots.txt` from its root; use a custom domain for that.
+4. Turn on Arabic for search engines: admin, General, Languages & words, Site languages = **English and Arabic**, Save. The Arabic pages appear after the build. Have the Arabic reviewed before this step.
+
 ## 3. Daily use
 - Open `admin.html`, enter your GitHub user or organization, the repository name, and the token. The first three are remembered by the browser; the token is asked each time unless you tick *Keep me signed in for this browser tab*.
 - Edit in **General** and **Sections**, then press **Save to GitHub** (or Ctrl+S). The undo arrow discards unsaved changes; the download icon saves a backup copy of the data file.
 - Photos you upload are resized and cropped to their frame automatically and stored in `assets/`.
 - Arabic: every box has English on the left and Arabic on the right; an empty Arabic box falls back to English. Save writes only the file(s) that changed.
+- **Preview** (button in the top bar): the real page with your unsaved changes, beside the editor. Choose phone / tablet / desktop and English / Arabic.
+- Videos: Sections, **Home** (or **About**), **Video**. Paste the YouTube address, add a title and text if you like, and choose the position from the list. Leave the English link empty or tick *Hide this video section* to remove it from the site.
 - Fonts: General, **Fonts** (whole site) or Sections, **Look of this section**, **Fonts** (one section). Headings and text, English and Arabic.
 
 ## 4. Troubleshooting
@@ -47,6 +55,7 @@ Saving in the admin writes a commit to the repository. The host republishes the 
 | "The file changed on GitHub" | Someone saved in between. Press the undo arrow to reload, then redo your edit. |
 | Saved but the site looks the same | Wait a minute or two, then hard-refresh (Ctrl+F5). Visitors' browsers keep a copy and refresh it on their next visit. |
 | An image is too large | Images over 3 MB after resizing are refused; compress it first. |
+| The site looks unstyled or different after a push | Run `node scripts/build-tailwind.js --cdn` (or restore the five pages from the previous commit) to go back to the Tailwind CDN, then tell whoever maintains the site; check the Action log for "Tailwind build failed". |
 
 ## 5. Security and care
 - The token is the only secret. Never paste it into the site files or share it. Use a fine-grained token limited to this one repository, with an expiry date.
@@ -58,5 +67,8 @@ Saving in the admin writes a commit to the repository. The host republishes the 
 - `app-data.json`, `app-data.ar.json`: all editable content. `app-data.sample.json` is a minimal example.
 - `admin.html`: the admin page. `admin-look.js`: the look controls (fonts, header & bar, cards, text alignment, logos, picture effects, animation, map & logo motion), drawn in General (site-wide) and in Sections ("Look of this section"); `admin-general.js`, `admin-sections.js`, `sections-map.js`: the General and Sections pages. `news-import.js`, `slider-import.js`: Word / Markdown / spreadsheet import readers used by the admin.
 - `theme.js` (colors, fonts, backgrounds, hero height, header / bar / card colours, text alignment, logo sizes), `lang.js` (English / Arabic engine), `pages-i18n.js` (fixed page texts, English and Arabic), `rich.js` (text formatting), `look.js` (menu behaviour), `faq.js`, `service-page.js`, `footer.js` (bottom bar and WhatsApp box), `tailwind-config.js`, `styles.css`.
+- `preview.js` (public pages, inert for visitors) and `admin-preview.js` (admin): the live preview. Plan of the Control phases: `CONTROL-PLAN.md`.
+- `video.js`: the YouTube video sections of the home and About pages.
 - `assets/`: logos, team photos and uploaded pictures.
 - `scripts/validate.js`, `.github/workflows/validate.yml`: content check run by GitHub.
+- `scripts/build-tailwind.js`, `scripts/tailwind.config.cjs`, `scripts/tailwind-input.css`, `tailwind.css` (generated): the compiled Tailwind stylesheet; run by the same Action as the SEO build.

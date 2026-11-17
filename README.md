@@ -16,6 +16,38 @@ Open `https://YOUR-SITE/admin.html`, sign in with a GitHub fine-grained token (C
 - Photos: upload from your device (large photos are shrunk automatically) or pick one already in `assets/`.
 - Add, duplicate, reorder, delete, search (long lists), Ctrl+S to save, undo arrow to discard changes, download icon for a backup.
 
+## Live preview (admin: Preview button)
+The **Preview** button shows the real page with your unsaved changes (phone, tablet or desktop width; English or Arabic) beside the editor, scrolled to and outlining the section you are editing. See [CONTROL-PLAN.md](CONTROL-PLAN.md), phase 1. `preview.js` is loaded first by every public page and does nothing unless the page is inside the admin preview (address `?khip-preview=1` and a parent window that is `admin.html`); `admin-preview.js` is the panel.
+
+
+## Video sections (admin: Sections, Home, Video / About, Video)
+A YouTube video with an optional title and text, on the **Home** page and on the **About** page. Paste any YouTube address (`watch?v=`, `youtu.be/`, `/shorts/`, `/live/` or the 11-letter id; a start time such as `?t=90` is kept). The admin shows the video it found. The page shows a poster with a play button and loads the YouTube player (youtube-nocookie.com) only when it is pressed, so the page stays fast.
+- **Hide this video section** keeps everything but shows nothing. Nothing shows either while the English link is empty.
+- **Arabic**: the Arabic boxes can hold a different (Arabic) video, title and text; an empty box shows the English one.
+- **Position** (a list in the admin). Home: right under the slider (start), or after any other section. About: after the first paragraph (start), after the second paragraph, or after any other section. Between two paragraphs the video sits inside the About text; elsewhere it is a full section.
+- **Text and video**: text beside, above or below the video. With no title and no text the video is shown alone, wide.
+- **Look of this section** works as for every section (background, header parts, fonts, alignment, animation).
+- **Button** (optional): words (English and Arabic) plus a link: `whatsapp` (a chat with the number in General, Contact), a web address, `tel:+20...`, `mailto:...` or a page of the site (`about.html#team`). Both must be set for it to show.
+- **Cover picture** (optional): upload or pick from `assets/`; it is cropped 16:9. Empty: YouTube's own picture.
+- **Start by itself**: silent, looping, starts when half the video is in view and pauses when it scrolls away; visitors can switch the sound on. Visitors whose device asks for less motion, or who save data, get the play button instead.
+- **Search engines**: the build (`scripts/build-seo.js`) writes VideoObject data (title, text, picture, YouTube address, and the publish date if you fill *Date the video was published*) and a copy of the title and text for crawlers that do not run scripts.
+- Saved as `videos` in `app-data.json`: `{ "home": { "url": "", "title": "", "text": "", "layout": "side|top|bottom", "after": "home-hero", "hidden": false, "poster": "", "autoplay": false, "date": "2025-03-02", "ctaText": "", "ctaLink": "whatsapp" }, "about": { ... "after": "p1" } }`; Arabic `url`, `title`, `text`, `ctaText` in `app-data.ar.json`. New file: `video.js`.
+
+## Section header (admin: Sections, Look of this section, Section header)
+Hide or show the **title**, the **icon**, the **thin line** under the title and, on the Patents / Trademarks / Translation pages, the **WhatsApp button** of any section. A hidden title is only visually hidden (search engines and screen readers still read it). Saved as `theme.secHead` (`{ "<section>": { "title": true } }`, only hidden parts are written). See [CONTROL-PLAN.md](CONTROL-PLAN.md), phase 2.
+
+## Columns per row (admin: Sections, Look of this section, Columns per row)
+Set how many cards sit side by side (1 to 4) on **tablet** and **desktop** for Home Services, Home Latest news, About Advantages, About Our team and the Details cards of the service pages. Phones are not affected. Saved as `theme.cols` (`{ "<section>": { "t": "2", "d": "3" } }`). See [CONTROL-PLAN.md](CONTROL-PLAN.md), phase 3.
+
+## Card backgrounds (admin: Sections, open the item, Card background)
+A colour and/or a picture for one card: a news article, a team member, the Translation card, the IP Services card (Home, Services). With a picture you can darken it and choose the text colour. Saved on the item as `cardBg`, `cardImage`, `cardShade`, `cardText` (and on `ipCard`). See [CONTROL-PLAN.md](CONTROL-PLAN.md).
+
+## Picture sizes
+Uploading a slider, news or team picture in the admin also uploads smaller copies (`-w480`, `-w960`) and lists them in `imgSizes`; the pages use `srcset` so phones load the light copy. Older pictures are unchanged.
+
+## Phone editor
+On a phone the English and Arabic boxes are shown one language at a time: use **Show: English | عربي | Both** under the tabs. Wider screens show both side by side.
+
 ## Fonts (admin: General, Fonts; Sections, Look of this section, Fonts)
 Choose the letters of the site: **Headings** (titles, card titles, FAQ questions) and **Text** (everything else), separately for **English** and **Arabic**, for the whole site and for a single section. Each box offers ready fonts (16 Latin, 8 Arabic), **the visitor's own font (system)** and **Another Google font** (type its exact name from fonts.google.com). The first choice of every box keeps the original fonts (Cormorant Garamond and Jost for English, Noto Naskh Arabic and Cairo for Arabic). A section left on "Same as the whole site" follows General. The preview shows English and Arabic samples. Visitors download only the fonts you chose. Logos, the KHIP word mark and icons are not affected.
 Saved as `theme.fonts`: `{ "all": { "head": { "en": "Playfair Display", "ar": "Amiri" }, "body": { "en": "Inter", "ar": "Tajawal" } }, "sec": { "<section>": { "head": { "en": "Lora" } } } }`. `theme.js` sets four CSS variables (`--fh-en`, `--fh-ar`, `--fb-en`, `--fb-ar`; a section's own values sit on its element) and loads the Google stylesheet; `styles.css` and `tailwind-config.js` read `--fh` / `--fb`, which follow the page direction.
@@ -59,12 +91,22 @@ Home, IP Services (IP Services section), News (Latest news section), Jurisdictio
 - A small dark box in the bottom-left corner of every public page shows the build name and when `app-data.json` was last fetched from GitHub (plus the file's saved time). Tap it to shrink; `?debug=0` hides it, `?debug=1` shows it again. Set `STAMP=false` in `site-version.js` to remove it for good.
 - All site pictures are requested as `picture.jpg?v=2`. To force a re-download for everyone, raise `IMG_V` in `site-version.js` and change `?v=2` in the logo tags of the HTML pages.
 
+## Search engines and Arabic addresses (`scripts/build-seo.js`)
+The pages fill themselves from `app-data.json` with JavaScript, which many crawlers do not run. The SEO build writes what they need straight into the HTML. Run it with `node scripts/build-seo.js`; on GitHub it runs by itself after every change to the content or the pages (`.github/workflows/build-seo.yml`, which commits the result; it needs Settings, Actions, General, Workflow permissions, **Read and write**).
+- **Head of every page**: description, canonical address, Open Graph / Twitter tags, `LegalService` structured data (name, phone, e-mail, map position, countries served, social links) and, where the page has FAQ, the FAQPage data.
+- **Crawlable text**: a hidden `<h1>` on the home page and a `<noscript>` copy of the page text (about text, services, countries, news, testimonials, team, FAQ, contact). Visitors with JavaScript never see it.
+- **Arabic at its own address**: when the site languages are **both**, the build writes `index-ar.html`, `about-ar.html`, `patents-ar.html`, `trademarks-ar.html`, `translation-ar.html` (Arabic title, description, `lang="ar" dir="rtl"`, `hreflang` links between the two versions). The EN | AR button goes to the other address, links on an Arabic page stay on Arabic pages, and an old `index.html?lang=ar` link is sent to `index-ar.html`. Do not edit the `-ar` files: they are rebuilt from the English pages. Text that is still English in `app-data.ar.json` (country summaries, news) is left out of the Arabic page's crawlable copy.
+- **`sitemap.xml` and `robots.txt`** (with the English and Arabic address of each page).
+- **Settings** in `app-data.json`, block `seo` (all optional, checked by `scripts/validate.js`): `siteUrl` (the live address, **needed** for canonical, hreflang, sitemap and the share picture; it is never guessed), `name`, `ogImage` (a file in `assets/`, default `assets/khip-logo.jpg`) and `pages.<home|about|patents|trademarks|translation>.title|description.<en|ar>` to replace the built-in titles and descriptions. The Arabic descriptions built in are drafts: have them reviewed with the rest of the Arabic.
+- **How the language is chosen**: when a page carries `data-khip-lang` (written by the build for English + Arabic sites) the address decides the language. Without it, and inside the admin preview, the old behaviour (saved choice, `?lang=`) is used.
+- Files: `scripts/build-seo.js`, `lang.js` (`KLang.page()`, `KLang.url()`, `KLang.links()`), `footer.js`, `look.js` and `service-page.js` (they read the page name through `KLang.page()` so `about-ar.html` counts as About).
+
 ## Checks
 
 `node scripts/validate.js` checks `app-data.json` (required fields, duplicate ids, missing images, bad links). GitHub runs it on every push (`.github/workflows/validate.yml`).
 
 ## Notes
-- The site loads Tailwind from its CDN, which is fine for this size but is not meant for heavy production use. If pages feel slow, compile Tailwind once and replace the CDN script.
+- **Tailwind is compiled, not loaded from the CDN.** On GitHub, the same Action that builds the SEO pages (`.github/workflows/build-seo.yml`) runs `scripts/build-tailwind.js`: it builds `tailwind.css` (only the classes the site uses, minified) and points the five public pages at it, so visitors no longer download Tailwind's script and the browser no longer builds the styles on every page view. The theme still comes from `tailwind-config.js`. If the build fails for any reason, the pages go back to the CDN by themselves and the old `tailwind.css` is deleted, so styles are never lost. Each page has two marked places in its `<head>` (`KHIP-TW-JS` and `KHIP-TW-CSS`); do not remove them. To go back to the CDN on purpose run `node scripts/build-tailwind.js --cdn`; `--check` tells which one is active. `admin.html` keeps the CDN. When you add a **new** Tailwind class in a page or script nothing else is needed: the next push rebuilds. Classes written only inside `app-data.json` are not seen (the site does not use any).
 - Contact phones, emails, address, map, WhatsApp number and social links: admin, General, Contact & social (stored as `contact` and `social`; `contact.js` puts them on the pages). The sentence "Offices in Egypt, the UAE and Saudi Arabia" is still page text (Page texts tab in Arabic mode; HTML for English).
 - **Pictures nobody uses**: these files in `assets/` are not used by any page or data file (about 3.9 MB). Delete the ones you do not want in the repository (a picture you add to a slide, article or team member later is stored under its own name): `Yasmine Saeed.jpg`, `Younan.jpg`, `omar.jpg`, `mvm9bed7-65080.jpg`, `mvoyodop-74217.jpg`, `mvoyopv9-74216.jpg`, `mvoyoyp3-74215.jpg`, `mvoyp74f-74214.jpg`, `mvoypojs-74208.jpg`, `mvoypw1b-74214.jpg`, `mvoyqc0y-74209.jpg`, `mvoyqs64-74211.jpg`, `mvoyr2jd-74210.jpg`, `mvoyre90-74207.jpg`, `mvoyrq6p-74212.jpg`, `mvx165cd-1000082090.jpg`, `mwie8y9k-zizi-zi-Brlj6pi-g1I-unsplash.jpg`, `mwif2c3b-mikael-kristenson-MYXf7tGEntk-unsplash.jpg`, `mwif2k6j-nikhil-fHOc-5r6LMg-unsplash.jpg`. Check first that none is one of your own pictures in a slide you plan to use.
 - **Light zip**: the package comes in two forms, complete and without `assets/`. The light one is for updates when the pictures are already in the repository.
