@@ -590,7 +590,9 @@
           "cards": {
             "effect": "start",
             "stagger": "0.2",
-            "speed": "1.4"
+            "speed": "1.9",
+            "delay": "1.3",
+            "distance": "medium"
           }
         }
       }
