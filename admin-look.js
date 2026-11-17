@@ -361,11 +361,33 @@ const ALOOK=(()=>{
     const one=([k,l,w])=>`<label class="flex items-start gap-2 text-xs font-bold text-gray-700 bg-gray-50 border border-gray-200 rounded-lg p-3 cursor-pointer"><input type="checkbox" data-p="theme.parts.${key}.${k}" data-bool="1" data-lkv="1" ${s[k]===true?'checked':''} class="mt-0.5"><span>${esc(l)}${w?`: <span class="font-normal text-gray-600">${esc(w)}</span>`:''}</span></label>`;
     return det('p:'+key,'Parts of this section',hid.length>0,hid.length+' hidden','All shown',`<div class="grid sm:grid-cols-2 gap-3">${parts.map(one).join('')}</div><p class="text-[11px] text-gray-500">Tick a box to hide that part on the website, in English and Arabic. Untick it to show it again. What is written for a hidden part is kept.</p><div><button type="button" data-lk="reset-sec-parts" data-k="${key}" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl"><i class="fas fa-rotate-left"></i> Show every part</button></div>`);
   }
+  /* ---------- IP service buttons (home Services only): the colours of all the Patents / Trademarks / ... buttons ---------- */
+  function secBtns(key){
+    if(BK(key)!=='home-services')return '';
+    const base=`theme.secBtns.${key}.`,s=(T().secBtns||{})[key]||{},on=Object.keys(s).some(k=>s[k]);
+    return det('s:'+key,'IP service buttons',on,'Own colors','As designed',
+      grid(cref(base+'bg','Button color',{none:'As designed (no color)'})+cref(base+'text','Text and icon color',{none:'As designed (white or dark on a color)'})
+        +cref(base+'border','Border color',{none:'As designed'})+cref(base+'hbg','Color when pointed at or tapped',{none:'As designed (dark)'})
+        +cref(base+'htext','Text color when pointed at or tapped',{none:'As designed (white or dark)'}))
+      +`<p class="text-[11px] text-gray-500">The buttons inside the IP Services card (Patents, Trademarks, ...). One button can have its own colors: open that service in the list above, <b>Button colors</b>.</p>`
+      +`<div><button type="button" data-lk="reset-sec-btns" data-k="${key}" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl"><i class="fas fa-rotate-left"></i> As designed</button></div>`);
+  }
+  /* ---------- Icons before titles: size, colour, circle colour, beside the title ---------- */
+  function secIcons(key){
+    const what=(TH().TI_SECS||{})[BK(key)];if(!what)return '';
+    const base=`theme.icons.${key}.`,s=(T().icons||{})[key]||{},on=Object.keys(s).some(k=>s[k]!==''&&s[k]!=null&&s[k]!==false&&!(k==='size'&&+s[k]===100));
+    return det('i:'+key,'Icons before titles',on,'Own look','As designed',
+      `<p class="text-[11px] text-gray-500">${esc(what)}.</p>`
+      +slider(base+'size','Size',50,150,5,'%',100)
+      +grid(cref(base+'color','Icon color',{none:'As designed'})+cref(base+'bg','Circle color (icons that sit in a circle)',{none:'As designed'}))
+      +`<label class="flex items-start gap-2 text-xs font-bold text-gray-700 bg-gray-50 border border-gray-200 rounded-lg p-3 cursor-pointer"><input type="checkbox" data-p="${base}inline" data-bool="1" data-lkv="1" ${s.inline===true?'checked':''} class="mt-0.5"><span>Beside the title: <span class="font-normal text-gray-600">the icon sits on the same line as its title, instead of above it.</span></span></label>`
+      +`<div><button type="button" data-lk="reset-sec-icons" data-k="${key}" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl"><i class="fas fa-rotate-left"></i> As designed</button></div>`);
+  }
   const SECKEYS=()=>TH().SECTIONS.map(x=>x[0]);
   function hasLook(key){
     const t=T(),has=o=>!!o&&Object.values(o).some(v=>v&&typeof v==='object'?has(v):v!==''&&v!=null&&v!==false);
     if(key==='home-hero')return has((t.imgfx||{}).hero);
-    return ['color','image'].includes(((t.sections||{})[key]||{}).mode)||has((t.secCards||{})[key])||has((t.secHead||{})[key])||has((t.parts||{})[key])||has((t.cols||{})[key])||has(((t.align||{}).sec||{})[key])||has(((t.imgfx||{}).sec||{})[key])||has(((t.anim||{}).sec||{})[key])||has(((t.fonts||{}).sec||{})[key]);
+    return ['color','image'].includes(((t.sections||{})[key]||{}).mode)||has((t.secCards||{})[key])||has((t.secHead||{})[key])||has((t.parts||{})[key])||has((t.secBtns||{})[key])||has(Object.fromEntries(Object.entries((t.icons||{})[key]||{}).filter(([k,v])=>!(k==='size'&&+v===100))))||has((t.cols||{})[key])||has(((t.align||{}).sec||{})[key])||has(((t.imgfx||{}).sec||{})[key])||has(((t.anim||{}).sec||{})[key])||has(((t.fonts||{}).sec||{})[key]);
   }
   function secLook(key){
     const wrap=(intro,body,extra='')=>`<div class="bg-white p-4 rounded-2xl border border-gray-200 space-y-3"><div class="flex items-start justify-between gap-3"><div><h3 class="font-extrabold text-base">Look of this section</h3><p class="text-xs text-gray-600 mt-0.5">${intro}</p></div>${extra}</div>${body}</div>`;
@@ -376,9 +398,9 @@ const ALOOK=(()=>{
     }
     if(!SECKEYS().includes(BK(key)))return '';
     const bg=bgInfo(key);
-    return wrap('Background, header parts, parts of the section, columns, cards, fonts, text alignment, photo effect and animation of this section only. Whatever you leave on its default follows the site-wide settings in <b>General</b> (Colors, Cards, Fonts, Text alignment, Picture effects, Animation). Cards settings only matter where the section has cards.',
+    return wrap('Background, header parts, parts of the section, columns, buttons, icons, cards, fonts, text alignment, photo effect and animation of this section only. Whatever you leave on its default follows the site-wide settings in <b>General</b> (Colors, Cards, Fonts, Text alignment, Picture effects, Animation). Cards settings only matter where the section has cards.',
       det('b:'+key,'Background',bg.mode!=='default',bg.badge,'Default',bg.body)
-      +secHead(key)+secParts(key)+secCols(key)+secCards(key)+secFonts(key)+secAlign(key)+secFx(key)+secAx(key),
+      +secHead(key)+secParts(key)+secCols(key)+secCards(key)+secBtns(key)+secIcons(key)+secFonts(key)+secAlign(key)+secFx(key)+secAx(key),
       hasLook(key)?`<button type="button" data-lk="reset-sec-look" data-k="${key}" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl flex-shrink-0" title="Remove every look setting of this section"><i class="fas fa-rotate-left"></i> Reset this section</button>`:'');
   }
 
@@ -399,6 +421,7 @@ const ALOOK=(()=>{
       }
     };
     if(t.secHead){Object.keys(t.secHead).forEach(k=>{const s=t.secHead[k]||{};Object.keys(s).forEach(p=>{if(s[p]!==true)delete s[p]})})}      // only "hide" is saved
+    if(t.icons){Object.keys(t.icons).forEach(k=>{const s=t.icons[k]||{};if(s.inline!==true)delete s.inline;if(s.size!=null&&(s.size===''||+s.size===100))delete s.size})}
     if(t.parts){Object.keys(t.parts).forEach(k=>{const s=t.parts[k]||{};Object.keys(s).forEach(p=>{if(s[p]!==true)delete s[p]})})}
     if(t.layout){
       const Ly=t.layout;
@@ -407,7 +430,7 @@ const ALOOK=(()=>{
       ['hide','order','copies'].forEach(k=>{if(Ly[k]&&!Object.keys(Ly[k]).length)delete Ly[k]});
       if(!Object.keys(Ly).length)delete t.layout;
     }
-    ['header','bar','wa','cards','secCards','secHead','parts','cols','align','logos','menu','imgfx','anim','motion','fonts'].forEach(k=>{if(t[k]){prune(t[k]);if(!Object.keys(t[k]).length)delete t[k]}});
+    ['header','bar','wa','cards','secCards','secHead','parts','secBtns','icons','cols','align','logos','menu','imgfx','anim','motion','fonts'].forEach(k=>{if(t[k]){prune(t[k]);if(!Object.keys(t[k]).length)delete t[k]}});
     // a font name that is not allowed is dropped rather than saved
     const okF=o=>{if(!o||typeof o!=='object')return;['head','body'].forEach(r=>['en','ar'].forEach(l=>{if(o[r]&&o[r][l]&&!TH().fontOk(o[r][l]))delete o[r][l]}))};
     if(t.fonts){okF(t.fonts.all);Object.values(t.fonts.sec||{}).forEach(okF);[t.fonts].concat([t.fonts.all],Object.values(t.fonts.sec||{})).forEach(o=>{if(o)prune(o)});if(!Object.keys(t.fonts).length)delete t.fonts}
@@ -468,8 +491,10 @@ const ALOOK=(()=>{
     else if(a==='reset-sec'){if(t.secCards)delete t.secCards[b.dataset.k];mark();view()}
     else if(a==='reset-sec-cols'){if(t.cols)delete t.cols[b.dataset.k];mark();view()}
     else if(a==='reset-sec-head'){if(t.secHead)delete t.secHead[b.dataset.k];mark();view()}
+    else if(a==='reset-sec-btns'){if(t.secBtns)delete t.secBtns[b.dataset.k];mark();view()}
+    else if(a==='reset-sec-icons'){if(t.icons)delete t.icons[b.dataset.k];mark();view()}
     else if(a==='reset-sec-parts'){if(t.parts)delete t.parts[b.dataset.k];mark();view()}
-    else if(a==='reset-sec-look'){const k=b.dataset.k;if(confirm('Remove the background, hidden header parts, hidden parts, columns, cards colors, fonts, text alignment, photo effect and animation set for this section? It will follow the site-wide settings.')){if(t.sections)delete t.sections[k];[['secCards'],['secHead'],['parts'],['cols'],['align','sec'],['imgfx','sec'],['anim','sec'],['fonts','sec']].forEach(([a1,a2])=>{const o=a2?(t[a1]||{})[a2]:t[a1];if(o)delete o[k]});mark();view()}}
+    else if(a==='reset-sec-look'){const k=b.dataset.k;if(confirm('Remove the background, hidden header parts, hidden parts, button and icon settings, columns, cards colors, fonts, text alignment, photo effect and animation set for this section? It will follow the site-wide settings.')){if(t.sections)delete t.sections[k];[['secCards'],['secHead'],['parts'],['secBtns'],['icons'],['cols'],['align','sec'],['imgfx','sec'],['anim','sec'],['fonts','sec']].forEach(([a1,a2])=>{const o=a2?(t[a1]||{})[a2]:t[a1];if(o)delete o[k]});mark();view()}}
   });
 
   return {tabs,clean,previews,secLook,hasLook,cref};

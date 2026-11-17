@@ -8,6 +8,7 @@ More control for the admin over what visitors see, and a real preview of it. Eac
 | 2 | **Section header**: hide or show the title, the icon and the thin line of any section. **WhatsApp button**: hide or show it at the end of the service pages | **Done** |
 | 3 | **Columns per row** on tablet and desktop for the sections that have cards | **Done** |
 | 4 | **Card backgrounds**: a colour or a picture for one card (the IP Services and Translation cards, each news card, each team card) | **Done** |
+| 6 | **IP service buttons and title icons**: colours of the Patents / Trademarks buttons (each one, or all of them), and size, colour and position of the icons before titles | **Done** |
 | 5 | **Page layout**: show or hide whole sections, show or hide parts inside a section, change the order of the sections, duplicate a section | **Done** |
 
 ## Phase 1: live preview
@@ -54,3 +55,12 @@ More control for the admin over what visitors see, and a real preview of it. Eac
   `{ "layout": { "hide": { "home-news": true }, "order": { "home": ["home-hero", "home-faq", "home-about", ...] }, "copies": { "home-faq-c2": "home-faq" } }, "parts": { "home-about": { "more": true } } }`.
   A copy is named after its section plus `-c2`, `-c3`, ...; its look settings are saved under that name like any section (`theme.sections["home-faq-c2"]`, ...). Nothing is written until something is changed, so the site looks as before.
 - **Files**: `layout.js` (new; every page, right after `theme.js`: hides sections and parts, orders the sections, makes the copies; also lists the parts, `KLAYOUT.PARTS`), `theme.js` (`KTHEME.paintSec` paints one section), the pages (`data-part` on the parts, `data-lay="home-hero"` on the slider), `contact.js` (parts on the contact tiles), `styles.css` (copies; the map and news rules also match a copy), `admin-sections.js` (the list and the bar), `admin-look.js` (Parts of this section, copies in Look of this section), `admin-preview.js`, `scripts/validate.js` (checks `theme.layout` and `theme.parts`).
+
+## Phase 6: IP service buttons and icons before titles
+- **One button** (Patents, Trademarks, any IP service): **Sections, Home, Services**, open the service, **Button colors**: button color, text and icon color, border, color when pointed at or tapped, and its text color. A preview shows the button as it will look. The Translation service is a card, so it keeps **Card background**; IP services no longer show that block (it did nothing for them).
+- **All the IP buttons at once**: **Sections, Home, Services, Look of this section, IP service buttons**, same five colors. A button's own colors go on top of these.
+- A button color with no text color gets white or dark text, whichever reads; the same for the pointed-at color.
+- **Icons before titles**: **Look of this section, Icons before titles**, in the sections that have them: Home Services (the round icon of the two cards), About intro (the service tiles), About Advantages, and the Introduction (page icon and fact cards), Details and Contact (links) of the service pages. **Size** 50 % to 150 %, **Icon color**, **Circle color** and **Beside the title** (the icon on the same line as its title instead of above it).
+- A copy of a section has its own button and icon settings, and starts with those of the section it was copied from.
+- **Saved as**: on the service `btnBg`, `btnText`, `btnBorder`, `btnHoverBg`, `btnHoverText`; `theme.secBtns = { "home-services": { "bg", "text", "border", "hbg", "htext" } }`; `theme.icons = { "<section>": { "size": "80", "color": "role:gold", "bg": "#fde68a", "inline": true } }`. Colors are palette colors (`role:...`), your own colors (`custom:...`) or `#rrggbb`. `scripts/validate.js` checks them.
+- **Files**: `theme.js` (`KTHEME.sb`, `paintBtns`, `icons`, `TI_SECS`), `styles.css` (`.svc-sub` reads `--sb-*`; the icons block at the end), `index.html` (buttons and card icons), `about.html`, the three service pages and `service-page.js` (`data-ti` on the icons, `data-ti-row` on icon + title), `admin.html` (Button colors), `admin-look.js` (IP service buttons, Icons before titles), `admin-sections.js` (copies take these settings too).

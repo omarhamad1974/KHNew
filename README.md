@@ -52,6 +52,9 @@ Hide or show the **title**, the **icon**, the **thin line** under the title and,
 ## Page layout (admin: Sections, Sections of this page)
 Show or hide any **section**, hide single **parts** of a section (logo, buttons, map, slider arrows, one card, contact tiles, ...: *Look of this section, Parts of this section*), **change the order** of the sections of a page and **duplicate** a section. A copy shows the same content as its section and has its own look. Saved as `theme.layout` (`hide`, `order`, `copies`) and `theme.parts`; applied by `layout.js`. See [CONTROL-PLAN.md](CONTROL-PLAN.md), phase 5.
 
+## IP service buttons and icons before titles
+Colors of the Patents / Trademarks buttons in the IP Services card: one button (open the service, **Button colors**) or all of them (Home, Services, Look of this section, **IP service buttons**). Icons before titles: size, color, circle color and **beside the title** (Look of this section, **Icons before titles**). Saved as `btn*` on the service, `theme.secBtns`, `theme.icons`. See [CONTROL-PLAN.md](CONTROL-PLAN.md), phase 6.
+
 ## Columns per row (admin: Sections, Look of this section, Columns per row)
 Set how many cards sit side by side (1 to 4) on **tablet** and **desktop** for Home Services, Home Latest news, About Advantages, About Our team and the Details cards of the service pages. Phones are not affected. Saved as `theme.cols` (`{ "<section>": { "t": "2", "d": "3" } }`). See [CONTROL-PLAN.md](CONTROL-PLAN.md), phase 3.
 

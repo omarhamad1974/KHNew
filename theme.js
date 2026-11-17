@@ -391,13 +391,52 @@
       else{st.removeProperty('--card-fg');st.removeProperty('--card-title-rgb');el.removeAttribute('data-cbc')}
     });
   }
+  /* ---------- The IP service buttons (Patents, Trademarks, ... inside the IP Services card) ----------
+     On a service item: btnBg, btnText, btnBorder, btnHoverBg, btnHoverText (colour refs). For all of them in one section:
+     theme.secBtns {<section>: {bg, text, border, hbg, htext}}. A button's own colours go on top of the section's.
+     A page writes KTHEME.sb(item) into the button's tag; paintBtns() turns it into the --sb-* variables styles.css uses.
+     A background with no text colour gets white or dark text, whichever reads. */
+  const SBK=[['bg','btnBg','--sb-bg'],['text','btnText','--sb-fg'],['border','btnBorder','--sb-bd'],['hbg','btnHoverBg','--sb-hbg'],['htext','btnHoverText','--sb-hfg']];
+  const sbAttr=x=>{
+    const q=v=>String(v==null?'':v).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+    return ' data-sb'+SBK.map(([k,f])=>x&&x[f]?` data-sb-${k}="${q(x[f])}"`:'').join('');
+  };
+  function paintBtns(T,root){
+    T=T||window.KTHEME.current||{};
+    const S=T.secBtns||{},pal=palette(T);
+    (root?[...root].flatMap(r=>[...r.querySelectorAll('[data-sb]')]):[...document.querySelectorAll('[data-sb]')]).forEach(el=>{
+      const sec=el.closest('[data-sec]'),s=(sec&&S[sec.dataset.sec])||{},v={};
+      SBK.forEach(([k])=>{v[k]=col(el.getAttribute('data-sb-'+k),T)||col(s[k],T)||null});
+      if(v.bg&&!v.text)v.text=lum(v.bg)<.4?'#ffffff':pal.ink;
+      if(v.hbg&&!v.htext)v.htext=lum(v.hbg)<.4?'#ffffff':pal.ink;
+      SBK.forEach(([k,,n])=>put(el.style,n,v[k]||''));
+    });
+  }
+  /* ---------- Icons before titles (the round icon above a card title, the icon above a page title, ...) ----------
+     theme.icons {<section>: {size: 50..150 (% of the designed size), color, bg (the circle), inline: true}}
+     The pages mark these icons data-ti (data-ti="c" when it sits in a circle) and the icon + title pair data-ti-row.
+     inline = the icon beside the title instead of above it. styles.css does the rest. */
+  // Sections that have icons before titles, and what they are (shown in the admin)
+  const TI_SECS={'home-services':'The round icon above the title of the IP Services and Translation cards','about-intro':'The icons of the Patents, Trademarks and Translation tiles','about-advantages':'The round icon above the title of each card'};
+  ['patents','trademarks','translation'].forEach(p=>{TI_SECS[p+'-intro']='The round icon above the page title and the icons of the small fact cards';TI_SECS[p+'-details']='The round icon above the title of each card';TI_SECS[p+'-contact']='The icons of the links to the other services'});
+  function icons(T){
+    const S=(T||{}).icons||{};
+    secEls().forEach(el=>{
+      const s=S[el.dataset.sec]||{},st=el.style,n=parseFloat(s.size),sz=isFinite(n)&&Math.round(n)!==100?Math.min(150,Math.max(50,n)):0,fg=col(s.color,T),bg=col(s.bg,T);
+      if(sz){st.setProperty('--ti-s',(sz/100).toFixed(2));el.setAttribute('data-ti-s','')}else{st.removeProperty('--ti-s');el.removeAttribute('data-ti-s')}
+      if(fg){st.setProperty('--ti-fg',fg);el.setAttribute('data-ti-c','')}else{st.removeProperty('--ti-fg');el.removeAttribute('data-ti-c')}
+      if(bg){st.setProperty('--ti-bg',bg);el.setAttribute('data-ti-b','')}else{st.removeProperty('--ti-bg');el.removeAttribute('data-ti-b')}
+      if(s.inline===true)el.setAttribute('data-ti-in','');else el.removeAttribute('data-ti-in');
+    });
+  }
   // Apply the per-section settings to some sections only (a copy of a section that layout.js has just made)
   function paintSec(els,T){
     T=T||window.KTHEME.current||{};scope=[...els];
-    try{paint(T);paintLook(T);secHead(T);cols(T);fontsSec(T);align(T)}finally{scope=null}
+    try{paint(T);paintLook(T);secHead(T);cols(T);fontsSec(T);align(T);icons(T)}finally{scope=null}
+    paintBtns(T,els);
   }
-  function apply(D){const T=(D&&D.theme)||{};vars(T);paint(T);paintLook(T);secHead(T);cols(T);fontsSec(T);align(T);logos(T);images(T);paintCards(T);window.KTHEME.current=T;document.dispatchEvent(new CustomEvent('khip-theme',{detail:T}))}
-  window.KTHEME={DEFAULTS,ROLES,SECTIONS,HEX,HERO,ALIGN,LOGOS,FXG,fxVals,AXE,AXDIST,AXEASE,AXHOVER,axCfg,axVars,LGE,LGIDLE,LGHOVER,MAPE,MAPIDLE,MAPHOVER,MAPPULSE,lgCfg,mapCfg,colsOf,cb:cbAttr,paintCards,paintSec,FONTS,fontOk,fontStack,fontVars,fontUrl,fontLink,resolve,lum,palette,apply,lookMap,cardMap,cardsOf};
+  function apply(D){const T=(D&&D.theme)||{};vars(T);paint(T);paintLook(T);secHead(T);cols(T);icons(T);fontsSec(T);align(T);logos(T);images(T);paintCards(T);paintBtns(T);window.KTHEME.current=T;document.dispatchEvent(new CustomEvent('khip-theme',{detail:T}))}
+  window.KTHEME={DEFAULTS,ROLES,SECTIONS,HEX,HERO,ALIGN,LOGOS,FXG,fxVals,AXE,AXDIST,AXEASE,AXHOVER,axCfg,axVars,LGE,LGIDLE,LGHOVER,MAPE,MAPIDLE,MAPHOVER,MAPPULSE,lgCfg,mapCfg,colsOf,cb:cbAttr,paintCards,paintSec,sb:sbAttr,paintBtns,TI_SECS,FONTS,fontOk,fontStack,fontVars,fontUrl,fontLink,resolve,lum,palette,apply,lookMap,cardMap,cardsOf};
   // The admin page uses the definitions only; it must not recolour itself.
   if(/admin\.html$/.test(location.pathname))return;
   let cached=null;try{cached=JSON.parse(localStorage.getItem(CACHE))}catch{}
