@@ -488,8 +488,14 @@ html [data-ax] .ax.ax-go{opacity:1;transform:none;filter:none;transition:opacity
 
 /* ---------- Icons before titles (theme.icons, theme.js icons()): size, colour, circle colour, beside the title ---------- */
 [data-ti-s] [data-ti]{zoom:var(--ti-s,1)}
+[data-ti-fit] [data-ti]{zoom:var(--ti-z,1)}                 /* fit: set per icon by theme.js fitIcons() */
 [data-ti-c] [data-ti],[data-ti-c] [data-ti] i{color:var(--ti-fg)!important}
 [data-ti-b] [data-ti="c"]{background-color:var(--ti-bg)!important}
 [data-ti-in] [data-ti-row]{display:flex;align-items:center;gap:.9rem;justify-content:var(--ti-j,flex-start)}
 [data-ti-in] [data-ti-row]>[data-ti]{margin:0!important;flex:0 0 auto}
 [data-ti-in] [data-ti-row]>:not([data-ti]){margin-top:0!important;min-width:0}
+
+/* ---------- Heading sizes (theme.headSize, theme.js heads()): page titles h1, section titles h2, card titles h3 ---------- */
+[data-hs~="1"] h1{zoom:var(--hs-1,1)}
+[data-hs~="2"] h2{zoom:var(--hs-2,1)}
+[data-hs~="3"] h3{zoom:var(--hs-3,1)}

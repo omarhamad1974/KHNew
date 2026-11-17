@@ -8,7 +8,7 @@ const KPV=(()=>{
   const DEV=[['m','Phone',390,'fa-mobile-screen'],['t','Tablet',820,'fa-tablet-screen-button'],['d','Desktop',1280,'fa-desktop']];
   const PAGES=[['home','Home','index.html'],['about','About','about.html'],['patents','Patents','patents.html'],['trademarks','Trademarks','trademarks.html'],['translation','Translation','translation.html']];
   // General pages: which page and section show what that page changes
-  const GEN={brand:['home',''],contact:['about','about-contact'],words:['home',''],colors:['home',''],fonts:['home',''],menu:['home',''],cards:['home','home-services'],align:['home','home-about'],imgfx:['home','home-news'],anim:['home','home-services'],motion:['home','home-jurisdictions']};
+  const GEN={brand:['home',''],contact:['about','about-contact'],words:['home',''],colors:['home',''],fonts:['home',''],menu:['home',''],cards:['home','home-services'],icons:['home','home-services'],align:['home','home-about'],imgfx:['home','home-news'],anim:['home','home-services'],motion:['home','home-jurisdictions']};
   const KEY='khip-pv',file=p=>(PAGES.find(x=>x[0]===p)||PAGES[0])[2];
   const st={open:null,dev:matchMedia('(max-width:700px)').matches?'m':'d',lang:'en',hl:true,auto:true,big:false};
   try{Object.assign(st,JSON.parse(localStorage.getItem(KEY))||{});st.big=false}catch{}
