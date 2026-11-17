@@ -526,7 +526,8 @@
     "imgfx": {
       "hero": {
         "color": "role:accentDark",
-        "intensity": "45"
+        "intensity": "45",
+        "opacity": "70"
       },
       "news": {
         "color": "role:accentDark"
@@ -576,6 +577,17 @@
     "cols": {
       "home-news": {
         "d": "3"
+      }
+    },
+    "anim": {
+      "sec": {
+        "home-news": {
+          "cards": {
+            "effect": "start",
+            "stagger": "0.2",
+            "speed": "1.4"
+          }
+        }
       }
     }
   },
@@ -656,6 +668,24 @@
         480,
         960
       ]
+    }
+  },
+  "faq": {
+    "pages": {
+      "home": {
+        "items": [
+          {
+            "id": "1",
+            "q": "What are parents for?",
+            "a": "Parents are for everything "
+          },
+          {
+            "id": "2",
+            "q": "What are parents for?",
+            "a": "Parents are for everything "
+          }
+        ]
+      }
     }
   }
 }
