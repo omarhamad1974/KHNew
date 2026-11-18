@@ -23,6 +23,33 @@ body.pv-side{--pvw:clamp(26rem,40vw,44rem)}
 body.pv-side #app>header>div,body.pv-side #tabs,body.pv-side #subnav,body.pv-side #view{max-width:min(60rem,calc(100vw - var(--pvw) - 3rem));margin-left:0;margin-right:0}
 body.pv-side #app>header>div,body.pv-side #tabs,body.pv-side #subnav{margin-left:0}
 body.pv-side #pv{position:fixed;right:1rem;width:var(--pvw);top:var(--pv-top,9rem);bottom:1rem;z-index:20}
+/* live preview docked at the bottom (phones and tablets, below 1280 px): the page and the boxes you edit are seen together */
+#pv.pv-dock{position:fixed;left:0;right:0;bottom:0;z-index:35;height:var(--dockh,46vh);max-width:none;margin:0;padding:0}
+#pv.pv-dock .pv-card{border-radius:1rem 1rem 0 0;border-bottom:0;box-shadow:0 -10px 30px rgba(15,23,42,.18)}
+#pv .pv-grip{display:none}
+#pv.pv-dock .pv-grip{display:flex;justify-content:center;padding:.35rem 0 .1rem;cursor:ns-resize;touch-action:none}
+#pv.pv-dock .pv-grip span{width:2.75rem;height:.3rem;border-radius:9px;background:#cbd5e1}
+#pv.pv-dock .pv-bar{flex-wrap:nowrap;overflow-x:auto}
+#pv.pv-dock .pv-foot{display:none}
+body.pv-docked{padding-bottom:calc(var(--dockh,46vh) + .5rem)}
+html.pv-docked{scroll-padding-bottom:calc(var(--dockh,46vh) + 1rem)}
+#pv-fab{display:none}
+@media(max-width:1279px){body.pv-fab #pv-fab{display:flex}}
+/* phone: a slim header (the dark bar scrolls away; tabs and language tuck away while scrolling down), 16 px fields so phones do not zoom in, bigger tap targets */
+@media(max-width:767px){
+  #topbar{position:static}
+  #app>header{top:0}
+  #app>header>div:first-child{padding-top:.5rem;padding-bottom:.5rem}
+  #repo-name{font-size:.8rem}
+  #hdr2{display:flex;align-items:center;gap:.5rem;padding:0 1rem .5rem}
+  #hdr2>#tabs,#hdr2>#panebar{padding:0;margin:0;max-width:none}
+  #hdr2>#tabs{flex:1 1 auto;min-width:0}
+  #hdr2>#panebar>span{display:none}
+  #hdr2>#panebar>button{flex:none;padding:.5rem .6rem}
+  body.hdr-min #hdr2{display:none}
+  #app input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]),#app select,#app textarea,#imp-modal input:not([type=checkbox]):not([type=radio]),#imp-modal select,#imp-modal textarea{font-size:16px}
+}
+@media(pointer:coarse){#app .w-8.h-8,#pv .w-8.h-8{width:2.5rem;height:2.5rem}#pv .h-8{height:2.5rem}}
 /* phone: one language at a time (the bar in the header sets body[data-pane]); from 768 px both sit side by side */
 @media(max-width:767px){body[data-pane=en] [data-pane=ar],body[data-pane=ar] [data-pane=en]{display:none}}
 </style>
@@ -30,7 +57,7 @@ body.pv-side #pv{position:fixed;right:1rem;width:var(--pvw);top:var(--pv-top,9re
 <body class="bg-gray-100 text-gray-900 antialiased font-sans">
 
 <!-- Top bar -->
-<div class="sticky top-0 z-40 bg-gray-900 text-white">
+<div id="topbar" class="sticky top-0 z-40 bg-gray-900 text-white">
   <div class="max-w-5xl mx-auto px-4 h-12 flex items-center gap-3">
     <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center font-black text-xs flex-shrink-0">KH</div>
     <span class="text-sm font-bold flex-1">KHIP website admin</span>
@@ -73,11 +100,11 @@ body.pv-side #pv{position:fixed;right:1rem;width:var(--pvw);top:var(--pv-top,9re
       <button type="button" id="pv-btn" aria-pressed="false" title="Show or hide the live preview" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl flex-shrink-0"><i class="fas fa-eye"></i> <span class="hidden sm:inline">Preview</span></button>
       <button data-act="discard" id="discard" disabled class="text-xs bg-gray-100 hover:bg-gray-200 disabled:opacity-40 font-bold px-3 py-2 rounded-xl" title="Discard unsaved changes" aria-label="Discard unsaved changes"><i class="fas fa-rotate-left"></i></button>
       <button data-act="backup" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl" title="Download a copy of both files" aria-label="Download a copy of both files"><i class="fas fa-download"></i></button>
-      <button data-act="out" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl">Sign out</button>
-      <button id="save" data-act="save" disabled class="text-xs bg-brand-600 hover:bg-brand-700 disabled:bg-gray-300 text-white font-bold px-4 py-2 rounded-xl" title="Ctrl+S">Save to GitHub</button>
+      <button data-act="out" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl" title="Sign out" aria-label="Sign out"><i class="fas fa-right-from-bracket sm:hidden"></i><span class="hidden sm:inline">Sign out</span></button>
+      <button id="save" data-act="save" disabled class="text-xs bg-brand-600 hover:bg-brand-700 disabled:bg-gray-300 text-white font-bold px-4 py-2 rounded-xl" title="Ctrl+S"><span class="sm:hidden"><i class="fas fa-cloud-arrow-up"></i> Save</span><span class="hidden sm:inline">Save to GitHub</span></button>
     </div>
-    <nav id="tabs" class="max-w-5xl mx-auto flex gap-1.5 overflow-x-auto px-4 pb-2" aria-label="Sections"></nav>
-    <div id="panebar" class="md:hidden max-w-5xl mx-auto px-4 pb-2 flex items-center gap-1.5" role="group" aria-label="Language shown in the boxes"><span class="text-[11px] font-bold text-gray-500 mr-1">Show</span><button type="button" data-pane-set="en" class="flex-1 text-xs font-bold px-3 py-2 rounded-xl">English</button><button type="button" data-pane-set="ar" lang="ar" class="flex-1 text-xs font-bold px-3 py-2 rounded-xl">عربي</button><button type="button" data-pane-set="both" class="flex-1 text-xs font-bold px-3 py-2 rounded-xl">Both</button></div>
+    <div id="hdr2"><nav id="tabs" class="max-w-5xl mx-auto flex gap-1.5 overflow-x-auto px-4 pb-2" aria-label="Sections"></nav>
+    <div id="panebar" class="md:hidden max-w-5xl mx-auto px-4 pb-2 flex items-center gap-1.5" role="group" aria-label="Language shown in the boxes"><span class="text-[11px] font-bold text-gray-500 mr-1">Show</span><button type="button" data-pane-set="en" class="flex-1 text-xs font-bold px-3 py-2 rounded-xl">English</button><button type="button" data-pane-set="ar" lang="ar" class="flex-1 text-xs font-bold px-3 py-2 rounded-xl">عربي</button><button type="button" data-pane-set="both" class="flex-1 text-xs font-bold px-3 py-2 rounded-xl">Both</button></div></div>
   </header>
   <datalist id="assets"></datalist>
   <nav id="subnav" class="hidden max-w-5xl mx-auto px-4 pt-3 flex flex-wrap gap-1.5" aria-label="General settings"></nav>
@@ -289,7 +316,7 @@ function impPick(err){
       <p><b>Word:</b> give every article a title in the <b>Heading 1</b> style. Right under it, type the details, one per line: <code>Subtitle:</code> <code>Date:</code> <code>Category:</code> <code>Excerpt:</code>. Then write the article. The first picture of an article becomes its cover; other pictures stay in the text. <b>Heading 2</b>, bold text and bullet lists are kept.</p>
       <p><b>Markdown:</b> start each article with <code># Title</code>, then the same detail lines. Pictures: write <code>Image: cover.jpg</code> or <code>![](photo.jpg)</code> and pick the picture files together with the .md file (or put everything in one .zip). Web addresses (https://...) also work.</p>
       <p>Dates can be 2026-03-14, 14/03/2026 or 14 March 2026. A category that is not in your list is added. With no excerpt, the first paragraph is used. You see everything before it is added.</p>
-      <button type="button" data-imp="template" class="font-bold text-brand-700 underline">Download a Markdown template</button>
+      <a href="templates/news-template.docx" download class="font-bold text-brand-700 underline me-4"><i class="fas fa-file-word"></i> Download a Word template</a><button type="button" data-imp="template" class="font-bold text-brand-700 underline">Download a Markdown template</button>
     </div></details>`);
 }
 async function impLoad(files){
@@ -407,7 +434,7 @@ function slPick(err){
       <p><b>Markdown or text:</b> start each slide with <code># Title</code>, then <code>Subtitle:</code>, <code>Tag:</code> and <code>Image: photo.jpg</code> lines. Pick the picture files together with the file, or use a web address (https://...).</p>
       <p><b>Spreadsheet:</b> one row per slide, first row <code>Title, Subtitle, Tag, Image</code>. Image is a file name (pick the pictures together with the sheet, or use one already in <code>assets</code>) or a web address.</p>
       <p>Photos are resized to suit the slider. You see everything before it is added, and nothing is published until you press Save.</p>
-      <div class="flex flex-wrap gap-4"><button type="button" data-imp="template" class="font-bold text-brand-700 underline">Download a Markdown template</button><button type="button" data-imp="template-csv" class="font-bold text-brand-700 underline">Download a spreadsheet (CSV) template</button></div>
+      <div class="flex flex-wrap gap-4"><a href="templates/slides-template.docx" download class="font-bold text-brand-700 underline me-4"><i class="fas fa-file-word"></i> Download a Word template</a><button type="button" data-imp="template" class="font-bold text-brand-700 underline">Download a Markdown template</button><button type="button" data-imp="template-csv" class="font-bold text-brand-700 underline">Download a spreadsheet (CSV) template</button></div>
     </div></details>`);
 }
 async function slLoad(files){
@@ -496,7 +523,7 @@ function svPick(err){
       <p><b>Word:</b> give every service text a title in the <b>Heading 1</b> style. Right under it type, one per line: <code>Service:</code> (the service name, e.g. Patents, or its page file, e.g. patents.html), <code>Language:</code> (English or Arabic) and, if you like, <code>Subtitle:</code> (the short brief on the home page card), <code>Card title:</code> (renames the service), <code>Icon:</code>, <code>Hidden:</code> (yes / no) and <code>Part:</code> (<i>Page</i>, the default, or <i>Pop-up</i>, the text shown when the home page card is opened). Then the text.</p>
       <p><b>Markdown:</b> the same, starting each text with <code># Title</code>. In the text, the part before the first <b>Heading 2</b> (<code>## </code>) is the introduction; each <b>Heading 2</b> becomes a card. Bold, bullet lists and numbered lists are kept.</p>
       <p>Without a <code>Service:</code> line the title must be the service name. Without <code>Language:</code> the language is detected from the text. Pictures are ignored. You see everything before it is added, and nothing is published until you press Save.</p>
-      <button type="button" data-imp="template" class="font-bold text-brand-700 underline">Download a Markdown template</button>
+      <a href="templates/service-pages-template.docx" download class="font-bold text-brand-700 underline me-4"><i class="fas fa-file-word"></i> Download a Word template</a><button type="button" data-imp="template" class="font-bold text-brand-700 underline">Download a Markdown template</button>
     </div></details>`);
 }
 async function svLoad(files){
@@ -561,7 +588,7 @@ function jrPick(err){
       <p><b>Word:</b> give every country text a title in the <b>Heading 1</b> style (the country name). Right under it type, one per line: <code>Language:</code> (English or Arabic), <code>Code:</code> (2 letters, e.g. ae; English text only), <code>Tag:</code> (the short label on the card) and, in an Arabic text, <code>Country:</code> (the English name, so it finds its country).</p>
       <p><b>Markdown:</b> the same, starting each text with <code># Country</code>. The text before the first <b>Heading 2</b> (<code>## </code>), or under <code>## Overview</code>, is the <b>Overview</b> of the country card. Everything under <code>## Filing details</code> is the <b>Filing details</b> of the pop-up; other <code>##</code> headings stay inside the part they follow.</p>
       <p>A country is found by its code, its <code>Country:</code> line or its name (English or Arabic). A country not on the site yet is added from its English text. You see everything before it is added, and nothing is published until you press Save.</p>
-      <button type="button" data-imp="template" class="font-bold text-brand-700 underline">Download a Markdown template</button>
+      <a href="templates/jurisdictions-template.docx" download class="font-bold text-brand-700 underline me-4"><i class="fas fa-file-word"></i> Download a Word template</a><button type="button" data-imp="template" class="font-bold text-brand-700 underline">Download a Markdown template</button>
     </div></details>`);
 }
 async function jrLoad(files){
@@ -641,7 +668,7 @@ function frPick(err){
       <p><b>Word:</b> give each page's list a title in the <b>Heading 1</b> style: <i>Home</i>, <i>About</i>, <i>Patents</i>, <i>Trademarks</i> or <i>Translation</i>. Right under it you can type <code>Language:</code> English or Arabic (otherwise it is detected). Then every <b>question</b> is a <b>Heading 2</b> and the paragraphs under it are its <b>answer</b>. A <b>Heading 3</b> inside an answer becomes a subtitle of the answer.</p>
       <p><b>Markdown:</b> the same: <code># Patents</code>, <code>Language: Arabic</code>, <code>## Question?</code>, the answer below, <code>### Subtitle</code> inside an answer. Bold, bullet lists and numbered lists are kept. Text before the first question is the optional introduction of that page's FAQ.</p>
       <p>The Arabic list is matched to the English questions <b>by position</b> (1st with 1st), so keep the same order. You see everything before it is added, and nothing is published until you press Save.</p>
-      <button type="button" data-imp="template" class="font-bold text-brand-700 underline">Download a Markdown template</button>
+      <a href="templates/faq-template.docx" download class="font-bold text-brand-700 underline me-4"><i class="fas fa-file-word"></i> Download a Word template</a><button type="button" data-imp="template" class="font-bold text-brand-700 underline">Download a Markdown template</button>
     </div></details>`);
 }
 async function frLoad(files){
@@ -1142,6 +1169,15 @@ $('login-form').addEventListener('submit',e=>{
 });
 addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'&&D){e.preventDefault();if(dirty)save()}});
 addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue=''}});
+(function(){                                 // phones: the tabs and language row tuck away while scrolling down and come back when scrolling up
+  let last=scrollY,acc=0;const mq=matchMedia('(max-width:767px)');
+  addEventListener('scroll',()=>{
+    const y=scrollY,d=y-last;last=y;
+    if(!mq.matches||y<80){document.body.classList.remove('hdr-min');acc=0;return}
+    acc=(Math.sign(d)===Math.sign(acc)?acc:0)+d;
+    if(acc>40)document.body.classList.add('hdr-min');else if(acc<-40)document.body.classList.remove('hdr-min');
+  },{passive:true});
+})();
 try{const s=JSON.parse(localStorage.getItem('khip-admin'));if(s){$('f-o').value=s.o;$('f-r').value=s.r;$('f-b').value=s.b;$('f-p').value=s.p}}catch{}
 const tk=sessionStorage.getItem('khip-admin-t');
 if(tk&&$('f-o').value){$('f-t').value=tk;$('f-s').checked=true;connect({o:$('f-o').value,r:$('f-r').value,b:$('f-b').value,p:$('f-p').value,t:tk})}
@@ -1154,6 +1190,6 @@ if(tk&&$('f-o').value){$('f-t').value=tk;$('f-s').checked=true;connect({o:$('f-o
 <script src="video.js?v=4"></script>
 <script src="admin-sections.js?v=16"></script>
 <script src="admin-general.js?v=11"></script>
-<script src="admin-preview.js?v=3"></script>
+<script src="admin-preview.js?v=4"></script>
 </body>
 </html>

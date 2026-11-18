@@ -71,3 +71,7 @@ More control for the admin over what visitors see, and a real preview of it. Eac
 - **News slider**: on phones a news card now changes with the card animation set for the News section (Look of this section, Animation, Cards; or General, Animation): effect, distance, speed and easing. With *No animation* the cards switch at once, and on larger screens the row jumps instead of gliding. Before, phones always used a fixed fade. On larger screens each card already played its entrance effect as it slid in.
 - **Pop-up windows**: the WhatsApp button is gone from the service and country pop-ups (home and About pages). The WhatsApp box at the bottom of every page stays.
 - **Map and Jurisdictions**: the button under the map (home page) and in the country card (About page) now reads *Egypt Filing Requirements* (the chosen or focused country). Wording: **General, Languages & words**, `req_for` (`{x}` = the country); Arabic: متطلبات التسجيل في {x}.
+
+## Admin on phones and import templates
+- **Phones**: slim header (tabs and language on one row, tucked away while scrolling down); the live preview docks at the bottom of the screen (phones and tablets): drag the handle to resize, double-tap for full screen, the round **Preview** button opens it; the box you type in stays above it. Fields are 16 px (no zoom on focus), icon buttons are bigger on touch screens. From 1280 px the preview stays beside the editor.
+- **Templates**: `templates/` holds Word and Markdown templates for all imports; the import windows link to the Word ones. See `templates/README.md`.

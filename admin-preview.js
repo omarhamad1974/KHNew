@@ -10,9 +10,9 @@ const KPV=(()=>{
   // General pages: which page and section show what that page changes
   const GEN={brand:['home',''],contact:['about','about-contact'],words:['home',''],colors:['home',''],fonts:['home',''],menu:['home',''],cards:['home','home-services'],icons:['home','home-services'],align:['home','home-about'],imgfx:['home','home-news'],anim:['home','home-services'],motion:['home','home-jurisdictions']};
   const KEY='khip-pv',file=p=>(PAGES.find(x=>x[0]===p)||PAGES[0])[2];
-  const st={open:null,dev:matchMedia('(max-width:700px)').matches?'m':'d',lang:'en',hl:true,auto:true,big:false};
+  const st={open:null,dev:matchMedia('(max-width:700px)').matches?'m':'d',lang:'en',hl:true,auto:true,big:false,dockH:.46};   // dockH: share of the screen the docked preview takes (phones, tablets)
   try{Object.assign(st,JSON.parse(localStorage.getItem(KEY))||{});st.big=false}catch{}
-  const keep=()=>{try{localStorage.setItem(KEY,JSON.stringify({open:st.open,dev:st.dev,lang:st.lang,hl:st.hl,auto:st.auto}))}catch{}};
+  const keep=()=>{try{localStorage.setItem(KEY,JSON.stringify({open:st.open,dev:st.dev,lang:st.lang,hl:st.hl,auto:st.auto,dockH:st.dockH}))}catch{}};
   let el=null,frame=null,stage=null,scaler=null,cur={page:'',key:''},genPage=null,y=0,timer=0,watch=0,pending=false,loading=false,shown='',ASSETS0=new Set();
   const $q=s=>el&&el.querySelector(s);
 
@@ -81,13 +81,14 @@ const KPV=(()=>{
   function build(){
     el=document.getElementById('pv');if(!el||el.dataset.built)return;el.dataset.built='1';
     el.innerHTML=`<div class="pv-card bg-white rounded-2xl border border-gray-200 shadow-sm flex flex-col overflow-hidden h-full">
-      <div class="flex items-center gap-1.5 p-2 border-b border-gray-200 flex-wrap">
+      <div class="pv-grip" id="pv-grip" role="separator" aria-orientation="horizontal" aria-label="Drag to make the preview taller or shorter" title="Drag to resize; double-tap for full screen"><span></span></div>
+      <div class="pv-bar flex items-center gap-1.5 p-2 border-b border-gray-200 flex-wrap">
         <div class="flex-1 min-w-[8rem]"><div class="text-xs font-extrabold"><i class="fas fa-eye text-brand-600"></i> Live preview <span id="pv-busy" class="font-normal text-gray-400 hidden"><i class="fas fa-spinner fa-spin"></i> updating</span></div><div id="pv-what" class="text-[11px] text-gray-500 truncate"></div></div>
         <div class="flex gap-1" role="group" aria-label="Screen size">${DEV.map(([k,n,w,i])=>`<button type="button" data-pv="dev" data-k="${k}" title="${n} (${w} px wide)" aria-label="${n}" class="w-8 h-8 rounded-lg text-xs"><i class="fas ${i}"></i></button>`).join('')}</div>
         <div class="flex gap-1" role="group" aria-label="Language"><button type="button" data-pv="lang" data-k="en" class="h-8 px-2 rounded-lg text-[11px] font-extrabold">EN</button><button type="button" data-pv="lang" data-k="ar" lang="ar" class="h-8 px-2 rounded-lg text-[11px] font-extrabold">عربي</button></div>
         ${b('refresh','Refresh the preview now','fa-rotate','')}${b('big','Enlarge or shrink the preview','fa-expand','')}${b('close','Hide the preview','fa-xmark','')}
       </div>
-      <div class="flex flex-wrap items-center gap-x-4 gap-y-1 px-2.5 py-1.5 border-b border-gray-200 text-[11px] text-gray-700">
+      <div class="pv-opts flex flex-wrap items-center gap-x-4 gap-y-1 px-2.5 py-1.5 border-b border-gray-200 text-[11px] text-gray-700">
         <label id="pv-pagebox" class="hidden items-center gap-1.5 font-bold">Page <select id="pv-page" class="border border-gray-300 rounded-lg px-1.5 py-1 font-normal bg-white">${PAGES.map(p=>`<option value="${p[0]}">${p[1]}</option>`).join('')}</select></label>
         <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" data-pv="hl"> Outline this section</label>
         <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" data-pv="auto"> Update as I type</label>
@@ -96,7 +97,7 @@ const KPV=(()=>{
         <div id="pv-scaler" class="absolute left-0 top-0" style="transform-origin:0 0"><iframe id="pv-frame" title="Preview of the website with your changes" class="block bg-white border-0 shadow-lg"></iframe></div>
         <p id="pv-warn" class="hidden absolute inset-x-3 top-3 text-xs bg-amber-50 border border-amber-200 text-amber-900 rounded-xl p-3">The preview did not start. Open this admin page from the website's own address (for example https://your-name.github.io/KHNew/admin.html), not from a file on your computer, then press Refresh.</p>
       </div>
-      <p class="text-[10px] text-gray-500 px-2.5 py-1.5 border-t border-gray-200">This is the real page with your unsaved changes. Nothing is published until you press <b>Save to GitHub</b>. Links and buttons are switched off here.</p>
+      <p class="pv-foot text-[10px] text-gray-500 px-2.5 py-1.5 border-t border-gray-200">This is the real page with your unsaved changes. Nothing is published until you press <b>Save to GitHub</b>. Links and buttons are switched off here.</p>
     </div>`;
     frame=$q('#pv-frame');stage=$q('#pv-stage');scaler=$q('#pv-scaler');
     if(window.ResizeObserver)new ResizeObserver(fit).observe(stage);
@@ -116,6 +117,23 @@ const KPV=(()=>{
       else if(t.dataset.pv==='auto'){st.auto=t.checked;keep();if(st.auto&&pending)load(true);head()}
     });
     addEventListener('resize',layout);
+    if(window.visualViewport)visualViewport.addEventListener('resize',dockSize);   // a phone keyboard opening: keep the preview to a part of what is left
+    // drag the grip to resize the docked preview; double-tap it for full screen
+    const g=$q('#pv-grip');let drag=null,lastTap=0;
+    g.addEventListener('pointerdown',e=>{drag={y:e.clientY};g.setPointerCapture(e.pointerId)});
+    g.addEventListener('pointermove',e=>{if(!drag)return;const H=innerHeight;st.dockH=Math.min(.85,Math.max(.22,(H-e.clientY)/H));dockSize()});
+    g.addEventListener('pointerup',e=>{if(!drag)return;const moved=Math.abs(e.clientY-drag.y)>6;drag=null;keep();
+      if(!moved){const n=Date.now();if(n-lastTap<350){st.big=true;layout();head()}lastTap=n}});
+    // the box you type in stays visible above the docked preview
+    document.addEventListener('focusin',e=>{
+      if(!document.body.classList.contains('pv-docked'))return;
+      const t=e.target;if(!t.matches||!t.matches('input,textarea,select')||(el&&el.contains(t)))return;
+      setTimeout(()=>{try{t.scrollIntoView({block:'nearest'})}catch{}},350);
+    });
+    const fab=document.createElement('button');fab.id='pv-fab';fab.type='button';
+    fab.className='fixed right-4 bottom-4 z-30 items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm px-4 py-3 rounded-full shadow-xl';
+    fab.innerHTML='<i class="fas fa-eye"></i> Preview';fab.setAttribute('aria-label','Show the live preview');
+    fab.addEventListener('click',()=>setOpen(true));document.body.appendChild(fab);
     addEventListener('keydown',e=>{if(e.key==='Escape'&&st.big){st.big=false;layout();head()}});
   }
   function fit(){
@@ -125,11 +143,21 @@ const KPV=(()=>{
     scaler.style.width=W+'px';scaler.style.height=(Hs/s)+'px';scaler.style.transform=`scale(${s})`;scaler.style.left=left+'px';
     frame.style.width=W+'px';frame.style.height=(Hs/s)+'px';
   }
+  // the docked preview's height in px: a share of the visible screen (smaller while a phone keyboard is open)
+  function dockSize(){
+    if(!el||!document.body.classList.contains('pv-docked'))return;
+    const vv=window.visualViewport,H=vv?vv.height:innerHeight,kb=vv&&vv.height<innerHeight*.8;
+    const h=Math.round(Math.max(150,(kb?Math.min(st.dockH,.4):st.dockH)*H));
+    document.documentElement.style.setProperty('--dockh',h+'px');fit();
+  }
   function layout(){
     if(!el)return;
-    const side=st.open&&!st.big&&matchMedia('(min-width:1280px)').matches;
+    const wide=matchMedia('(min-width:1280px)').matches,side=st.open&&!st.big&&wide,dock=st.open&&!st.big&&!wide;
     document.body.classList.toggle('pv-side',side);
-    el.classList.toggle('hidden',!st.open);el.classList.toggle('pv-big',st.big&&st.open);el.classList.toggle('pv-top',st.open&&!side&&!st.big);
+    document.body.classList.toggle('pv-docked',dock);document.documentElement.classList.toggle('pv-docked',dock);
+    document.body.classList.toggle('pv-fab',!st.open&&!!D);
+    el.classList.toggle('hidden',!st.open);el.classList.toggle('pv-big',st.big&&st.open);el.classList.toggle('pv-dock',dock);el.classList.remove('pv-top');
+    if(dock)dockSize();
     if(side){const h=document.querySelector('#app>header');el.style.setProperty('--pv-top',((h?h.getBoundingClientRect().bottom:120)+8)+'px')}
     fit();btn();
   }

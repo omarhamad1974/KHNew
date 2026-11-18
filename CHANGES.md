@@ -1,5 +1,9 @@
 # Change log
 
+## Import templates in Word and Markdown; admin on phones
+- **templates/**: a Word (.docx) and a Markdown (.md) template for every import (news, slides, service pages, countries, FAQ), plus the slides spreadsheet (.csv). Each opens with a "how to fill in" box that the importers ignore. Every Word template was checked with the real importers: it reads the same as the admin's own template. The import windows have a **Download a Word template** link. Built by `scripts/build-templates.js`; guide in `templates/README.md`.
+- **Admin on phones**: a slim header (the dark bar scrolls away; tabs and the language switch share one row and tuck away while scrolling down; Save and Sign out are short buttons). The live preview **docks at the bottom** of phones and tablets so the page and the boxes you edit are seen together: drag its handle to resize, double-tap it (or the expand button) for full screen, and a round **Preview** button opens it. The box you type in stays above the preview. Fields use 16 px text so phones do not zoom in, and small icon buttons are bigger on touch screens. Wide screens keep the preview beside the editor.
+
 ## Heading sizes, news slider, pop-ups, map button
 - **Heading sizes** (General, Fonts; and per section): page titles, section titles, card titles, 60 to 160 %. Saved as `theme.headSize`.
 - **News slider** on phones follows the card animation set in the admin (effect, speed, easing, or none).
