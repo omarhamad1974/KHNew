@@ -631,6 +631,15 @@
           "home-faq"
         ]
       }
+    },
+    "imgsvg": {
+      "news": {
+        "mask": "blob",
+        "anim": "morph"
+      },
+      "hero": {
+        "anim": "zoom"
+      }
     }
   },
   "newsCategories": [
