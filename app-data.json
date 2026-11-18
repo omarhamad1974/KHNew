@@ -600,6 +600,17 @@
           }
         }
       }
+    },
+    "secBtns": {
+      "home-services": {
+        "border": "role:accent"
+      }
+    },
+    "icons": {
+      "home-services": {
+        "size": "50",
+        "inline": true
+      }
     }
   },
   "newsCategories": [
