@@ -634,12 +634,14 @@
     },
     "imgsvg": {
       "news": {
-        "mask": "blob",
-        "anim": "morph"
+        "mask": "slant",
+        "anim": "morph",
+        "speed": "6.5"
       },
       "hero": {
         "anim": "zoom",
-        "strength": "15"
+        "strength": "15",
+        "speed": "7.5"
       }
     }
   },
