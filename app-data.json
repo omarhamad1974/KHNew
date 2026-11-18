@@ -634,9 +634,11 @@
     },
     "imgsvg": {
       "news": {
-        "mask": "slant",
+        "mask": "circle",
         "anim": "morph",
-        "speed": "6.5"
+        "speed": "7",
+        "maskFit": "keep",
+        "trigger": "view"
       },
       "hero": {
         "anim": "zoom",
