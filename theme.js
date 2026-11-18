@@ -109,7 +109,7 @@
           layers.push(flat(tone==='light'||(tone==='auto'&&ov>=.4)?ink:(solid?bc.slice(0,3):palette(T).page),(1-fx.op).toFixed(2)));
         }
         layers.push(`url("${imgUrl(String(s.image)).replace(/"/g,'%22')}")`);
-        el.style.backgroundImage=layers.join(',');el.style.backgroundSize='cover';el.style.backgroundPosition='center';el.style.backgroundRepeat='no-repeat';
+        el.style.backgroundImage=layers.join(',');el.style.backgroundSize='cover';el.style.backgroundPosition=s.pos==='top'?'center top':s.pos==='bottom'?'center bottom':'center';el.style.backgroundRepeat='no-repeat';
         light=tone==='light'||(tone==='auto'&&ov>=.4);
         if(light)el.style.backgroundColor=ink;
       }
@@ -374,16 +374,48 @@
   const cbAttr=x=>{
     if(!x||!(x.cardBg||x.cardImage))return '';
     const q=v=>String(v==null?'':v).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
-    return ` data-cb data-cbg="${q(x.cardBg)}" data-cbi="${q(x.cardImage)}" data-cbs="${q(x.cardShade)}" data-cbt="${q(x.cardText)}" data-cbo="${q(x.cardPos)}"`;
+    return ` data-cb data-cbg="${q(x.cardBg)}" data-cbi="${q(x.cardImage)}" data-cbs="${q(x.cardShade)}" data-cbt="${q(x.cardText)}" data-cbo="${q(x.cardPos)}" data-cbq="${q(x.cardOpacity)}"`;
   };
+  // A picture on a card: the darkening on top, then the card colour showing through as much as the picture is see-through
+  const picLayers=(u,sh,op,base)=>[sh?`linear-gradient(rgb(0 0 0 / ${sh}),rgb(0 0 0 / ${sh}))`:'',op<1?`linear-gradient(rgb(${base} / ${(1-op).toFixed(2)}),rgb(${base} / ${(1-op).toFixed(2)}))`:'',u].filter(Boolean).join(',');
+  function cardRgb(el,T){                                  // the card's own colour (rgb triplet), white when it has none
+    const m=(getComputedStyle(el).backgroundColor.match(/[\d.]+/g)||[]).map(Number);
+    return m.length>=3&&(m.length<4||m[3]>0)?m.slice(0,3).join(' '):'255 255 255';
+  }
+  /* ---------- Pictures on the cards of a section ----------
+     theme.secCards.<section> {image, imgOpacity 0..100, imgShade 0..80, imgPos top|center|bottom}: every card of the section;
+     theme.secCards.<section>.nth {"2": {image, imgOpacity, imgShade, imgPos}}: one card, counted from the top of the section.
+     A card with its own picture (a news article, a team member, ...) keeps it. */
+  const CARDSEL=':is(.card,.faq-item,.tframe,.ct-tile)';
+  const cardsIn=sec=>[...sec.querySelectorAll(CARDSEL)].filter(c=>!(c.parentElement&&c.parentElement.closest(CARDSEL)));
+  let cpObs=new WeakSet();
+  function cardPics(T,els){
+    T=T||window.KTHEME.current||{};
+    const S=T.secCards||{};
+    (els||secEls()).forEach(sec=>{
+      const s=S[sec.dataset.sec]||{},N=s.nth||{},on=!!(s.image||Object.values(N).some(o=>o&&o.image));
+      cardsIn(sec).forEach((c,i)=>{
+        const o=Object.assign({},s.image?{image:s.image,imgOpacity:s.imgOpacity,imgShade:s.imgShade,imgPos:s.imgPos}:{},N[i+1]&&N[i+1].image?N[i+1]:{}),st=c.style;
+        if(!on||!o.image||c.hasAttribute('data-cbp')){if(c.hasAttribute('data-cpic')){st.removeProperty('--cp-img');st.removeProperty('--cp-pos');c.removeAttribute('data-cpic')}return}
+        const u=`url("${imgUrl(String(o.image)).replace(/"/g,'%22')}")`;
+        c.removeAttribute('data-cpic');st.removeProperty('--cp-img');                         // measure the card's colour without the picture
+        st.setProperty('--cp-img',picLayers(u,num(o.imgShade,0,0,80)/100,num(o.imgOpacity,100,0,100)/100,cardRgb(c,T)));
+        st.setProperty('--cp-pos',o.imgPos==='top'?'center top':o.imgPos==='bottom'?'center bottom':'center');
+        c.setAttribute('data-cpic','');
+      });
+      if(on&&!cpObs.has(sec)&&window.MutationObserver){                                      // cards drawn later (news, FAQ, ...) get it too
+        cpObs.add(sec);let q=0;new MutationObserver(rs=>{if(q||!rs.some(r=>r.type==='childList'))return;q=requestAnimationFrame(()=>{q=0;cardPics(window.KTHEME.current,[sec])})}).observe(sec,{childList:true,subtree:true});
+      }
+    });
+  }
   function paintCards(T){
     T=T||window.KTHEME.current||{};
     document.querySelectorAll('[data-cb]').forEach(el=>{
       const d=el.dataset,bg=col(d.cbg,T),fg=col(d.cbt,T),img=String(d.cbi||'').trim(),sh=num(d.cbs,0,0,80)/100,st=el.style;
       if(bg)st.setProperty('--card-bg',`rgb(${rgb(bg)} / 1)`);else st.removeProperty('--card-bg');
       if(img){
-        const u=`url("${imgUrl(img).replace(/"/g,'%22')}")`;
-        st.setProperty('--cb-img',sh?`linear-gradient(rgb(0 0 0 / ${sh}),rgb(0 0 0 / ${sh})),${u}`:u);
+        const u=`url("${imgUrl(img).replace(/"/g,'%22')}")`,op=num(d.cbq,100,0,100)/100,base=bg?rgb(bg):cardRgb(el,T);
+        st.setProperty('--cb-img',picLayers(u,sh,op,base));
         st.setProperty('--cb-pos',d.cbo==='top'?'center top':d.cbo==='bottom'?'center bottom':'center');
         el.setAttribute('data-cbp','1');
       }else{st.removeProperty('--cb-img');st.removeProperty('--cb-pos');el.removeAttribute('data-cbp')}
@@ -462,9 +494,11 @@
      theme.headSize {all: {h1, h2, h3}, sec: {<section>: {h1, h2, h3}}}: 60..160 (% of the designed size). h1 = page titles,
      h2 = section titles, h3 = card titles. A section's own value goes on top of "all". The heading keeps its own sizes per screen
      (phone, tablet, desktop) and is scaled from them. styles.css: [data-hs~="2"] h2 {zoom: var(--hs-2)}. */
-  const HS=['h1','h2','h3'];
+  const HS=['h1','h2','h3','h4'];                       // h4 = sub-headings written inside text (## lines; rich.js gives them the class rt-h)
   function heads(T){
     const H=(T||{}).headSize||{},A=H.all||{},S=H.sec||{};
+    { const n=parseFloat(A.h4),v=isFinite(n)&&Math.round(n)!==100?Math.min(160,Math.max(60,n)):0;   // sub-headings also in the pop-ups (outside sections)
+      if(v){root.style.setProperty('--hs-4a',(v/100).toFixed(2));root.setAttribute('data-hs4a','')}else{root.style.removeProperty('--hs-4a');root.removeAttribute('data-hs4a')} }
     secEls().forEach(el=>{
       const s=S[el.dataset.sec]||{},on=[];
       HS.forEach((h,i)=>{
@@ -475,14 +509,26 @@
     });
     fitSoon();
   }
+  /* ---------- Heading alignment ----------
+     theme.headAlign {all: {t, c}, sec: {<section>: {t, c}}}: t = section and page titles (h1, h2), c = card titles (h3 in cards).
+     start | center | end (start is left in English and right in Arabic). The thin line under a title and the icon before it follow. */
+  const HA=['start','center','end'];
+  function headAlign(T){
+    const H=(T||{}).headAlign||{},A=H.all||{},S=H.sec||{};
+    secEls().forEach(el=>{
+      const s=S[el.dataset.sec]||{};
+      [['t','data-hat'],['c','data-hac']].forEach(([k,a])=>{const v=HA.includes(s[k])?s[k]:(HA.includes(A[k])?A[k]:'');if(v)el.setAttribute(a,v);else el.removeAttribute(a)});
+    });
+  }
   // Apply the per-section settings to some sections only (a copy of a section that layout.js has just made)
   function paintSec(els,T){
     T=T||window.KTHEME.current||{};scope=[...els];
-    try{paint(T);paintLook(T);secHead(T);cols(T);fontsSec(T);align(T);icons(T);heads(T)}finally{scope=null}
+    try{paint(T);paintLook(T);secHead(T);cols(T);fontsSec(T);align(T);icons(T);heads(T);headAlign(T)}finally{scope=null}
+    cardPics(T,els);
     paintBtns(T,els);
   }
-  function apply(D){const T=(D&&D.theme)||{};vars(T);paint(T);paintLook(T);secHead(T);cols(T);icons(T);heads(T);fontsSec(T);align(T);logos(T);images(T);paintCards(T);paintBtns(T);window.KTHEME.current=T;document.dispatchEvent(new CustomEvent('khip-theme',{detail:T}))}
-  window.KTHEME={DEFAULTS,ROLES,SECTIONS,HEX,HERO,ALIGN,LOGOS,FXG,fxVals,AXE,AXDIST,AXEASE,AXHOVER,axCfg,axVars,LGE,LGIDLE,LGHOVER,MAPE,MAPIDLE,MAPHOVER,MAPPULSE,lgCfg,mapCfg,colsOf,cb:cbAttr,paintCards,paintSec,sb:sbAttr,paintBtns,TI_SECS,fitIcons,FONTS,fontOk,fontStack,fontVars,fontUrl,fontLink,resolve,lum,palette,apply,lookMap,cardMap,cardsOf};
+  function apply(D){const T=(D&&D.theme)||{};vars(T);paint(T);paintLook(T);secHead(T);cols(T);icons(T);heads(T);headAlign(T);fontsSec(T);align(T);logos(T);images(T);paintCards(T);cardPics(T);paintBtns(T);window.KTHEME.current=T;document.dispatchEvent(new CustomEvent('khip-theme',{detail:T}))}
+  window.KTHEME={DEFAULTS,ROLES,SECTIONS,HEX,HERO,ALIGN,LOGOS,FXG,fxVals,AXE,AXDIST,AXEASE,AXHOVER,axCfg,axVars,LGE,LGIDLE,LGHOVER,MAPE,MAPIDLE,MAPHOVER,MAPPULSE,lgCfg,mapCfg,colsOf,cb:cbAttr,paintCards,cardPics,paintSec,sb:sbAttr,paintBtns,TI_SECS,fitIcons,FONTS,fontOk,fontStack,fontVars,fontUrl,fontLink,resolve,lum,palette,apply,lookMap,cardMap,cardsOf};
   // The admin page uses the definitions only; it must not recolour itself.
   if(/admin\.html$/.test(location.pathname))return;
   let cached=null;try{cached=JSON.parse(localStorage.getItem(CACHE))}catch{}

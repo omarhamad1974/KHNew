@@ -8,12 +8,12 @@ const KPV=(()=>{
   const DEV=[['m','Phone',390,'fa-mobile-screen'],['t','Tablet',820,'fa-tablet-screen-button'],['d','Desktop',1280,'fa-desktop']];
   const PAGES=[['home','Home','index.html'],['about','About','about.html'],['patents','Patents','patents.html'],['trademarks','Trademarks','trademarks.html'],['translation','Translation','translation.html']];
   // General pages: which page and section show what that page changes
-  const GEN={brand:['home',''],contact:['about','about-contact'],words:['home',''],colors:['home',''],fonts:['home',''],menu:['home',''],cards:['home','home-services'],icons:['home','home-services'],align:['home','home-about'],imgfx:['home','home-news'],anim:['home','home-services'],motion:['home','home-jurisdictions']};
+  const GEN={brand:['home',''],contact:['about','about-contact'],words:['home',''],colors:['home',''],fonts:['home',''],menu:['home',''],cards:['home','home-services'],icons:['home','home-services'],shapes:['home','home-news'],align:['home','home-about'],imgfx:['home','home-news'],anim:['home','home-services'],motion:['home','home-jurisdictions']};
   const KEY='khip-pv',file=p=>(PAGES.find(x=>x[0]===p)||PAGES[0])[2];
-  const st={open:null,dev:matchMedia('(max-width:700px)').matches?'m':'d',lang:'en',hl:true,auto:true,big:false,dockH:.46};   // dockH: share of the screen the docked preview takes (phones, tablets)
+  const st={open:null,dev:matchMedia('(max-width:700px)').matches?'m':'d',lang:'en',hl:true,auto:true,big:false,dockH:.46,pick:true};   // pick: tap the page to edit that part   // dockH: share of the screen the docked preview takes (phones, tablets)
   try{Object.assign(st,JSON.parse(localStorage.getItem(KEY))||{});st.big=false}catch{}
-  const keep=()=>{try{localStorage.setItem(KEY,JSON.stringify({open:st.open,dev:st.dev,lang:st.lang,hl:st.hl,auto:st.auto,dockH:st.dockH}))}catch{}};
-  let el=null,frame=null,stage=null,scaler=null,cur={page:'',key:''},genPage=null,y=0,timer=0,watch=0,pending=false,loading=false,shown='',ASSETS0=new Set();
+  const keep=()=>{try{localStorage.setItem(KEY,JSON.stringify({open:st.open,dev:st.dev,lang:st.lang,hl:st.hl,auto:st.auto,dockH:st.dockH,pick:st.pick}))}catch{}};
+  let el=null,frame=null,stage=null,scaler=null,cur={page:'',key:''},lastItem=null,genPage=null,y=0,timer=0,watch=0,pending=false,loading=false,shown='',ASSETS0=new Set();
   const $q=s=>el&&el.querySelector(s);
 
   /* ---------- the data the page inside the frame gets (what saving would write) ---------- */
@@ -41,7 +41,7 @@ const KPV=(()=>{
   }
   const url=(w,keepY)=>{
     const u=new URL(file(w.page),location.href),q=u.searchParams;
-    q.set('khip-preview','1');q.set('lang',st.lang);if(w.key)q.set('sec',w.key);q.set('hl',st.hl?'1':'0');if(keepY>0)q.set('y',Math.round(keepY));q.set('t',Date.now());
+    q.set('khip-preview','1');q.set('lang',st.lang);if(w.key)q.set('sec',w.key);q.set('hl',st.hl?'1':'0');q.set('pick',st.pick?'1':'0');if(keepY>0)q.set('y',Math.round(keepY));q.set('t',Date.now());
     return u.toString();
   };
   function load(keepY){
@@ -58,7 +58,7 @@ const KPV=(()=>{
     if(!st.open){btn();return}
     const w=want();
     if(!frame.src||frame.src==='about:blank'||w.page!==cur.page){load(false);return}
-    if(w.key!==cur.key){cur.key=w.key;try{frame.contentWindow.__khipFocus&&frame.contentWindow.__khipFocus(w.key)}catch{}}
+    if(w.key!==cur.key){cur.key=w.key;lastItem=null;try{frame.contentWindow.__khipFocus&&frame.contentWindow.__khipFocus(w.key)}catch{}}
     head();
   }
   // Called when the data changes (every edit): reload after a short pause, keeping the scroll position
@@ -70,6 +70,7 @@ const KPV=(()=>{
   // Called by preview.js inside the frame
   const loaded=f=>{
     shown=f;loading=false;clearTimeout(watch);$q('#pv-warn').classList.add('hidden');
+    if(lastItem)setTimeout(()=>showItem(lastItem),400);                     // the item being edited stays shown after an update
     const pg=PAGES.find(p=>p[2]===f);                          // a link followed inside the preview (General): that page is now the one shown
     if(pg&&typeof tab!=='undefined'&&tab==='general'&&pg[0]!==cur.page){genPage=pg[0];cur={page:pg[0],key:''}}
     head();
@@ -92,6 +93,7 @@ const KPV=(()=>{
         <label id="pv-pagebox" class="hidden items-center gap-1.5 font-bold">Page <select id="pv-page" class="border border-gray-300 rounded-lg px-1.5 py-1 font-normal bg-white">${PAGES.map(p=>`<option value="${p[0]}">${p[1]}</option>`).join('')}</select></label>
         <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" data-pv="hl"> Outline this section</label>
         <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" data-pv="auto"> Update as I type</label>
+        <label class="flex items-center gap-1.5 cursor-pointer font-bold text-brand-700" title="Tap a section, a card, a question or a picture in the preview and its settings open in the editor"><input type="checkbox" data-pv="pick"> Tap the page to edit it</label>
       </div>
       <div id="pv-stage" class="relative flex-1 min-h-0 bg-gray-200 overflow-hidden">
         <div id="pv-scaler" class="absolute left-0 top-0" style="transform-origin:0 0"><iframe id="pv-frame" title="Preview of the website with your changes" class="block bg-white border-0 shadow-lg"></iframe></div>
@@ -115,6 +117,7 @@ const KPV=(()=>{
       if(t.id==='pv-page'){genPage=t.value;load(false);return}
       if(t.dataset.pv==='hl'){st.hl=t.checked;keep();try{frame.contentWindow.__khipFocus&&frame.contentWindow.__khipFocus(cur.key,st.hl)}catch{}}
       else if(t.dataset.pv==='auto'){st.auto=t.checked;keep();if(st.auto&&pending)load(true);head()}
+      else if(t.dataset.pv==='pick'){st.pick=t.checked;keep();try{frame.contentWindow.__khipPick&&frame.contentWindow.__khipPick(st.pick)}catch{}}
     });
     addEventListener('resize',layout);
     if(window.visualViewport)visualViewport.addEventListener('resize',dockSize);   // a phone keyboard opening: keep the preview to a part of what is left
@@ -169,7 +172,7 @@ const KPV=(()=>{
     el.querySelectorAll('[data-pv=dev]').forEach(x=>{const on=x.dataset.k===st.dev;x.className=`w-8 h-8 rounded-lg text-xs ${on?'bg-brand-600 text-white':'bg-gray-100 hover:bg-gray-200'}`});
     el.querySelectorAll('[data-pv=lang]').forEach(x=>{const on=x.dataset.k===st.lang;x.className=`h-8 px-2 rounded-lg text-[11px] font-extrabold ${on?'bg-brand-600 text-white':'bg-gray-100 hover:bg-gray-200'}`});
     const r=$q('[data-pv=refresh]');r.className=`w-8 h-8 rounded-lg text-xs flex-shrink-0 ${pending?'bg-amber-400 text-gray-900 animate-pulse':'bg-gray-100 hover:bg-gray-200'}`;r.title=pending?'Your changes are not in the preview yet: press to refresh':'Refresh the preview now';
-    $q('[data-pv=hl]').checked=st.hl;$q('[data-pv=auto]').checked=st.auto;
+    $q('[data-pv=hl]').checked=st.hl;$q('[data-pv=auto]').checked=st.auto;$q('[data-pv=pick]').checked=st.pick;
     const pb=$q('#pv-pagebox');pb.classList.toggle('hidden',!(typeof tab!=='undefined'&&tab==='general'));pb.classList.toggle('flex',typeof tab!=='undefined'&&tab==='general');
     $q('#pv-page').value=w.page;
     const bg=$q('[data-pv=big] i');bg.className='fas '+(st.big?'fa-compress':'fa-expand');
@@ -190,6 +193,48 @@ const KPV=(()=>{
     layout();if(st.open){head();sync()}
   }
   document.addEventListener('click',e=>{const t=e.target.closest('#pv-btn');if(t&&D){if(!el)build();setOpen(!st.open)}});
-  return {init,sync,touch,data,loaded,scrolled,layout};
+
+  /* ---------- tap to edit: the page in the frame says what was tapped (preview.js); open it here ---------- */
+  const low=v=>String(v||'').trim().toLowerCase();
+  function findItem(list,it){
+    const arr=D[list],ar=(A&&A[list])||[];if(!Array.isArray(arr))return -1;
+    let i=-1;
+    if(it.id!=null)i=arr.findIndex(x=>x&&String(x.id)===String(it.id));
+    if(i<0&&it.name){const n=low(it.name);i=arr.findIndex((x,k)=>[x.title,x.name,x.country,(ar[k]||{}).title,(ar[k]||{}).name,(ar[k]||{}).country].some(v=>v&&(low(v)===n||(low(v).length>2&&n.includes(low(v))))))}
+    if(i<0&&it.i!=null&&!['employees','services','jurisdictions'].includes(list))i=it.i;
+    return i<arr.length?i:-1;
+  }
+  function pick(o){
+    if(!o||!o.key||!window.ASEC||!ASEC.entry(o.key))return;
+    ASEC.go(o.key);
+    const it=o.item;let label=ASEC.entry(o.key).label;
+    if(it&&it.faq){
+      const items=((((D.faq||{}).pages||{})[it.faq])||{}).items||[],full=items.map((x,i)=>[x,i]).filter(([x])=>String(x.q||'').trim()&&String(x.a||'').trim()),m=full[it.i];
+      if(m){faqPage=it.faq;faqOpen=m[1];label+=' · question '+(m[1]+1)}
+    }else if(it&&it.list){
+      const i=findItem(it.list,it);if(i>=0){openItem=`${it.list}.${i}`;const x=D[it.list][i]||{};label+=' · '+(x.title||x.name||x.country||('item '+(i+1)))}
+    }
+    tabs();view();
+    lastItem=it||null;if(it)showItem(it);
+    setTimeout(()=>{const t=document.querySelector('#items details[open],#faq-items details[open]')||document.getElementById('view'),h=document.querySelector('#app>header');
+      window.scrollTo({top:Math.max(0,t.getBoundingClientRect().top+scrollY-(h?h.getBoundingClientRect().bottom:0)-8),behavior:'smooth'})},60);
+    if(typeof toast==='function')toast('Editing: '+label);
+  }
+  function showItem(it){try{frame&&frame.contentWindow.__khipFocusItem&&frame.contentWindow.__khipFocusItem(it)}catch{}}
+  // an item opened in the editor (an article, a question, a country ...): the preview shows that one
+  document.addEventListener('toggle',e=>{
+    const d=e.target;if(!st.open||!d||!d.open||!d.matches||!d.matches('#items>details,#faq-items>details'))return;
+    const b=d.querySelector('summary [data-i]');if(!b)return;const i=+b.dataset.i;let it=null;
+    if(d.parentElement.id==='faq-items'){
+      const items=((((D.faq||{}).pages||{})[faqPage])||{}).items||[];let n=-1;items.forEach((x,k)=>{if(k<=i&&String(x.q||'').trim()&&String(x.a||'').trim())n++});
+      it={faq:faqPage,i:n};
+    }else{
+      const list=typeof LK==='function'?LK():'',x=(D[list]||[])[i]||{};
+      it=list==='news'?{list,id:x.id}:list==='jurisdictions'?{list,name:x.country}:list==='employees'?{list,name:x.name}:list==='services'?{list,name:x.title}:{list,i};
+    }
+    lastItem=it;showItem(it);
+  },true);
+  const isOpen=()=>!!st.open;
+  return {init,sync,touch,data,loaded,scrolled,layout,pick,open:v=>{if(!el)build();setOpen(v)},isOpen};
 })();
 window.KPV=KPV;

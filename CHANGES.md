@@ -1,5 +1,12 @@
 # Change log
 
+## Headings, backgrounds, picture sections, SVG shapes and motion, editing on phones
+- **Headings**: size of sub-headings inside text, and the side (start / center / end) of section titles and card titles, for all sections or one (`theme.headSize.h4`, `theme.headAlign`).
+- **Backgrounds**: opacity and position of a section's background photo in the Background block; pictures on the cards of any section (all cards or one by number) with opacity, darkening and position (`theme.secCards.*.image`, `.nth`); opacity for the card pictures of news, team and services (`cardOpacity`).
+- **Picture sections**: add a picture after any section or after a paragraph of a section, with size, frame, fit, opacity, shape and motion (`images`, `images.js`).
+- **SVG shapes and motion** for any picture: SVG masks, SVG ripple filter, SVG shape morph and waving edge, plus zoom, float, breathe and three reveals, with when / speed / strength (`theme.imgsvg`; General, Picture shapes & motion).
+- **Phones**: bottom bar with previous / next / Jump to / Preview; tap the live preview to edit that part; the preview follows the item being edited (`admin-mobile.js`).
+
 ## Import templates in Word and Markdown; admin on phones
 - **templates/**: a Word (.docx) and a Markdown (.md) template for every import (news, slides, service pages, countries, FAQ), plus the slides spreadsheet (.csv). Each opens with a "how to fill in" box that the importers ignore. Every Word template was checked with the real importers: it reads the same as the admin's own template. The import windows have a **Download a Word template** link. Built by `scripts/build-templates.js`; guide in `templates/README.md`.
 - **Admin on phones**: a slim header (the dark bar scrolls away; tabs and the language switch share one row and tuck away while scrolling down; Save and Sign out are short buttons). The live preview **docks at the bottom** of phones and tablets so the page and the boxes you edit are seen together: drag its handle to resize, double-tap it (or the expand button) for full screen, and a round **Preview** button opens it. The box you type in stays above the preview. Fields use 16 px text so phones do not zoom in, and small icon buttons are bigger on touch screens. Wide screens keep the preview beside the editor.

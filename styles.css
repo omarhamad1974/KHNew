@@ -499,3 +499,23 @@ html [data-ax] .ax.ax-go{opacity:1;transform:none;filter:none;transition:opacity
 [data-hs~="1"] h1{zoom:var(--hs-1,1)}
 [data-hs~="2"] h2{zoom:var(--hs-2,1)}
 [data-hs~="3"] h3{zoom:var(--hs-3,1)}
+html[data-hs4a] .rt-h{zoom:var(--hs-4a,1)}
+html [data-hs~="4"] .rt-h{zoom:var(--hs-4,1)}                 /* sub-headings written inside text (## lines) */
+
+/* ---------- Heading alignment (theme.headAlign, theme.js headAlign()): data-hat = section / page titles, data-hac = card titles ---------- */
+[data-hat=start] :is(h1,h2){text-align:start}[data-hat=center] :is(h1,h2){text-align:center}[data-hat=end] :is(h1,h2){text-align:end}
+[data-hat=start] :is(h1,h2)~.rule,[data-hat=start] .fu>.rule{margin-inline-start:0;margin-inline-end:auto}
+[data-hat=center] :is(h1,h2)~.rule,[data-hat=center] .fu>.rule{margin-left:auto;margin-right:auto}
+[data-hat=end] :is(h1,h2)~.rule,[data-hat=end] .fu>.rule{margin-inline-start:auto;margin-inline-end:0}
+[data-hat=center] [data-ti-row]:has(>:is(h1,h2))>[data-ti]{margin-inline:auto}
+[data-hat=end] [data-ti-row]:has(>:is(h1,h2))>[data-ti]{margin-inline-start:auto}
+[data-hat=center][data-ti-in] [data-ti-row]:has(>:is(h1,h2)){justify-content:center}
+[data-hat=end][data-ti-in] [data-ti-row]:has(>:is(h1,h2)){justify-content:flex-end}
+[data-hac=start] :is(.card,.faq-item,.tframe) h3{text-align:start}[data-hac=center] :is(.card,.faq-item,.tframe) h3{text-align:center}[data-hac=end] :is(.card,.faq-item,.tframe) h3{text-align:end}
+[data-hac=center] .card [data-ti-row]>[data-ti]{margin-inline:auto}
+[data-hac=end] .card [data-ti-row]>[data-ti]{margin-inline-start:auto}
+[data-hac=center][data-ti-in] .card [data-ti-row]{justify-content:center}
+[data-hac=end][data-ti-in] .card [data-ti-row]{justify-content:flex-end}
+
+/* ---------- Pictures on the cards of a section (theme.secCards.<section>.image / .nth, theme.js cardPics()) ---------- */
+[data-cpic]{background-image:var(--cp-img)!important;background-size:cover!important;background-position:var(--cp-pos,center)!important;background-repeat:no-repeat!important}

@@ -50,6 +50,12 @@ html.pv-docked{scroll-padding-bottom:calc(var(--dockh,46vh) + 1rem)}
   #app input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]),#app select,#app textarea,#imp-modal input:not([type=checkbox]):not([type=radio]),#imp-modal select,#imp-modal textarea{font-size:16px}
 }
 @media(pointer:coarse){#app .w-8.h-8,#pv .w-8.h-8{width:2.5rem;height:2.5rem}#pv .h-8{height:2.5rem}}
+/* phone: the bottom bar (admin-mobile.js) to move between parts; the docked preview sits just above it */
+body.mbar{padding-bottom:4.5rem}
+body.mbar #pv.pv-dock{bottom:3.6rem}
+body.mbar.pv-docked{padding-bottom:calc(var(--dockh,46vh) + 4.5rem)}
+html.pv-docked:has(body.mbar){scroll-padding-bottom:calc(var(--dockh,46vh) + 5rem)}
+body.mbar #pv-fab{display:none!important}
 /* phone: one language at a time (the bar in the header sets body[data-pane]); from 768 px both sit side by side */
 @media(max-width:767px){body[data-pane=en] [data-pane=ar],body[data-pane=ar] [data-pane=en]{display:none}}
 </style>
@@ -119,6 +125,7 @@ html.pv-docked{scroll-padding-bottom:calc(var(--dockh,46vh) + 1rem)}
 <script src="site-version.js"></script>
 <script src="theme.js"></script>
 <script src="layout.js?v=1"></script>
+<script src="images.js?v=1"></script>
 <script src="news-import.js"></script>
 <script src="slider-import.js"></script>
 <script src="service-import.js"></script>
@@ -208,6 +215,7 @@ function ctl(p,[k,l,t],o={}){
   if(t==='select'){const c=((D.newsCategories||[]).filter(Boolean).length?D.newsCategories.filter(Boolean):DEFCATS).slice(),cur=v||c[0];if(cur&&!c.includes(cur))c.push(cur);return `<select data-p="${p}" ${xa} aria-label="${esc(l)}" class="${inp}">${c.map(x=>`<option ${x===cur?'selected':''}>${esc(x)}</option>`).join('')}</select>`}
   if(t==='pos')return `<select data-p="${p}" aria-label="${esc(l)}" class="${inp}">${[['','Center (as designed)'],['top','Top (keep the top: faces, titles)'],['bottom','Bottom']].map(([k,n])=>`<option value="${k}" ${(v||'')===k?'selected':''}>${n}</option>`).join('')}</select>`;
   if(t==='cref')return ALOOK.cref(p,l,{none:'None (as designed)'});
+  if(t==='opac'){const n=parseFloat(v),op=isFinite(n)?n:100,id='op-'+p.replace(/\W/g,'-');return `<label class="block text-xs font-bold">${esc(l)}: <span id="${id}">${op}</span>%<input type="range" min="0" max="100" step="5" data-p="${p}" data-out="${id}" data-pct="1" value="${op}" class="mt-1 w-full"></label>`}
   if(t==='shade'){const n=parseFloat(v),sh=isFinite(n)?n:0,id='sh-'+p.replace(/\W/g,'-');return `<label class="block text-xs font-bold">${esc(l)}: <span id="${id}">${sh}</span>%<input type="range" min="0" max="80" step="5" data-p="${p}" data-out="${id}" data-pct="1" value="${sh}" class="mt-1 w-full"></label>`}
   if(t==='img')return `<div class="flex items-center gap-2"><img data-prev="${p}" src="${esc(imgSrc(v))}" alt="" onerror="this.style.visibility='hidden'" class="w-12 h-12 rounded-lg object-cover bg-gray-200 flex-shrink-0"><input data-p="${p}" ${xa} aria-label="${esc(l)}" value="${esc(v)}" list="assets" placeholder="File name in assets, or upload" class="${inp}"><label class="flex-shrink-0 text-xs bg-brand-50 text-brand-700 font-bold px-3 py-2.5 rounded-lg cursor-pointer hover:bg-brand-100" title="Upload an image"><i class="fas fa-upload"></i><input type="file" accept="image/*" data-up="${p}" class="hidden"></label></div>`;
   return `<input data-p="${p}" ${xa} ${ph} aria-label="${esc(l)}" type="${t==='date'?'date':'text'}" value="${esc(v)}" class="${inp}">`;
@@ -253,7 +261,7 @@ function items(){
     <div class="p-4 pt-1 space-y-3 border-t">${itemFields(tab,i)}</div></details>`).join('');
 }
 // The fields of one item: words are English | Arabic side by side, the rest (picture, date, category, tick boxes) once.
-const CBF=[['cardBg','Card color','cref'],['cardImage','Card picture (covers the whole card)','img'],['cardPos','Which part of the picture stays in view','pos'],['cardShade','Darken the picture so the text can be read','shade'],['cardText','Text color on this card','cref']];
+const CBF=[['cardBg','Card color','cref'],['cardImage','Card picture (covers the whole card)','img'],['cardPos','Which part of the picture stays in view','pos'],['cardShade','Darken the picture so the text can be read','shade'],['cardOpacity','Picture opacity (100 % = solid; lower lets the card color show through)','opac'],['cardText','Text color on this card','cref']];
 // The background of ONE card (colour and/or picture). base is "news.2." or "ipCard."; what: which card it is
 function cardBgBlock(base,what){
   const o=get(D,base.slice(0,-1))||{},on=!!(o.cardBg||o.cardImage);
@@ -831,7 +839,9 @@ function bgInfo(key){
   }
   if(mode==='image'){
     body+=fld(base,['image','Photo (file name in assets, or upload)','img'])
-      +`<label class="block text-xs font-bold">Darken the photo: <span id="ov-${key}">${esc(s.overlay||0)}</span>%<input type="range" min="0" max="85" step="5" data-p="${base}overlay" data-out="ov-${key}" data-pct="1" value="${esc(s.overlay||0)}" class="mt-1 w-full"></label>`;
+      +`<label class="block text-xs font-bold">Darken the photo: <span id="ov-${key}">${esc(s.overlay||0)}</span>%<input type="range" min="0" max="85" step="5" data-p="${base}overlay" data-out="ov-${key}" data-pct="1" value="${esc(s.overlay||0)}" class="mt-1 w-full"></label>`
+      +(()=>{const fp=`theme.imgfx.sec.${key}.opacity`,o=parseFloat(get(D,fp)),op=isFinite(o)?o:100;return `<label class="block text-xs font-bold">Photo opacity: <span id="bgop-${key}">${op}</span>%<input type="range" min="0" max="100" step="5" data-p="${fp}" data-out="bgop-${key}" data-pct="1" value="${op}" class="mt-1 w-full"><span class="block font-normal text-[11px] text-gray-500">100 % = solid. Lower lets the section color show through (the same setting as Photo effect, Opacity).</span></label>`})()
+      +`<label class="block text-xs font-bold">Which part of the photo stays in view<select data-p="${base}pos" class="${inp} mt-1">${[['','Center'],['top','Top'],['bottom','Bottom']].map(([v,n])=>`<option value="${v}" ${(s.pos||'')===v?'selected':''}>${n}</option>`).join('')}</select></label>`;
   }
   if(mode!=='default')body+=`<label class="block text-xs font-bold">Text color on this section<select data-p="${base}tone" class="${inp} mt-1">${TONES.map(([v,n])=>`<option value="${v}" ${(s.tone||'auto')===v?'selected':''}>${n}</option>`).join('')}</select></label>`
     +`<div class="h-12 rounded-xl border border-gray-200" style="${pre}" role="img" aria-label="Preview of the background"></div>`;
@@ -979,7 +989,7 @@ function bad(k,i,f,msg){
   return msg;
 }
 /* ---------- Arabic content: app-data.ar.json mirrors the English file; empty fields fall back to English on the site ---------- */
-const TRF={carousel:['title','subtitle','tag'],jurisdictions:['country','tag','brief','details'],news:['title','subtitle','excerpt','text'],services:['title','description','details','pageContent'],testimonials:['name','role','text'],employees:['name','position']};
+const TRF={carousel:['title','subtitle','tag'],jurisdictions:['country','tag','brief','details'],news:['title','subtitle','excerpt','text'],services:['title','description','details','pageContent'],testimonials:['name','role','text'],employees:['name','position'],images:['alt','caption']};
 const UIK=Object.keys(KLang.DICT.en).filter(k=>typeof KLang.DICT.en[k]==='string'&&k!=='switch_to');
 const arPath=()=>S.p.replace(/\.json$/,'')+'.ar.json';
 function mirror(en,ar){ // the Arabic form always has the same items, in the same order, as the English content
@@ -1185,11 +1195,12 @@ if(tk&&$('f-o').value){$('f-t').value=tk;$('f-s').checked=true;connect({o:$('f-o
 
 
 </script>
-<script src="admin-look.js?v=17"></script>
+<script src="admin-look.js?v=18"></script>
 <script src="sections-map.js?v=13"></script>
 <script src="video.js?v=4"></script>
-<script src="admin-sections.js?v=16"></script>
-<script src="admin-general.js?v=11"></script>
-<script src="admin-preview.js?v=4"></script>
+<script src="admin-sections.js?v=17"></script>
+<script src="admin-general.js?v=12"></script>
+<script src="admin-preview.js?v=5"></script>
+<script src="admin-mobile.js?v=1"></script>
 </body>
 </html>
