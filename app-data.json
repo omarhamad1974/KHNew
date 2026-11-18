@@ -660,8 +660,9 @@
     }
   },
   "ipCard": {
-    "cardImage": "mwlxmgxl-89409.jpg",
-    "cardShade": "0"
+    "cardImage": "mwm2mr0b-89410.jpg",
+    "cardShade": "0",
+    "cardPos": "bottom"
   },
   "imgSizes": {
     "mwkwzbos-nikhil-fHOc-5r6LMg-unsplash.jpg": {
