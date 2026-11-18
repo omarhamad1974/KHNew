@@ -638,7 +638,8 @@
         "anim": "morph"
       },
       "hero": {
-        "anim": "zoom"
+        "anim": "zoom",
+        "strength": "15"
       }
     }
   },
