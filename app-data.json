@@ -633,17 +633,15 @@
       }
     },
     "imgsvg": {
-      "news": {
-        "mask": "circle",
-        "anim": "morph",
-        "speed": "7",
-        "maskFit": "keep",
-        "trigger": "view"
-      },
       "hero": {
         "anim": "zoom",
         "strength": "15",
-        "speed": "7.5"
+        "speed": "6.5"
+      },
+      "news": {
+        "mask": "slant",
+        "maskFit": "keep",
+        "anim": "zoom"
       }
     }
   },
