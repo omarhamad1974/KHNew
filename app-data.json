@@ -440,6 +440,10 @@
       "home-news": {
         "mode": "color",
         "color": "role:accentSoft"
+      },
+      "translation-intro": {
+        "mode": "color",
+        "color": "role:page"
       }
     },
     "sectionWidthTablet": "86",
@@ -538,7 +542,7 @@
     "secCards": {
       "translation-intro": {
         "bg": "role:surface",
-        "opacity": "100",
+        "opacity": "50",
         "border": "role:sand"
       },
       "translation-details": {
@@ -562,13 +566,12 @@
     },
     "motion": {
       "map": {
-        "entrance": "fade",
-        "speed": "1.7",
-        "delay": "1.1",
-        "base": "fade",
-        "stagger": "0.36",
-        "idle": "breathe",
-        "hover": "raise"
+        "entrance": "pop",
+        "speed": "1.9",
+        "delay": "0",
+        "stagger": "0.1",
+        "hover": "raise",
+        "pulse": "fast"
       },
       "logos": {
         "header": {
@@ -577,11 +580,12 @@
         },
         "home": {
           "effect": "fade",
-          "speed": "1.7",
-          "delay": "1.2"
+          "speed": "1.1",
+          "delay": "0"
         },
         "about": {
-          "effect": "up"
+          "effect": "fade",
+          "hover": "glow"
         }
       }
     },
@@ -642,6 +646,22 @@
         "mask": "slant",
         "maskFit": "keep",
         "anim": "zoom"
+      }
+    },
+    "iconsAll": {
+      "size": "fit",
+      "pos": "beside",
+      "bg": "role:sand"
+    },
+    "headSize": {
+      "sec": {
+        "translation-intro": {
+          "h3": "160"
+        },
+        "translation-details": {
+          "h2": "90",
+          "h3": "125"
+        }
       }
     }
   },
