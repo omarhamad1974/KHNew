@@ -549,6 +549,9 @@
         "bg": "role:accent",
         "text": "role:sand",
         "title": "role:page"
+      },
+      "home-jurisdictions": {
+        "bg": "role:accentDark"
       }
     },
     "align": {
@@ -708,5 +711,8 @@
         ]
       }
     }
+  },
+  "ui": {
+    "cov_title": "Regional Coverage"
   }
 }
