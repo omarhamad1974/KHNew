@@ -55,6 +55,9 @@ Show or hide any **section**, hide single **parts** of a section (logo, buttons,
 ## IP service buttons and icons before titles
 Colors of the Patents / Trademarks buttons in the IP Services card: one button (open the service, **Button colors**) or all of them (Home, Services, Look of this section, **IP service buttons**). Icons before titles: size (or **fit to the title**), color, circle color and **beside the title**, for all sections (General, **Icons**, with the one-click **Small, on one line with the title**) or one section (Look of this section, **Icons before titles**). Saved as `btn*` on the service, `theme.secBtns`, `theme.iconsAll`, `theme.icons`. See [CONTROL-PLAN.md](CONTROL-PLAN.md), phase 6.
 
+## Picture sections, SVG shapes and motion
+Add a picture after any section or after a paragraph (Sections, **Add a picture**), and give any picture an SVG shape and an animation (General, **Picture shapes & motion**, or per section / per picture). Saved as `images` and `theme.imgsvg`; applied by `images.js`. See [CONTROL-PLAN.md](CONTROL-PLAN.md).
+
 ## Columns per row (admin: Sections, Look of this section, Columns per row)
 Set how many cards sit side by side (1 to 4) on **tablet** and **desktop** for Home Services, Home Latest news, About Advantages, About Our team and the Details cards of the service pages. Phones are not affected. Saved as `theme.cols` (`{ "<section>": { "t": "2", "d": "3" } }`). See [CONTROL-PLAN.md](CONTROL-PLAN.md), phase 3.
 

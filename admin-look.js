@@ -69,10 +69,33 @@ const ALOOK=(()=>{
     const one=(h,txt)=>`<div style="background:var(--card-bg,#fff);color:var(--card-fg,${pal.text});border:1px solid var(--card-bd,rgba(231,229,228,.8))" class="rounded-2xl p-3 shadow-sm"><p style="font-family:Georgia,serif;font-size:15px;font-weight:600;color:rgb(var(--card-title-rgb,${r} ${g} ${b}))">${h}</p><p class="text-xs mt-1">${txt}</p><p class="text-[11px] mt-1.5" style="color:${fg?'rgb(var(--card-fg-rgb) / .8)':'#78716c'}">Muted line</p></div>`;
     return `<div style="${styleOf(m)};background:${pal.page}" class="p-3 grid grid-cols-2 gap-3">${one('Patents','Protect your invention in eleven countries.')}${one('Trademarks','Register and renew your brand.')}</div>`;
   }
+  /* pictures on the cards of a section: all of them, or one card counted from the top */
+  const cardN={};                                         // which card the "One card" box shows, per section
+  function cardsCount(key){                                // how many cards the section has, read from the live preview when it is open
+    try{const f=document.getElementById('pv-frame'),d=f&&f.contentDocument,sec=d&&d.querySelector(`[data-sec="${key}"]`);
+      if(sec){const S=':is(.card,.faq-item,.tframe,.ct-tile)';return [...sec.querySelectorAll(S)].filter(c=>!(c.parentElement&&c.parentElement.closest(S))).length}}catch{}
+    return 0;
+  }
+  function picFields(base,what){
+    const o=get(D,base.slice(0,-1))||{};
+    return fld(base,['image',`Picture on ${what} (file in assets, or upload)`,'img'])
+      +(true?grid(slider(base+'imgOpacity','Picture opacity',0,100,5,'%',100)+slider(base+'imgShade','Darken the picture',0,80,5,'%',0))
+        +`<label class="block text-xs font-bold">Which part of the picture stays in view<select data-p="${base}imgPos" class="${inp} mt-1">${[['','Center'],['top','Top'],['bottom','Bottom']].map(([v,n])=>`<option value="${v}" ${(o.imgPos||'')===v?'selected':''}>${n}</option>`).join('')}</select></label>`:'');
+  }
+  function cardPicBlock(key){
+    const base=`theme.secCards.${key}.`,n=cardN[key]||1,cnt=cardsCount(key),max=Math.max(cnt,12,n);
+    return `<div class="border-t border-gray-200 pt-3 space-y-3"><h4 class="text-xs font-extrabold">Pictures on the cards</h4>`
+      +picFields(base,'every card of this section')
+      +`<div class="bg-gray-50 border border-gray-200 rounded-lg p-3 space-y-3"><label class="block text-xs font-bold">One card only: card number <select data-cardn="${key}" class="${inp} mt-1">${Array.from({length:max},(_,i)=>`<option value="${i+1}" ${i+1===n?'selected':''}>${i+1}${(((T().secCards||{})[key]||{}).nth||{})[i+1]&&(((T().secCards||{})[key]||{}).nth||{})[i+1].image?' (has a picture)':''}</option>`).join('')}</select><span class="block font-normal text-[11px] text-gray-500 mt-1">Cards are counted from the top of the section${cnt?` (it has ${cnt} now)`:'. Open the live preview to see how many it has'}. A picture here replaces the one above for that card.</span></label>`
+      +picFields(`${base}nth.${n}.`,`card ${n}`)+`</div>`
+      +`<p class="text-[11px] text-gray-500">With a dark picture, also choose a light <b>Card text</b> and <b>Card titles</b> color above. A news article, a team member or a service with its own card picture keeps it.</p></div>`;
+  }
+  document.addEventListener('change',e=>{const k=e.target.dataset&&e.target.dataset.cardn;if(!k||!D)return;cardN[k]=+e.target.value;view()});
   function secCards(key){
-    const base=`theme.secCards.${key}.`,s=(T().secCards||{})[key]||{},on=Object.keys(s).some(k=>s[k]);
+    const base=`theme.secCards.${key}.`,s=(T().secCards||{})[key]||{},on=Object.keys(s).some(k=>s[k]&&(k!=='nth'||Object.values(s.nth).some(o=>o&&o.image)));
     const body=grid(cref(base+'bg','Card background',{none:'Same as all cards'})+slider(base+'opacity','Opacity',0,100,5,'%',100,{off:!s.bg})
       +cref(base+'text','Card text',{none:'Same as all cards'})+cref(base+'title','Card titles',{none:'Same as all cards'})+cref(base+'border','Card border',{none:'Same as all cards'}))
+      +cardPicBlock(key)
       +`<div><button type="button" data-lk="reset-sec" data-k="${key}" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl"><i class="fas fa-rotate-left"></i> Same as all cards</button></div>`;
     return det('c:'+key,'Cards',on,'Own colors','Same as all',body);
   }
@@ -323,12 +346,19 @@ const ALOOK=(()=>{
         fontFields(fontBase(''),false)+`<div><span class="text-xs font-bold text-gray-700">Preview</span><div class="mt-1 rounded-xl overflow-hidden border border-gray-200" data-fprev="all">${fontPrev('')}</div></div>`
         +`<p class="text-[11px] text-gray-500">Logos, the KHIP word mark and the icons keep their own look. A very decorative font can be hard to read in small text: choose a plain one for <b>Text</b>.</p>`,
         reset('reset-fonts-all','Reset all'))
-      +card('Heading sizes','Make the titles of every section bigger or smaller. 100 % = as designed. Each title keeps its phone, tablet and desktop sizes and is scaled from them.',
-        `<div class="grid sm:grid-cols-3 gap-3">${headFields('theme.headSize.all.','')}</div>`,reset('reset-hs-all','Reset'))
+      +card('Headings: size and alignment','Make the titles of every section bigger or smaller (100 % = as designed; each title keeps its phone, tablet and desktop sizes and is scaled from them) and choose the side they sit on.',
+        `<div class="grid sm:grid-cols-2 gap-3">${headFields('theme.headSize.all.','')}</div>${alignFields('theme.headAlign.all.','')}`,reset('reset-hs-all','Reset'))
       +seeSections('Fonts and heading sizes');
   }
   /* ---------- Heading sizes: page titles (h1), section titles (h2), card titles (h3); all sections or one ---------- */
-  const HSL=[['h1','Page titles','The big title at the top of the About, Patents, Trademarks and Translation pages'],['h2','Section titles','The title of each section (Services, Latest news, FAQ, ...)'],['h3','Card titles','The titles inside cards (services, advantages, details cards, news cards, ...)']];
+  const HSL=[['h1','Page titles','The big title at the top of the About, Patents, Trademarks and Translation pages'],['h2','Section titles','The title of each section (Services, Latest news, FAQ, ...)'],['h3','Card titles','The titles inside cards (services, advantages, details cards, news cards, ...)'],['h4','Sub-headings inside text','The ## lines written in articles, service pages, card texts, FAQ answers and pop-ups']];
+  // the side the titles sit on: section / page titles (t) and card titles (c)
+  function alignFields(base,sec){
+    const A=((T().headAlign||{}).all)||{},nm={start:'Start (left; right in Arabic)',center:'Center',end:'End (right; left in Arabic)'};
+    const sel=(k,l,w)=>{const v=val(base+k);return `<label class="block text-xs font-bold">${esc(l)}<select data-p="${base+k}" data-lkv="1" class="${inp} mt-1"><option value="" ${v===''?'selected':''}>${sec&&A[k]?'Same as all sections ('+esc(nm[A[k]].split(' (')[0])+')':'As designed'}</option>${Object.entries(nm).map(([x,n])=>`<option value="${x}" ${v===x?'selected':''}>${esc(n)}</option>`).join('')}</select><span class="block font-normal text-[11px] text-gray-500 mt-1">${esc(w)}</span></label>`};
+    return `<div class="grid sm:grid-cols-2 gap-3 mt-3">${sel('t','Side of the section titles','Page and section titles; the thin line under them and their icon follow.')}${sel('c','Side of the card titles','The titles inside cards; the text of the cards keeps its own alignment.')}</div>`;
+  }
+  const haSet=o=>!!o&&['t','c'].some(k=>o[k]);
   function headFields(base,sec){
     const A=((T().headSize||{}).all)||{};
     return HSL.map(([h,l,w])=>{
@@ -337,12 +367,12 @@ const ALOOK=(()=>{
     }).join('');
   }
   const hsSet=o=>!!o&&HS0.some(h=>o[h]!==undefined&&o[h]!==''&&+o[h]!==100);
-  const HS0=['h1','h2','h3'];
+  const HS0=['h1','h2','h3','h4'];
   function secHeads(key){
-    const s=(((T().headSize||{}).sec)||{})[key]||{};
-    return det('z:'+key,'Heading sizes',hsSet(s),'Own sizes',hsSet((T().headSize||{}).all)?'Same as all sections':'As designed',
-      `<div class="grid sm:grid-cols-3 gap-3">${headFields(`theme.headSize.sec.${key}.`,key)}</div><p class="text-[11px] text-gray-500">100 % = as designed. Each title keeps its phone, tablet and desktop sizes and is made bigger or smaller from them. For all sections: <b>General, Fonts, Heading sizes</b>.</p>`
-      +`<div><button type="button" data-lk="reset-hs-sec" data-k="${key}" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl"><i class="fas fa-rotate-left"></i> ${hsSet((T().headSize||{}).all)?'Same as all sections':'As designed'}</button></div>`);
+    const s=(((T().headSize||{}).sec)||{})[key]||{},a=(((T().headAlign||{}).sec)||{})[key]||{},all=hsSet((T().headSize||{}).all)||haSet((T().headAlign||{}).all);
+    return det('z:'+key,'Headings: size and side',hsSet(s)||haSet(a),'Own settings',all?'Same as all sections':'As designed',
+      `<div class="grid sm:grid-cols-2 gap-3">${headFields(`theme.headSize.sec.${key}.`,key)}</div>${alignFields(`theme.headAlign.sec.${key}.`,key)}<p class="text-[11px] text-gray-500">100 % = as designed. Each title keeps its phone, tablet and desktop sizes and is made bigger or smaller from them. For all sections: <b>General, Fonts, Headings</b>.</p>`
+      +`<div><button type="button" data-lk="reset-hs-sec" data-k="${key}" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl"><i class="fas fa-rotate-left"></i> ${all?'Same as all sections':'As designed'}</button></div>`);
   }
   function secFonts(key){
     const s=((T().fonts||{}).sec||{})[key]||{},on=!!Object.values(s).some(o=>o&&Object.values(o).some(v=>v));
@@ -435,11 +465,44 @@ const ALOOK=(()=>{
     if(v==='')unset(p);else if(v==='fit')set(D,p,'fit');else{const n=parseFloat(get(D,p));set(D,p,isFinite(n)?String(n):'80')}
     mark();view();
   });
+  /* ---------- Picture shape (SVG mask) and motion (images.js): theme.imgsvg.{all,hero,news,team,blocks,sec.<section>} and picture sections ---------- */
+  const prevPic=()=>{const x=((D.images||[]).find(i=>i&&i.image)||(D.carousel||[]).find(i=>i&&i.image)||(D.news||[]).find(i=>i&&i.image)||{}).image;return x?imgSrc(x):''};
+  function shapeFields(base,none,pic){
+    const v=k=>val(base+k),K=window.KIMG||{SHAPES:{},ANIMS:{}};
+    const sel=(k,label,opts,note)=>`<label class="block text-xs font-bold">${esc(label)}<select data-p="${base+k}" data-lkv="1" class="${inp} mt-1">${opts.map(([x,n])=>`<option value="${x}" ${v(k)===x?'selected':''}>${esc(n)}</option>`).join('')}</select>${note?`<span class="block font-normal text-[11px] text-gray-500 mt-1">${note}</span>`:''}</label>`;
+    const an=v('anim'),def=(K.ANIMS[an]||[0,1])[1];
+    return grid(sel('mask','Shape (an SVG mask the picture is cut to)',[['',none],['none','No shape'],...Object.entries(K.SHAPES).map(([k,[n]])=>[k,n])])
+        +sel('maskFit','Shape proportions',[['','The shape stretches with the picture'],['keep','The shape keeps its proportions']]))
+      +grid(sel('anim','Animation',[['',none],['none','No animation'],...Object.entries(K.ANIMS).map(([k,[n]])=>[k,n])],'<b>(SVG)</b> ones are drawn with SVG: the ripple is a moving SVG filter, morph and waving edge animate the SVG shape itself (they replace the shape above).')
+        +sel('trigger','When it plays',[['','Automatic (reveals when seen, the others all the time)'],['always','All the time (reveals: when the page opens)'],['view','When it scrolls into view'],['hover','While the pointer is on it']]))
+      +(an&&an!=='none'?grid(slider(base+'speed',`Speed: seconds for one ${['wipe','iris','focus'].includes(an)?'reveal':'cycle'}`,.5,30,.5,' s',def)+slider(base+'strength','Strength',0,100,5,'%',50,{off:['wipe','iris','morph','waves'].includes(an)})):'')
+      +`<div><span class="text-xs font-bold text-gray-700">Preview</span><div class="mt-1 rounded-xl border border-gray-200 bg-[repeating-linear-gradient(135deg,#f3f4f6_0_10px,#e5e7eb_10px_20px)] p-3 flex justify-center"><img data-shprev="${base}" src="${esc(pic||prevPic())}" alt="" class="w-56 h-36 object-cover bg-gray-300"></div><span class="text-[11px] text-gray-500">The sample shows this setting only; on the site a picture also takes what is set for all pictures and its group. Visitors who ask their device for less motion see the shape without the motion.</span></div>`;
+  }
+  const shapeSet=o=>!!o&&['mask','anim','maskFit','trigger'].some(k=>o[k]);
+  function shapePrevs(){
+    if(!window.KIMG)return;KIMG.addCss&&KIMG.addCss();
+    document.querySelectorAll('img[data-shprev]').forEach(img=>{const o=get(D,img.dataset.shprev.slice(0,-1))||{},s=Object.assign({},o);if(s.mask==='none')delete s.mask;if(s.anim==='none')delete s.anim;if(s.trigger==='view')s.trigger='always';img.__iasig=null;KIMG.put(img,s)});
+  }
+  if(window.MutationObserver)document.addEventListener('DOMContentLoaded',()=>{const v=$('view');if(v)new MutationObserver(()=>{clearTimeout(shapePrevs.t);shapePrevs.t=setTimeout(shapePrevs,30)}).observe(v,{childList:true,subtree:true})});
+  document.addEventListener('input',e=>{const p=e.target.dataset&&e.target.dataset.p||'';if(/^(theme\.imgsvg|images\.)/.test(p))setTimeout(shapePrevs,0)});
+  function secShape(key){
+    const s=(((T().imgsvg||{}).sec||{})[key])||{};
+    return det('m:'+key,'Picture shape & motion',shapeSet(s),'Own shape or motion','Same as its group',
+      `<p class="text-[11px] text-gray-500">The pictures inside this section (news cards, team photos, picture sections, ...). Not the section background photo. For all pictures: <b>General, Picture shapes & motion</b>.</p>`
+      +shapeFields(`theme.imgsvg.sec.${key}.`,'Same as its group')
+      +`<div><button type="button" data-lk="reset-shape-sec" data-k="${key}" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl"><i class="fas fa-rotate-left"></i> Same as its group</button></div>`);
+  }
+  function viewShapes(){
+    T();
+    const G=[['all','All pictures','Every picture of the pages (not the logos). Each group below can differ.','As designed'],['hero','Home page slider','The big pictures at the top of the home page.','Same as all pictures'],['news','News pictures','The pictures of the news cards.','Same as all pictures'],['team','Team photos','The photos of the About page team.','Same as all pictures'],['blocks','Picture sections','The pictures you add as their own section or after a paragraph (Sections, Add a picture). Each one can also have its own.','Same as all pictures']];
+    $('view').innerHTML=G.map(([g,t,i,none])=>card(t,i,shapeFields(`theme.imgsvg.${g}.`,none),`<button type="button" data-lk="reset-shape" data-k="${g}" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl flex-shrink-0"><i class="fas fa-rotate-left"></i> ${none}</button>`)).join('')
+      +seeSections('The shape and motion of the pictures');
+  }
   const SECKEYS=()=>TH().SECTIONS.map(x=>x[0]);
   function hasLook(key){
     const t=T(),has=o=>!!o&&Object.values(o).some(v=>v&&typeof v==='object'?has(v):v!==''&&v!=null&&v!==false);
     if(key==='home-hero')return has((t.imgfx||{}).hero);
-    return ['color','image'].includes(((t.sections||{})[key]||{}).mode)||has((t.secCards||{})[key])||has((t.secHead||{})[key])||has((t.parts||{})[key])||hsSet(((t.headSize||{}).sec||{})[key])||has((t.secBtns||{})[key])||has(Object.fromEntries(Object.entries((t.icons||{})[key]||{}).filter(([k,v])=>!(k==='size'&&+v===100))))||has((t.cols||{})[key])||has(((t.align||{}).sec||{})[key])||has(((t.imgfx||{}).sec||{})[key])||has(((t.anim||{}).sec||{})[key])||has(((t.fonts||{}).sec||{})[key]);
+    return ['color','image'].includes(((t.sections||{})[key]||{}).mode)||has((t.secCards||{})[key])||has((t.secHead||{})[key])||has((t.parts||{})[key])||hsSet(((t.headSize||{}).sec||{})[key])||shapeSet(((t.imgsvg||{}).sec||{})[key])||haSet(((t.headAlign||{}).sec||{})[key])||has((t.secBtns||{})[key])||has(Object.fromEntries(Object.entries((t.icons||{})[key]||{}).filter(([k,v])=>!(k==='size'&&+v===100))))||has((t.cols||{})[key])||has(((t.align||{}).sec||{})[key])||has(((t.imgfx||{}).sec||{})[key])||has(((t.anim||{}).sec||{})[key])||has(((t.fonts||{}).sec||{})[key]);
   }
   function secLook(key){
     const wrap=(intro,body,extra='')=>`<div class="bg-white p-4 rounded-2xl border border-gray-200 space-y-3"><div class="flex items-start justify-between gap-3"><div><h3 class="font-extrabold text-base">Look of this section</h3><p class="text-xs text-gray-600 mt-0.5">${intro}</p></div>${extra}</div>${body}</div>`;
@@ -448,17 +511,17 @@ const ALOOK=(()=>{
       return wrap('The slider is not a section of the page, so only its pictures can be styled here. Its height and controls are in the cards above. Anything left on its default follows <b>General, Picture effects</b>.',
         det('f:hero','Photo effect',on,'Own effect','Same as all pictures',fxBody('theme.imgfx.hero.','hero',null,'Same as all pictures')+`<div><button type="button" data-lk="reset-fx-hero" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl"><i class="fas fa-rotate-left"></i> Same as all pictures</button></div>`));
     }
-    if(!SECKEYS().includes(BK(key)))return '';
+    if(!SECKEYS().includes(BK(key))&&!/-image-[a-z]+$/.test(BK(key)))return '';
     const bg=bgInfo(key);
     return wrap('Background, header parts, parts of the section, columns, buttons, icons, cards, fonts, text alignment, photo effect and animation of this section only. Whatever you leave on its default follows the site-wide settings in <b>General</b> (Colors, Cards, Fonts, Text alignment, Picture effects, Animation). Cards settings only matter where the section has cards.',
       det('b:'+key,'Background',bg.mode!=='default',bg.badge,'Default',bg.body)
-      +secHead(key)+secParts(key)+secCols(key)+secCards(key)+secBtns(key)+secIcons(key)+secHeads(key)+secFonts(key)+secAlign(key)+secFx(key)+secAx(key),
+      +secHead(key)+secParts(key)+secCols(key)+secCards(key)+secBtns(key)+secIcons(key)+secHeads(key)+secShape(key)+secFonts(key)+secAlign(key)+secFx(key)+secAx(key),
       hasLook(key)?`<button type="button" data-lk="reset-sec-look" data-k="${key}" class="text-xs bg-gray-100 hover:bg-gray-200 font-bold px-3 py-2 rounded-xl flex-shrink-0" title="Remove every look setting of this section"><i class="fas fa-rotate-left"></i> Reset this section</button>`:'');
   }
 
   /* ---------- tabs registry (later phases add to it) ---------- */
 
-  const tabs={icons:viewIcons,fonts:viewFonts,header:viewHeader,cards:viewCards,align:viewAlign,logos:viewLogos,menu:viewMenu,imgfx:viewFx,anim:viewAnim,motion:viewMotion};
+  const tabs={shapes:viewShapes,icons:viewIcons,fonts:viewFonts,header:viewHeader,cards:viewCards,align:viewAlign,logos:viewLogos,menu:viewMenu,imgfx:viewFx,anim:viewAnim,motion:viewMotion};
   const previews={fonts:()=>{document.querySelectorAll('[data-fprev]').forEach(b=>{b.innerHTML=fontPrev(b.dataset.fprev==='all'?'':b.dataset.fprev)})},imgfx:()=>{document.querySelectorAll('[data-fxprev]').forEach(b=>{const [g,k]=b.dataset.fxprev.split(':');b.innerHTML=fxPrev(g==='all'?'news':g,k)})},menu:()=>{const a=$('lk-menu');if(a)a.innerHTML=menuPrev()},header:()=>{const a=$('lk-hdr'),b=$('lk-bar');if(a)a.innerHTML=hdrPrev();if(b)b.innerHTML=barPrev()},cards:()=>{const a=$('lk-cards');if(a)a.innerHTML=cardsPrev()},align:()=>{const a=$('lk-align');if(a)a.innerHTML=alignPrev()},logos:()=>{['header','home','about'].forEach(k=>{const a=$('lk-lg-'+k);if(a)a.innerHTML=logoPrev(k)})}};
 
   /* ---------- saving: drop empty values so the data file stays small ---------- */
@@ -476,7 +539,7 @@ const ALOOK=(()=>{
     const tiClean=s=>{if(!s)return;if(s.inline===true&&!s.pos)s.pos='beside';delete s.inline;if(s.pos!=='beside'&&s.pos!=='above')delete s.pos;if(s.size!=null&&s.size!=='fit'&&(s.size===''||+s.size===100))delete s.size};
     if(t.icons)Object.values(t.icons).forEach(tiClean);
     tiClean(t.iconsAll);if(t.iconsAll&&t.iconsAll.pos==='above')delete t.iconsAll.pos;
-    const hsClean=(o,all)=>{if(o)['h1','h2','h3'].forEach(h=>{if(o[h]===''||(+o[h]===100&&!(all&&all[h])))delete o[h]})};   // a section's 100 % is kept when all sections have another size
+    const hsClean=(o,all)=>{if(o)['h1','h2','h3','h4'].forEach(h=>{if(o[h]===''||(+o[h]===100&&!(all&&all[h])))delete o[h]})};   // a section's 100 % is kept when all sections have another size
     if(t.headSize){hsClean(t.headSize.all);Object.values(t.headSize.sec||{}).forEach(o=>hsClean(o,t.headSize.all))}
     if(t.parts){Object.keys(t.parts).forEach(k=>{const s=t.parts[k]||{};Object.keys(s).forEach(p=>{if(s[p]!==true)delete s[p]})})}
     if(t.layout){
@@ -486,7 +549,7 @@ const ALOOK=(()=>{
       ['hide','order','copies'].forEach(k=>{if(Ly[k]&&!Object.keys(Ly[k]).length)delete Ly[k]});
       if(!Object.keys(Ly).length)delete t.layout;
     }
-    ['header','bar','wa','cards','secCards','secHead','parts','secBtns','icons','iconsAll','headSize','cols','align','logos','menu','imgfx','anim','motion','fonts'].forEach(k=>{if(t[k]){prune(t[k]);if(!Object.keys(t[k]).length)delete t[k]}});
+    ['header','bar','wa','cards','secCards','secHead','parts','secBtns','icons','iconsAll','headSize','headAlign','imgsvg','cols','align','logos','menu','imgfx','anim','motion','fonts'].forEach(k=>{if(t[k]){prune(t[k]);if(!Object.keys(t[k]).length)delete t[k]}});
     // a font name that is not allowed is dropped rather than saved
     const okF=o=>{if(!o||typeof o!=='object')return;['head','body'].forEach(r=>['en','ar'].forEach(l=>{if(o[r]&&o[r][l]&&!TH().fontOk(o[r][l]))delete o[r][l]}))};
     if(t.fonts){okF(t.fonts.all);Object.values(t.fonts.sec||{}).forEach(okF);[t.fonts].concat([t.fonts.all],Object.values(t.fonts.sec||{})).forEach(o=>{if(o)prune(o)});if(!Object.keys(t.fonts).length)delete t.fonts}
@@ -548,16 +611,18 @@ const ALOOK=(()=>{
     else if(a==='reset-sec-cols'){if(t.cols)delete t.cols[b.dataset.k];mark();view()}
     else if(a==='reset-sec-head'){if(t.secHead)delete t.secHead[b.dataset.k];mark();view()}
     else if(a==='reset-sec-btns'){if(t.secBtns)delete t.secBtns[b.dataset.k];mark();view()}
-    else if(a==='reset-hs-sec'){if(t.headSize&&t.headSize.sec)delete t.headSize.sec[b.dataset.k];mark();view()}
-    else if(a==='reset-hs-all'){if(confirm('Set the heading sizes of all sections back to as designed? Sizes set for a single section are kept.')){if(t.headSize)delete t.headSize.all;mark();view()}}
+    else if(a==='reset-hs-sec'){if(t.headSize&&t.headSize.sec)delete t.headSize.sec[b.dataset.k];if(t.headAlign&&t.headAlign.sec)delete t.headAlign.sec[b.dataset.k];mark();view()}
+    else if(a==='reset-hs-all'){if(confirm('Set the heading sizes and sides of all sections back to as designed? Settings of a single section are kept.')){if(t.headSize)delete t.headSize.all;if(t.headAlign)delete t.headAlign.all;mark();view()}}
+    else if(a==='reset-shape-sec'){if(t.imgsvg&&t.imgsvg.sec)delete t.imgsvg.sec[b.dataset.k];mark();view()}
+    else if(a==='reset-shape'){if(t.imgsvg)delete t.imgsvg[b.dataset.k];mark();view()}
     else if(a==='reset-sec-icons'){if(t.icons)delete t.icons[b.dataset.k];mark();view()}
     else if(a==='reset-icons-all'){if(confirm('Set the icons before titles back to their original look? Icons set for a single section are kept.')){delete t.iconsAll;mark();view()}}
     else if(a==='ti-oneline'){const p=b.dataset.b;set(D,p+'size','fit');set(D,p+'pos','beside');mark();view()}
     else if(a==='reset-sec-parts'){if(t.parts)delete t.parts[b.dataset.k];mark();view()}
-    else if(a==='reset-sec-look'){const k=b.dataset.k;if(confirm('Remove the background, hidden header parts, hidden parts, button and icon settings, columns, cards colors, fonts, text alignment, photo effect and animation set for this section? It will follow the site-wide settings.')){if(t.sections)delete t.sections[k];[['secCards'],['secHead'],['parts'],['secBtns'],['icons'],['headSize','sec'],['cols'],['align','sec'],['imgfx','sec'],['anim','sec'],['fonts','sec']].forEach(([a1,a2])=>{const o=a2?(t[a1]||{})[a2]:t[a1];if(o)delete o[k]});mark();view()}}
+    else if(a==='reset-sec-look'){const k=b.dataset.k;if(confirm('Remove the background, hidden header parts, hidden parts, button and icon settings, columns, cards colors, fonts, text alignment, photo effect and animation set for this section? It will follow the site-wide settings.')){if(t.sections)delete t.sections[k];[['secCards'],['secHead'],['parts'],['secBtns'],['icons'],['headSize','sec'],['headAlign','sec'],['imgsvg','sec'],['cols'],['align','sec'],['imgfx','sec'],['anim','sec'],['fonts','sec']].forEach(([a1,a2])=>{const o=a2?(t[a1]||{})[a2]:t[a1];if(o)delete o[k]});mark();view()}}
   });
 
-  return {tabs,clean,previews,secLook,hasLook,cref};
+  return {tabs,clean,previews,secLook,hasLook,cref,shapeFields,shapePrevs};
 })();
 
 window.ALOOK=ALOOK;

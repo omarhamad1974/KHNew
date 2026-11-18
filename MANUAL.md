@@ -78,6 +78,7 @@ Saving in the admin writes a commit to the repository. The host republishes the 
 - `preview.js` (public pages, inert for visitors) and `admin-preview.js` (admin): the live preview. Plan of the Control phases: `CONTROL-PLAN.md`.
 - `video.js`: the YouTube video sections of the home and About pages.
 - `templates/`: Word and Markdown templates for every import (see `templates/README.md`); rebuilt with `node scripts/build-templates.js`.
+- `images.js`: picture sections and the SVG shapes and motion of pictures. `admin-mobile.js`: the bottom bar of the admin on phones.
 - `layout.js`: which sections show, their order, copies of sections, and hidden parts of a section (admin: Sections, Sections of this page).
 - `assets/`: logos, team photos and uploaded pictures.
 - `scripts/validate.js`, `.github/workflows/validate.yml`: content check run by GitHub.

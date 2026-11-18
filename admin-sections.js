@@ -39,12 +39,18 @@ const ASEC=(()=>{
   const KL=window.KLAYOUT;
   const lyR=()=>((D&&D.theme&&D.theme.layout)||{});                       // read only (drawing the screen changes nothing)
   const lyW=()=>{const t=theme();if(!t.layout||typeof t.layout!=='object')t.layout={};return t.layout};
-  const isHidden=k=>(lyR().hide||{})[k]===true;
+  // picture sections (images.js): D.images items, shown here as sections named "<page>-image-<id>"
+  const IMGK=/^([a-z]+)-image-([a-z]+)$/;
+  const imgOf=k=>{const m=IMGK.exec(k||'');return m?(D.images||[]).find(x=>x&&x.id===m[2]&&x.page===m[1])||null:null};
+  const short=t=>{t=String(t||'').trim();return t.length>28?t.slice(0,27)+'…':t};
+  const isHidden=k=>{const x=imgOf(k);return x?x.hidden===true:(lyR().hide||{})[k]===true};
   const copyNo=k=>{const m=KL.COPY.exec(k);return m?+m[2]:0};
   // The entry of a section, or of a copy of one: {key, page, label, copyOf}
   function entry(k){
     const s=SECS.find(x=>x.key===k);if(s)return s;
-    const of=(lyR().copies||{})[k],o=of&&SECS.find(x=>x.key===of);
+    const im=imgOf(k);
+    if(im)return {key:k,page:im.page,label:'Picture'+(im.caption?': '+short(im.caption):im.alt?': '+short(im.alt):''),img:im.id,id:'',inText:+im.para>0};
+    const of=(lyR().copies||{})[k],o=of&&(SECS.find(x=>x.key===of)||(IMGK.test(of)?entry(of):null));
     return o&&KL.base(k)===of?{key:k,page:o.page,label:`${o.label} (copy ${copyNo(k)})`,copyOf:of,id:''}:null;
   }
   // The sections of a page, top to bottom, as the site shows them
@@ -55,6 +61,12 @@ const ASEC=(()=>{
       const a=v.after||KVIDEO.defaultAfter(page),to=keys.includes(a)?a:(page==='about'?'about-intro':null);
       if(to&&to!==vk){keys=keys.filter(x=>x!==vk);keys.splice(keys.indexOf(to)+1,0,vk)}
     }
+    (D.images||[]).forEach(x=>{                                             // picture sections right after the section they follow
+      if(!x||x.page!==page||!x.id)return;const k=`${page}-image-${x.id}`;
+      let i=keys.indexOf(x.after);if(i<0){keys.push(k);return}
+      while(i+1<keys.length&&IMGK.test(keys[i+1]))i++;
+      keys.splice(i+1,0,k);
+    });
     Object.entries(lyR().copies||{}).forEach(([c,of])=>{                    // copies right after their section (and its earlier copies)
       if(!keys.includes(of)||!entry(c))return;
       let i=keys.indexOf(of);while(i+1<keys.length&&KL.base(keys[i+1])===of)i++;
@@ -66,12 +78,31 @@ const ASEC=(()=>{
     keys.forEach((k,i)=>{if(out.includes(k))return;const prev=keys.slice(0,i).reverse().find(x=>out.includes(x));out.splice(prev?out.indexOf(prev)+1:0,0,k)});
     return out;
   }
-  const PER=[['sections'],['secCards'],['secHead'],['parts'],['secBtns'],['icons'],['headSize','sec'],['cols'],['align','sec'],['imgfx','sec'],['anim','sec'],['fonts','sec']];
+  const PER=[['sections'],['secCards'],['secHead'],['parts'],['secBtns'],['icons'],['headSize','sec'],['headAlign','sec'],['imgsvg','sec'],['cols'],['align','sec'],['imgfx','sec'],['anim','sec'],['fonts','sec']];
   function perSettings(fn){const t=theme();PER.forEach(([a,b])=>{if(b){t[a]=t[a]||{};t[a][b]=t[a][b]||{};fn(t[a][b])}else{t[a]=t[a]||{};fn(t[a])}})}
   function lyAct(a,k){
     const e=entry(k);if(!e)return;
     const page=e.page,L=lyW();
-    if(a==='hide'){L.hide=L.hide||{};if(L.hide[k])delete L.hide[k];else L.hide[k]=true;toast(L.hide[k]?`${e.label} is now hidden on the site (after you save).`:`${e.label} shows on the site again (after you save).`)}
+    const im=imgOf(k);
+    if(a==='hide'&&im){im.hidden=!im.hidden;if(!im.hidden)delete im.hidden;toast(im.hidden?'The picture is now hidden on the site (after you save).':'The picture shows on the site again (after you save).')}
+    else if(a==='addimg'){
+      const after=im?im.after:KL.base(k),letters='abcdefghijklmnopqrstuvwxyz';let id='';
+      do{id=Array.from({length:6},()=>letters[Math.floor(Math.random()*26)]).join('')}while((D.images||[]).some(x=>x&&x.id===id));
+      D.images=Array.isArray(D.images)?D.images:[];
+      D.images.push({id,page,after:IMGK.test(after)?(imgOf(after)||{}).after||after:after,para:'0',image:'',width:'wide',ratio:'16/9',fit:'cover'});
+      const nk=`${page}-image-${id}`;
+      if(Array.isArray((L.order||{})[page])){const list=pageKeys(page).filter(x=>x!==nk);list.splice(list.indexOf(k)+1,0,nk);L.order[page]=list}
+      go(nk);toast('Picture section added. Choose its picture below; the live preview shows it.');
+    }
+    else if(a==='delimg'){
+      if(!im||!confirm('Delete this picture section? The picture file stays in assets.'))return;
+      D.images=D.images.filter(x=>x!==im);
+      Object.keys(L.order||{}).forEach(p=>{L.order[p]=L.order[p].filter(x=>x!==k&&KL.base(x)!==k)});
+      Object.keys(L.copies||{}).forEach(c=>{if(L.copies[c]===k)delete L.copies[c]});
+      if(L.hide)delete L.hide[k];perSettings(o=>{delete o[k]});
+      go(im.after&&entry(im.after)?im.after:pageKeys(page)[0]);
+    }
+    else if(a==='hide'){L.hide=L.hide||{};if(L.hide[k])delete L.hide[k];else L.hide[k]=true;toast(L.hide[k]?`${e.label} is now hidden on the site (after you save).`:`${e.label} shows on the site again (after you save).`)}
     else if(a==='up'||a==='down'){
       const list=pageKeys(page),i=list.indexOf(k),j=a==='up'?i-1:i+1;if(i<0||j<0||j>=list.length)return;
       [list[i],list[j]]=[list[j],list[i]];L.order=L.order||{};L.order[page]=list;
@@ -118,13 +149,13 @@ const ASEC=(()=>{
         <button type="button" data-sc="${k}" class="flex-1 min-w-0 text-start text-sm font-bold truncate px-1 ${h?'text-gray-400 line-through':''}">${e.copyOf?'<i class="fas fa-clone text-[10px] text-gray-400 me-1"></i>':''}${esc(e.label)}</button>
         ${lyBtn('hide',k,h?'fa-eye-slash':'fa-eye',h?'Hidden: show it again':'Shown: hide it',{cls:h?'bg-amber-100 text-amber-800 hover:bg-amber-200':'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'})}
         ${can?lyBtn('dup',k,'fa-clone','Duplicate this section'):'<span class="w-8"></span>'}
-        ${e.copyOf?lyBtn('del',k,'fa-trash','Delete this copy',{cls:'bg-red-50 text-red-600 hover:bg-red-100'}):'<span class="w-8"></span>'}
+        ${e.copyOf?lyBtn('del',k,'fa-trash','Delete this copy',{cls:'bg-red-50 text-red-600 hover:bg-red-100'}):e.img?lyBtn('delimg',k,'fa-trash','Delete this picture section',{cls:'bg-red-50 text-red-600 hover:bg-red-100'}):'<span class="w-8"></span>'}
       </div>`;
     }).join('');
     return `<details data-lyopen ${lyOpen?'open':''} class="bg-white rounded-2xl border border-gray-200 shadow-sm"><summary class="flex items-center gap-2 p-3 cursor-pointer"><i class="fas fa-chevron-right chev text-[10px] text-gray-400"></i><i class="fas fa-layer-group text-brand-600 text-xs"></i><span class="font-extrabold text-sm flex-1">Sections of this page: order, show or hide, duplicate</span><span class="text-[11px] font-bold px-2 py-0.5 rounded-full ${hid?'bg-amber-100 text-amber-800':'bg-gray-100 text-gray-600'}">${keys.length} sections${hid?`, ${hid} hidden`:''}</span></summary>
       <div class="p-3 pt-0 space-y-2"><p class="text-xs text-gray-600">Top to bottom as on the page. <b>Arrows</b> move a section, the <b>eye</b> shows or hides it (what is written in it is kept), <b>Duplicate</b> adds a second copy of the section that you can place anywhere on this page and give its own look. Hidden sections are crossed out.</p>
       <div class="space-y-1.5">${rows}</div>
-      ${custom?`<div>${lyBtn('reset-order',keys[0],'fa-rotate-left','Original order',{txt:'Original order'})}</div>`:''}</div></details>`;
+      <div class="flex flex-wrap gap-2">${lyBtn('addimg',keys[keys.length-1],'fa-image','Add a picture at the end of the page',{txt:'Add a picture',cls:'bg-brand-50 text-brand-700 hover:bg-brand-100'})}${custom?lyBtn('reset-order',keys[0],'fa-rotate-left','Original order',{txt:'Original order'}):''}</div></div></details>`;
   }
   // The bar at the top of one section: shown / hidden, move, duplicate, delete copy
   function secBar(s){
@@ -135,6 +166,7 @@ const ASEC=(()=>{
       ${lyBtn('up',s.key,'fa-arrow-up','Move up on the page',{off:i<=0,txt:'Up'})}${lyBtn('down',s.key,'fa-arrow-down','Move down on the page',{off:i<0||i>=keys.length-1,txt:'Down'})}
       ${can?lyBtn('dup',s.key,'fa-clone','Duplicate this section',{txt:'Duplicate'}):''}
       ${s.copyOf?lyBtn('del',s.key,'fa-trash','Delete this copy',{txt:'Delete copy',cls:'bg-red-50 text-red-600 hover:bg-red-100'}):''}
+      ${lyBtn('addimg',s.key,'fa-image','Add a picture after this section',{txt:'Add a picture',cls:'bg-brand-50 text-brand-700 hover:bg-brand-100'})}
     </div>`;
   }
   const sec=()=>entry(secKey)||SECS[0];
@@ -247,7 +279,36 @@ const ASEC=(()=>{
       +`<div class="flex flex-wrap gap-2"><button type="button" data-imp="svc-open" class="text-xs bg-brand-600 hover:bg-brand-700 text-white font-bold px-3 py-2 rounded-xl"><i class="fas fa-file-import"></i> Import from Word / Markdown</button><button type="button" data-sj="home-services" class="text-xs bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold px-3 py-2 rounded-xl">Edit the title, brief and pop-up of this service</button></div>`);
   }
   const jump=(k,label,icon)=>`<button type="button" data-gj="${k}" class="text-xs bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold px-3 py-2 rounded-xl"><i class="fas ${icon}"></i> ${label}</button>`;
+  /* ---------- a picture section: picture, texts, place, size, look, shape and motion ---------- */
+  function imgBody(s){
+    const i=(D.images||[]).findIndex(x=>x&&x.id===s.img),x=D.images[i],b=`images.${i}.`;
+    const secs=pageKeys(s.page).filter(k=>!IMGK.test(KL.base(k))&&!entry(k).copyOf).map(k=>[k,entry(k).label]);
+    const sel=(k,label,opts,note)=>{const v=String(get(D,b+k)||'');return `<label class="block text-xs font-bold">${esc(label)}<select data-p="${b+k}" data-imgpos="${i}" class="${inp} mt-1">${opts.map(([o,n])=>`<option value="${o}" ${v===String(o)?'selected':''}>${esc(n)}</option>`).join('')}</select>${note?`<span class="block font-normal text-[11px] text-gray-500 mt-1">${note}</span>`:''}</label>`};
+    const g2=h=>`<div class="grid sm:grid-cols-2 gap-3">${h}</div>`;
+    return box('Picture','A picture of its own, as a section or inside the text of a section. The live preview shows it as you go.',
+        fld(b,['image','Picture (file in assets, or upload)','img'])
+        +bi(b,['alt','Description of the picture, for screen readers and search engines'],[],{phAr:'Empty: the English description'})
+        +bi(b,['caption','Caption under the picture (optional)'],[],{phAr:'Empty: the English caption'})
+        +(String(x.image||'').trim()?'':'<p class="text-xs font-bold text-amber-700">No picture yet: until you choose one, nothing shows on the site.</p>'))
+      +box('Place','',g2(sel('after','Next to the section',secs)+sel('para','Where',[['0','After it, as a section of its own'],...Array.from({length:8},(_,n)=>[String(n+1),`Inside it, after paragraph ${n+1}`])],'Inside a section the picture follows that paragraph of its text (About text, introduction of a service page, ...); with fewer paragraphs it goes after the last one.'))
+        +(+x.para>0?'<p class="text-[11px] text-gray-500">Inside a text the picture moves with that section; the Up and Down buttons do not apply to it.</p>':''))
+      +box('Size and look','',g2(sel('width','Width',[['wide','Wide'],['full','The full width of the section'],['medium','Medium'],['small','Small'],['bleed','Edge to edge of the screen (no margins)']])
+          +sel('ratio','Frame',[['auto','The picture as it is'],['16/9','Wide 16:9'],['21/9','Panorama 21:9'],['3/2','Photo 3:2'],['4/3','Classic 4:3'],['1/1','Square'],['3/4','Tall 3:4']])
+          +sel('fit','Fit in the frame',[['cover','Fill the frame (may crop)'],['contain','Show all of it']])
+          +sel('pos','Which part stays in view',[['','Center'],['top','Top'],['bottom','Bottom'],['left','Left'],['right','Right']]))
+        +fld(b,['opacity','Opacity of the picture (100 % = solid)','opac']))
+      +box('Shape and motion','An SVG shape to cut the picture to, and an animation. Empty = what is set for all picture sections in <b>General, Picture shapes & motion</b>.',ALOOK.shapeFields(b,'Same as all picture sections',String(x.image||'').trim()?imgSrc(x.image):''))
+      +`<div class="flex justify-end"><button type="button" data-ly="delimg" data-k="${s.key}" class="text-xs bg-red-50 hover:bg-red-100 text-red-600 font-bold px-3 py-2 rounded-xl"><i class="fas fa-trash"></i> Delete this picture section</button></div>`;
+  }
+  // Place changed: the picture's place in the page order follows
+  document.addEventListener('change',e=>{
+    const i=e.target.dataset&&e.target.dataset.imgpos;if(i==null||!D)return;
+    setTimeout(()=>{const x=(D.images||[])[+i];if(!x)return;const k=`${x.page}-image-${x.id}`,L=lyR(),saved=(L.order||{})[x.page];
+      if(Array.isArray(saved)){const list=saved.filter(y=>y!==k),at=list.indexOf(x.after);list.splice(at<0?list.length:at+1,0,k);lyW().order[x.page]=list}
+      render()},0);
+  });
   function body(s){
+    if(s.img)return imgBody(s)+ALOOK.secLook(s.key);
     if(s.copyOf){
       const o=entry(s.copyOf);
       return box(`A copy of ${esc(o.label)}`,`This section shows the same content as <b>${esc(o.label)}</b> and follows it, in English and Arabic: edit the words, lists and pictures there. Its place on the page, whether it shows, and its look below are its own.`,`<button type="button" data-sc="${s.copyOf}" class="text-xs bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold px-3 py-2 rounded-xl"><i class="fas fa-pen"></i> Edit the content of ${esc(o.label)}</button>`)

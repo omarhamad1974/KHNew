@@ -162,7 +162,7 @@ window.KLang=(function(){
     const enC=en.newsCategories||[],arC=ar.newsCategories||[],cm={};
     enC.forEach((c,i)=>{if(txt(arC[i]))cm[c]=arC[i]});
     o.newsCategories=enC.map(c=>cm[c]||c);
-    for(const sec of ['carousel','jurisdictions','news','services','testimonials','employees','products']){
+    for(const sec of ['carousel','jurisdictions','news','services','testimonials','employees','products','images']){
       const a=ar[sec];if(!Array.isArray(a)||!Array.isArray(o[sec]))continue;
       const by=new Map(a.filter(x=>x&&x.id!=null).map(x=>[String(x.id),x]));
       o[sec].forEach((it,i)=>{const x=by.get(String(it.id))||(it.id==null?a[i]:null);if(!x)return;

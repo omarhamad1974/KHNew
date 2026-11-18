@@ -55,6 +55,9 @@ if(H!==undefined){
       if(!/^[a-z]+-[a-z-]+(-c[0-9]{1,3})?$/.test(k))errs.push(`theme.secCards.${k}: not a section name`);
       ['bg','text','title','border'].forEach(c=>color(`secCards.${k}.${c}`,(v||{})[c]));
       range(`secCards.${k}.opacity`,(v||{}).opacity,0,100);
+      const pic=(p,o)=>{if(!o||typeof o!=='object')return;if(o.image!==undefined&&typeof o.image!=='string')errs.push(`theme.${p}.image: must be a file name or web address`);range(`${p}.imgOpacity`,o.imgOpacity,0,100);range(`${p}.imgShade`,o.imgShade,0,80);if(o.imgPos!==undefined&&o.imgPos!==''&&!['top','center','bottom'].includes(o.imgPos))errs.push(`theme.${p}.imgPos: use top, center or bottom`)};
+      pic(`secCards.${k}`,v);
+      if(v&&v.nth!==undefined){if(typeof v.nth!=='object'||v.nth===null||Array.isArray(v.nth))errs.push(`theme.secCards.${k}.nth: must be an object`);else for(const [n,o] of Object.entries(v.nth)){if(!/^[1-9][0-9]?$/.test(n))errs.push(`theme.secCards.${k}.nth.${n}: use a card number (1, 2, 3 ...)`);else pic(`secCards.${k}.nth.${n}`,o)}}
     }
   }
 }
@@ -286,6 +289,47 @@ if(H!==undefined){
     }
   }
 }
+// ---- Picture sections and picture shapes / motion (images.js): images = [{id, page, after, para, image, ...}]; theme.imgsvg ----
+{
+  const isObj=o=>typeof o==='object'&&o!==null&&!Array.isArray(o);
+  let KI=null;try{global.window=global.window||{};global.location=global.location||{pathname:'admin.html'};require(path.resolve(__dirname,'..','images.js'));KI=window.KIMG}catch(e){}
+  const shape=(p,o)=>{
+    if(!isObj(o)){errs.push(`${p}: must be an object`);return}
+    if(o.mask!==undefined&&o.mask!==''&&o.mask!=='none'&&KI&&!KI.SHAPES[o.mask])errs.push(`${p}.mask: unknown shape "${o.mask}" (use ${Object.keys(KI.SHAPES).join(', ')} or none)`);
+    if(o.anim!==undefined&&o.anim!==''&&o.anim!=='none'&&KI&&!KI.ANIMS[o.anim])errs.push(`${p}.anim: unknown animation "${o.anim}" (use ${Object.keys(KI.ANIMS).join(', ')} or none)`);
+    if(o.maskFit!==undefined&&!['','stretch','keep'].includes(o.maskFit))errs.push(`${p}.maskFit: use keep or stretch`);
+    if(o.trigger!==undefined&&!['','always','view','hover'].includes(o.trigger))errs.push(`${p}.trigger: use always, view or hover`);
+    if(o.speed!==undefined&&o.speed!==''&&!(Number(o.speed)>=.5&&Number(o.speed)<=30))errs.push(`${p}.speed: seconds from 0.5 to 30`);
+    if(o.strength!==undefined&&o.strength!==''&&!(Number(o.strength)>=0&&Number(o.strength)<=100))errs.push(`${p}.strength: from 0 to 100`);
+  };
+  const S=(d.theme||{}).imgsvg;
+  if(S!==undefined){
+    if(!isObj(S))errs.push('theme.imgsvg: must be an object');
+    else for(const [k,o] of Object.entries(S)){
+      if(['all','hero','news','team','blocks'].includes(k))shape(`theme.imgsvg.${k}`,o);
+      else if(k==='sec'){if(!isObj(o))errs.push('theme.imgsvg.sec: must be an object');else for(const [sk,x] of Object.entries(o)){if(!/^[a-z]+-[a-z-]+(-c[0-9]{1,3})?$/.test(sk))errs.push(`theme.imgsvg.sec.${sk}: not a section name`);else shape(`theme.imgsvg.sec.${sk}`,x)}}
+      else errs.push(`theme.imgsvg.${k}: unknown group (use all, hero, news, team, blocks, sec)`);
+    }
+  }
+  if(d.images!==undefined){
+    if(!Array.isArray(d.images))errs.push('images: must be a list');
+    else{const seen=new Set();d.images.forEach((x,i)=>{
+      const p=`images[${i}]`;if(!isObj(x)){errs.push(`${p}: must be an object`);return}
+      if(!/^[a-z]{2,12}$/.test(String(x.id||'')))errs.push(`${p}.id: must be 2 to 12 small letters`);else if(seen.has(x.id))errs.push(`${p}.id: "${x.id}" is used twice`);else seen.add(x.id);
+      if(!['home','about','patents','trademarks','translation'].includes(x.page))errs.push(`${p}.page: use home, about, patents, trademarks or translation`);
+      if(typeof x.after!=='string'||!x.after)errs.push(`${p}.after: the section the picture follows`);
+      if(x.para!==undefined&&x.para!==''&&!(Number.isInteger(Number(x.para))&&Number(x.para)>=0&&Number(x.para)<=12))errs.push(`${p}.para: 0 (its own section) or a paragraph number up to 12`);
+      if(x.image!==undefined&&typeof x.image!=='string')errs.push(`${p}.image: must be a file name or web address`);
+      else if(x.image&&!/^(https?:|\.\/|\/|data:)/.test(x.image)){const f=resolve(x.image);if(f&&!fs.existsSync(path.join('.',f)))noPic(`${p}.image: image not found ${x.image}`)}
+      if(x.width!==undefined&&!['','full','wide','medium','small','bleed'].includes(x.width))errs.push(`${p}.width: use full, wide, medium, small or bleed`);
+      if(x.ratio!==undefined&&!['','auto','16/9','21/9','3/2','4/3','1/1','3/4'].includes(x.ratio))errs.push(`${p}.ratio: use auto, 16/9, 21/9, 3/2, 4/3, 1/1 or 3/4`);
+      if(x.fit!==undefined&&!['','cover','contain'].includes(x.fit))errs.push(`${p}.fit: use cover or contain`);
+      if(x.pos!==undefined&&!['','center','top','bottom','left','right'].includes(x.pos))errs.push(`${p}.pos: use center, top, bottom, left or right`);
+      if(x.opacity!==undefined&&x.opacity!==''&&!(Number(x.opacity)>=0&&Number(x.opacity)<=100))errs.push(`${p}.opacity: from 0 to 100`);
+      shape(p,x);
+    })}
+  }
+}
 if(d.faq!==undefined){
   const P=['home','about','patents','trademarks','translation'],pg=(d.faq||{}).pages||{};
   for(const k of Object.keys(pg)){
@@ -309,6 +353,7 @@ if(d.faq!==undefined){
     if(o.cardPos!==undefined&&o.cardPos!==''&&!['top','center','bottom'].includes(o.cardPos))errs.push(`${path}.cardPos: use top, center or bottom`);
     if(o.cardImage!==undefined&&typeof o.cardImage!=='string')errs.push(`${path}.cardImage: must be a file name or web address`);
     if(o.cardShade!==undefined&&o.cardShade!==''){const n=Number(o.cardShade);if(!(n>=0&&n<=80))errs.push(`${path}.cardShade: must be between 0 and 80`)}
+    if(o.cardOpacity!==undefined&&o.cardOpacity!==''){const n=Number(o.cardOpacity);if(!(n>=0&&n<=100))errs.push(`${path}.cardOpacity: must be between 0 and 100`)}
   };
   for(const k of ['news','services','employees'])(Array.isArray(d[k])?d[k]:[]).forEach((x,i)=>one(`${k}[${i}]`,x));
   if(d.ipCard!==undefined)one('ipCard',d.ipCard);
@@ -344,9 +389,14 @@ if(d.faq!==undefined){
   }};
   per('icons',ico);
   {const H=(d.theme||{}).headSize;if(H!==undefined){
-    const lvl=(p,o)=>{if(!isObj(o)){errs.push(`${p}: must be an object`);return}for(const [k,v] of Object.entries(o)){if(!['h1','h2','h3'].includes(k))errs.push(`${p}.${k}: use h1, h2 or h3`);else{const n=Number(v);if(v!==''&&!(n>=60&&n<=160))errs.push(`${p}.${k}: must be between 60 and 160 (is "${v}")`)}}};
+    const lvl=(p,o)=>{if(!isObj(o)){errs.push(`${p}: must be an object`);return}for(const [k,v] of Object.entries(o)){if(!['h1','h2','h3','h4'].includes(k))errs.push(`${p}.${k}: use h1, h2, h3 or h4`);else{const n=Number(v);if(v!==''&&!(n>=60&&n<=160))errs.push(`${p}.${k}: must be between 60 and 160 (is "${v}")`)}}};
     if(!isObj(H))errs.push('theme.headSize: must be an object');
     else for(const [k,o] of Object.entries(H)){if(k==='all')lvl('theme.headSize.all',o);else if(k==='sec'){if(!isObj(o))errs.push('theme.headSize.sec: must be an object');else for(const [sk,x] of Object.entries(o)){if(!SK.test(sk))errs.push(`theme.headSize.sec.${sk}: not a section name`);else lvl(`theme.headSize.sec.${sk}`,x)}}else errs.push(`theme.headSize.${k}: use all or sec`)}
+  }}
+  {const H=(d.theme||{}).headAlign;if(H!==undefined){
+    const lvl=(p,o)=>{if(!isObj(o)){errs.push(`${p}: must be an object`);return}for(const [k,v] of Object.entries(o)){if(!['t','c'].includes(k))errs.push(`${p}.${k}: use t (titles) or c (card titles)`);else if(v!==''&&!['start','center','end'].includes(v))errs.push(`${p}.${k}: use start, center or end`)}};
+    if(!isObj(H))errs.push('theme.headAlign: must be an object');
+    else for(const [k,o] of Object.entries(H)){if(k==='all')lvl('theme.headAlign.all',o);else if(k==='sec'){if(!isObj(o))errs.push('theme.headAlign.sec: must be an object');else for(const [sk,x] of Object.entries(o)){if(!SK.test(sk))errs.push(`theme.headAlign.sec.${sk}: not a section name`);else lvl(`theme.headAlign.sec.${sk}`,x)}}else errs.push(`theme.headAlign.${k}: use all or sec`)}
   }}
   {const A=(d.theme||{}).iconsAll;if(A!==undefined){if(!isObj(A))errs.push('theme.iconsAll: must be an object');else ico('theme.iconsAll',A)}}
 }
