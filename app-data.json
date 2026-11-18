@@ -484,7 +484,7 @@
       "desktop": 200
     },
     "bar": {
-      "bg": "role:accent",
+      "bg": "role:accentDark",
       "text": "role:sand"
     },
     "menu": {
@@ -494,7 +494,8 @@
     },
     "wa": {
       "bg": "role:page",
-      "btnText": "role:page"
+      "btnText": "role:page",
+      "opacity": "100"
     },
     "fonts": {
       "all": {
