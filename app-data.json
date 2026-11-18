@@ -6,23 +6,23 @@
     {
       "id": "1",
       "title": "Using Legal Skills with Technical Knowledge",
-      "subtitle": "Discover legal and IP services.",
+      "subtitle": "",
       "tag": "Featured",
-      "image": "mwiioilp-1000097178.jpg"
+      "image": "mwmllxpp-89583.jpg"
     },
     {
       "id": "2",
-      "title": "Protecting Innovation",
-      "subtitle": "Discover legal and IP services.",
+      "title": "Protecting your intellectual property today to secure your competitive advantage tomorrow.",
+      "subtitle": "",
       "tag": "Featured",
-      "image": "./assets/slider2.jpg"
+      "image": "mwmllfn7-89584.jpg"
     },
     {
       "id": "3",
-      "title": "Making a difference ",
-      "subtitle": "To people lives and people business ",
+      "title": "Building a stronger future for businesses through innovation, protection, and strategic expertise.",
+      "subtitle": " ",
       "tag": "",
-      "image": "mwiip53o-1000097174.jpg"
+      "image": "mwmlkrzx-89582.jpg"
     }
   ],
   "jurisdictions": [
@@ -507,9 +507,9 @@
         "d": "80"
       },
       "home": {
-        "m": "80",
-        "t": "90",
-        "d": "100"
+        "m": "120",
+        "t": "140",
+        "d": "160"
       }
     },
     "secHead": {
@@ -702,6 +702,20 @@
     },
     "mwkx72a9-thedigitalartist-copyright-3360802_1920.jpg": {
       "w": 1600,
+      "v": [
+        480,
+        960
+      ]
+    },
+    "mwmllfn7-89584.jpg": {
+      "w": 1728,
+      "v": [
+        480,
+        960
+      ]
+    },
+    "mwmllxpp-89583.jpg": {
+      "w": 1920,
       "v": [
         480,
         960
