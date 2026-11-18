@@ -477,7 +477,7 @@
       "unit": "px",
       "mobile": 120,
       "tablet": 160,
-      "desktop": 200
+      "desktop": 320
     },
     "bar": {
       "bg": "role:accentDark",
@@ -528,7 +528,7 @@
     "imgfx": {
       "hero": {
         "color": "role:accentDark",
-        "intensity": "45",
+        "intensity": "75",
         "opacity": "70"
       },
       "news": {
@@ -542,9 +542,10 @@
         "border": "role:sand"
       },
       "translation-details": {
-        "bg": "role:accent",
-        "text": "role:sand",
-        "title": "role:page"
+        "bg": "role:surface",
+        "text": "role:text",
+        "title": "role:title",
+        "opacity": "50"
       },
       "home-jurisdictions": {
         "bg": "role:surface",
@@ -612,6 +613,9 @@
         "size": "fit",
         "color": "role:sand",
         "pos": "beside"
+      },
+      "translation-contact": {
+        "size": "50"
       }
     },
     "layout": {
