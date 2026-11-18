@@ -433,10 +433,6 @@
         "mode": "color",
         "color": "role:accent"
       },
-      "home-jurisdictions": {
-        "mode": "color",
-        "color": "role:page"
-      },
       "home-services": {
         "mode": "color",
         "color": "role:surface"
@@ -551,7 +547,9 @@
         "title": "role:page"
       },
       "home-jurisdictions": {
-        "bg": "role:accentDark"
+        "bg": "role:surface",
+        "opacity": "0",
+        "border": "role:ink"
       }
     },
     "align": {
@@ -611,8 +609,23 @@
     },
     "icons": {
       "home-services": {
-        "size": "50",
-        "inline": true
+        "size": "fit",
+        "color": "role:sand",
+        "pos": "beside"
+      }
+    },
+    "layout": {
+      "order": {
+        "home": [
+          "home-hero",
+          "home-about",
+          "home-video",
+          "home-services",
+          "home-jurisdictions",
+          "home-news",
+          "home-testimonials",
+          "home-faq"
+        ]
       }
     }
   },
