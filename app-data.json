@@ -429,10 +429,6 @@
     "custom": [],
     "sectionWidth": "89",
     "sections": {
-      "trademarks-intro": {
-        "mode": "color",
-        "color": "role:accent"
-      },
       "home-services": {
         "mode": "color",
         "color": "role:surface"
